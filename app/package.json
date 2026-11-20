@@ -32,7 +32,7 @@
     "@modelcontextprotocol/server": "^2.4.0",
     "mcp-handler": "^2.4.0",
     "next": "16.4.6",
-    "react": "19.3.0",
+    "react": "19.3.1",
     "react-dom": "19.3.0",
     "zod": "^4.6.7"
   },
