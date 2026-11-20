@@ -1,0 +1,504 @@
+<title>OncoAgent Pitch Deck</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&family=Hind+Siliguri:wght@500;600&display=swap">
+<style>
+/* Layout: 1920x1080 slides scaled to the viewport, one committed light look (same grid as the reference deck).
+   Ink boxes and DatourX mint boxes carry emphasis; mint steps encode magnitude. */
+:root {
+  --mint: #17ff88; --mint-2: #6dffb3; --mint-3: #b4ffd6; --mint-4: #e2fff0; --deep: #0a7a42;
+  --ink: #151923; --grey: #485368; --grey-2: #6b7890; --line: #b7e9cd; --mist: #f3fff8; --white: #ffffff;
+  --letterbox: #dff5e9;
+  --sans: "Inter", "Segoe UI", system-ui, sans-serif;
+  --brand: "Poppins", "Inter", "Segoe UI", sans-serif;
+  --bn: "Hind Siliguri", "Nirmala UI", sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { background: var(--letterbox); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow: hidden; }
+#deck { position: fixed; inset: 0; }
+.slide { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; margin: -540px 0 0 -960px;
+  transform: scale(var(--s, .5)); overflow: hidden; visibility: hidden; font-size: 26px; line-height: 1.35;
+  background-color: var(--mist);
+  background-image: radial-gradient(1200px 700px at 88% -10%, rgba(23,255,136,.20), transparent 60%), radial-gradient(900px 600px at -5% 110%, rgba(23,255,136,.12), transparent 60%), linear-gradient(180deg, #f6fffa 0%, #fbfffd 100%); }
+.slide.on { visibility: visible; }
+.anim .slide.on .rv { animation: rise .6s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--d, 0) * 80ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .anim .slide.on .rv { animation: none; } }
+.slide.ink { background: var(--ink); color: var(--white); }
+
+#progress { position: fixed; left: 0; bottom: 0; height: 4px; background: var(--deep); width: 0; transition: width .3s ease; z-index: 9; }
+#nav { position: fixed; right: max(10px, env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; align-items: center; z-index: 10; font: 600 16px/1 var(--sans); }
+#nav button { font: inherit; width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--ink); background: rgba(255,255,255,.85); color: var(--ink); cursor: pointer; opacity: .55; transition: opacity .2s ease; }
+#nav button:hover, #nav button:focus-visible { opacity: 1; }
+#nav button:focus-visible { outline: 3px solid var(--deep); outline-offset: 2px; }
+#count { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.logo { display: inline-flex; align-items: center; gap: .32em; font-family: var(--brand); font-weight: 600; color: var(--ink); letter-spacing: -.02em; line-height: 1; white-space: nowrap; }
+.logo .x { background: var(--mint); color: var(--ink); font-weight: 700; padding: .06em .12em .08em; margin-left: -.3em; line-height: .95; }
+.logo svg { width: 1.25em; height: 1.18em; flex: none; }
+.ink .logo { color: var(--white); }
+
+.top { position: absolute; left: 104px; right: 104px; top: 50px; display: flex; justify-content: space-between; align-items: center; z-index: 3; }
+.top .logo { font-size: 30px; }
+.top .sec { font: 600 17px/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--grey); }
+.bot { position: absolute; left: 104px; right: 104px; bottom: 42px; display: flex; justify-content: space-between; align-items: center; font: 500 18px/1 var(--sans); color: var(--grey-2); z-index: 3; }
+.bot .pg { font: 600 19px/1 var(--brand); color: var(--deep); letter-spacing: .02em; }
+.ink .top .sec, .ink .bot { color: rgba(255,255,255,.7); }
+.ink .bot .pg { color: var(--mint); }
+
+.body { position: absolute; left: 104px; right: 104px; top: 132px; bottom: 104px; display: flex; flex-direction: column; }
+.kicker { display: flex; align-items: center; gap: 14px; font: 700 19px/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--deep); margin-bottom: 22px; }
+.kicker::before { content: ""; width: 14px; height: 14px; background: var(--mint); box-shadow: inset 0 0 0 2px var(--deep); flex: none; }
+.ink .kicker { color: var(--mint); }
+h2 { font: 800 72px/1.03 var(--sans); letter-spacing: -.032em; color: var(--ink); text-wrap: balance; }
+h2 .g { color: #8b95a6; }
+.ink h2 { color: var(--white); }
+.lead { font: 500 28px/1.35 var(--sans); color: var(--grey); margin-top: 18px; max-width: 1400px; }
+.cap { font: 500 20px/1.4 var(--sans); color: var(--grey-2); }
+.ink .cap, .ink .lead { color: rgba(255,255,255,.75); }
+.bn { font-family: var(--bn); font-weight: 600; }
+.fill { flex: 1; }
+.mt { margin-top: 44px; }
+
+/* cover / close */
+.cover-in { position: absolute; left: 0; right: 0; top: 150px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.cover-in .logo { font-size: 56px; }
+.vs { margin-top: 72px; display: flex; align-items: center; gap: 30px; }
+.vs .box { font: 700 92px/1 var(--brand); letter-spacing: -.035em; padding: 10px 40px 22px; white-space: nowrap; }
+.vs .box.m { background: var(--mint); color: var(--ink); }
+.vs .box.k { background: var(--ink); color: var(--white); }
+.vs .x { font: 600 64px/1 var(--brand); color: var(--ink); }
+.cover-sub { margin-top: 56px; font: 700 52px/1.12 var(--sans); letter-spacing: -.025em; color: var(--ink); }
+.cover-kw { margin-top: 22px; display: flex; align-items: center; gap: 22px; font: 500 29px/1.2 var(--sans); color: var(--grey); }
+.sq { display: inline-block; width: 11px; height: 11px; background: var(--deep); flex: none; }
+.cover-foot { position: absolute; left: 104px; right: 104px; bottom: 58px; display: flex; justify-content: space-between; align-items: baseline; font: 500 23px/1 var(--sans); color: var(--grey); }
+.cover-foot b { color: var(--ink); font-weight: 700; margin-right: 12px; }
+.close-in { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.close-in .logo { font-size: 150px; }
+.close-in .t0 { margin-bottom: 60px; font: 600 20px/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--deep); }
+.close-in .t1 { margin-top: 60px; font: 700 64px/1 var(--sans); letter-spacing: -.025em; color: var(--ink); }
+.close-in .t2 { margin-top: 24px; font: 500 44px/1.1 var(--sans); color: var(--grey); }
+.close-in .t3 { margin-top: 46px; font: 500 30px/1 var(--sans); color: var(--grey); }
+
+/* boxes */
+.groups { display: grid; gap: 28px; }
+.c3 { grid-template-columns: repeat(3, 1fr); }
+.c4 { grid-template-columns: repeat(4, 1fr); }
+.c2 { grid-template-columns: repeat(2, 1fr); }
+.grp { background: var(--white); border: 2px solid var(--ink); padding: 26px 30px; }
+.grp.m { background: var(--mint); border-color: var(--mint); }
+.grp.k { background: var(--ink); border-color: var(--ink); }
+.grp em { display: block; font: 600 64px/1 var(--brand); font-style: normal; color: var(--ink); letter-spacing: -.02em; }
+.grp b { display: block; font: 700 30px/1.15 var(--sans); margin-top: 14px; color: var(--ink); }
+.grp span { display: block; font: 400 22px/1.38 var(--sans); color: var(--grey); margin-top: 8px; }
+.grp.k em, .grp.k b { color: var(--white); }
+.grp.k span { color: rgba(255,255,255,.75); }
+.grp.m span { color: #24432f; }
+
+/* bars */
+.res { display: flex; flex-direction: column; gap: 14px; }
+.res .r { display: grid; grid-template-columns: 420px 1fr 170px; align-items: center; gap: 24px; font: 600 26px/1.15 var(--brand); }
+.res .r .tr { height: 46px; position: relative; background: linear-gradient(var(--line), var(--line)) 0 50% / 100% 2px no-repeat; }
+.res .r .bar { position: absolute; left: 0; top: 0; bottom: 0; background: #9fb0c4; }
+.res .r .bar.m { background: var(--mint); }
+.res .r .bar.k { background: var(--ink); }
+.res .r .v { text-align: right; font: 600 34px/1 var(--brand); color: var(--grey); font-variant-numeric: tabular-nums; }
+.res .r.hl .v, .res .r.hl > span:first-child { color: var(--deep); }
+.res .r small { display: block; font: 500 18px/1.2 var(--sans); color: var(--grey-2); margin-top: 4px; }
+
+/* scale strip */
+.scale { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.scale div { min-height: 300px; display: flex; flex-direction: column; gap: 14px; padding: 26px 28px; }
+.scale b { font: 700 46px/1.05 var(--brand); letter-spacing: -.02em; }
+.scale span { font: 500 23px/1.35 var(--sans); }
+.scale i { font: 700 17px/1 var(--sans); font-style: normal; letter-spacing: .16em; text-transform: uppercase; }
+.s1 { background: var(--mint); color: var(--ink); }
+.s2 { background: var(--mint-3); color: var(--ink); }
+.s3 { background: var(--white); color: var(--ink); box-shadow: inset 0 0 0 2px var(--line); }
+
+/* heat table */
+.heat { width: 100%; border-collapse: separate; border-spacing: 6px; font: 500 23px/1.25 var(--sans); }
+.heat th { font: 600 19px/1 var(--sans); color: var(--grey); padding: 12px 10px; text-align: center; }
+.heat th.lead-col { background: var(--ink); color: var(--white); }
+.heat td { padding: 14px 18px; text-align: center; }
+.heat td.rl { text-align: left; color: var(--ink); background: transparent; padding-left: 0; font-weight: 600; }
+.h1c { background: var(--mint); color: var(--ink); font-weight: 700; box-shadow: inset 0 0 0 3px var(--ink); }
+.h2c { background: var(--mint-3); color: var(--ink); }
+.h3c { background: var(--mint-4); color: var(--grey); }
+
+/* flow */
+.flow { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+.flow div { background: var(--white); border: 2px solid var(--ink); padding: 22px 22px; min-height: 230px; display: flex; flex-direction: column; gap: 10px; position: relative; }
+.flow div i { font: 600 44px/1 var(--brand); font-style: normal; color: var(--deep); }
+.flow div b { font: 700 28px/1.1 var(--sans); }
+.flow div span { font: 400 20px/1.35 var(--sans); color: var(--grey); }
+.flow div.k { background: var(--ink); color: var(--white); }
+.flow div.k i { color: var(--mint); }
+.flow div.k span { color: rgba(255,255,255,.75); }
+.flow div.m { background: var(--mint); border-color: var(--mint); }
+.flow div.m i { color: var(--ink); }
+.flow div.m span { color: #24432f; }
+
+/* tables */
+.tbl { width: 100%; border-collapse: collapse; font: 400 22px/1.3 var(--sans); }
+.tbl th { text-align: left; font: 600 16px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--grey-2); padding: 0 18px 12px 0; border-bottom: 3px solid var(--ink); }
+.tbl td { padding: 13px 18px 13px 0; border-bottom: 1.5px solid var(--line); color: var(--grey); vertical-align: top; }
+.tbl td:first-child { color: var(--ink); font-weight: 700; white-space: nowrap; }
+.tbl td.dr { color: var(--deep); font-weight: 600; }
+
+/* layers */
+.layers { display: flex; flex-direction: column; gap: 10px; }
+.lay { display: grid; grid-template-columns: 250px 1fr; gap: 18px; align-items: center; }
+.lay > span { font: 700 17px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--grey); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips i { font: 600 21px/1 var(--sans); font-style: normal; padding: 13px 18px; background: var(--white); border: 2px solid var(--line); }
+.chips i.k { background: var(--ink); color: var(--white); border-color: var(--ink); }
+.chips i.m { background: var(--mint); border-color: var(--mint); }
+
+/* status */
+.st { display: inline-block; font: 700 16px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; padding: 9px 16px; border-radius: 999px; border: 2px solid var(--ink); white-space: nowrap; }
+.st.built { background: var(--ink); color: var(--white); }
+.st.mvp { background: var(--mint); border-color: var(--mint); color: var(--ink); }
+.st.design { color: var(--ink); }
+.st.plan { color: var(--grey-2); border-color: #b6bfcc; }
+.st.vision { color: var(--deep); border-color: var(--deep); }
+.rows { display: flex; flex-direction: column; }
+.rows div { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 15px 0; border-bottom: 1.5px solid var(--line); font: 500 25px/1.25 var(--sans); }
+.rows div:first-child { border-top: 3px solid var(--ink); }
+</style>
+
+<div id="deck">
+
+<!-- 1 COVER -->
+<section class="slide on" data-title="Cover">
+  <div class="cover-in">
+    <span class="logo rv" style="--d:0"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="5" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span>
+    <div class="vs rv" style="--d:1"><span class="box m">AI proposes</span><span class="x">·</span><span class="box k">Doctor decides</span></div>
+    <p class="cover-sub rv" style="--d:2">OncoAgent: an AI assistant team for oncologists</p>
+    <p class="cover-kw rv" style="--d:3">Lung cancer first <span class="sq"></span> Every claim sourced <span class="sq"></span> Every step recorded</p>
+    <p class="rv bn" style="--d:4;margin-top:26px;font-size:32px;color:var(--grey)">AI প্রস্তাব দেয়, ডাক্তার সিদ্ধান্ত নেন।</p>
+  </div>
+  <div class="cover-foot"><span><b>OncoAgent</b>Team DatourX</span><span>November 2026</span><span>Idea to Unicorn · HealthSphere AI · PredictRx</span></div>
+</section>
+
+<!-- 2 PROBLEM -->
+<section class="slide" data-title="The problem">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">The problem</span></div>
+  <div class="body">
+    <p class="kicker rv">The problem</p>
+    <h2 class="rv" style="--d:1">20 million new cases a year.<br>Lung cancer leads them all.</h2>
+    <div class="groups c4 mt rv" style="--d:2">
+      <div class="grp"><em>20M</em><b>New cases</b><span>worldwide, 2022</span></div>
+      <div class="grp"><em>9.7M</em><b>Deaths</b><span>worldwide, 2022</span></div>
+      <div class="grp m"><em>1.82M</em><b>Lung cancer deaths</b><span>18.7% of all, the most of any cancer</span></div>
+      <div class="grp k"><em>35.3M</em><b>New cases in 2050</b><span>if today's rates hold</span></div>
+    </div>
+    <div class="res mt rv" style="--d:3">
+      <div class="r hl"><span>Lung</span><span class="tr"><span class="bar m" style="width:100%"></span></span><span class="v">2.48M</span></div>
+      <div class="r"><span>Breast</span><span class="tr"><span class="bar" style="width:93.1%"></span></span><span class="v">2.31M</span></div>
+      <div class="r"><span>Colorectal</span><span class="tr"><span class="bar" style="width:77.8%"></span></span><span class="v">1.93M</span></div>
+    </div>
+    <p class="fill"></p>
+    <p class="cap">New cancer cases in 2022, top three. GLOBOCAN 2022, International Agency for Research on Cancer.</p>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">02 / 15</span></div>
+</section>
+
+<!-- 3 BANGLADESH -->
+<section class="slide" data-title="Bangladesh">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Bangladesh</span></div>
+  <div class="body">
+    <p class="kicker rv">Bangladesh</p>
+    <h2 class="rv" style="--d:1">One specialist for thousands of patients.</h2>
+    <p class="lead rv" style="--d:2">167,256 new cancer patients in 2022. 22 medical oncologists. One or two dedicated molecular labs.</p>
+    <div class="res mt rv" style="--d:3">
+      <div class="r hl"><span>Bangladesh<small>medical oncologists (22)</small></span><span class="tr"><span class="bar k" style="width:95%"></span></span><span class="v">≈ 7,600</span></div>
+      <div class="r"><span>Bangladesh<small>medical + radiation (≈ 272)</small></span><span class="tr"><span class="bar" style="width:7.7%"></span></span><span class="v">≈ 615</span></div>
+      <div class="r"><span>United States<small>haem / medical oncologists (14,547)</small></span><span class="tr"><span class="bar m" style="width:1.7%;min-width:8px"></span></span><span class="v">≈ 137</span></div>
+    </div>
+    <p class="fill"></p>
+    <p class="cap">New patients per specialist per year: our calculation from GLOBOCAN 2022, Financial Express (Feb 2026), ASCO workforce 2025 and ACS 2026. Definitions differ; a rough comparison.</p>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">03 / 15</span></div>
+</section>
+
+<!-- 4 THE GAP -->
+<section class="slide" data-title="The gap">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Without AI</span></div>
+  <div class="body">
+    <p class="kicker rv">Without AI, today</p>
+    <h2 class="rv" style="--d:1">Precision drugs exist.<br><span class="g">Too few patients reach them in time.</span></h2>
+    <div class="groups c4 mt rv" style="--d:2">
+      <div class="grp k"><em>≈ 45%</em><b>Tested in time</b><span>of US lung cancer patients show biomarker testing before first treatment (2025)</span></div>
+      <div class="grp"><em>20–30</em><b>Minutes per case</b><span>to hand-write a tumour-board summary</span></div>
+      <div class="grp"><em>By hand</em><b>Trial screening</b><span>eligibility checked criterion by criterion, trial by trial</span></div>
+      <div class="grp m"><em>0</em><b>Sources</b><span>in a generic chatbot answer: invented drugs and trial numbers, no audit trail</span></div>
+    </div>
+    <p class="fill"></p>
+    <p class="cap">JAMA Network Open 2025 via Targeted Oncology; Northside Hospital pilot (Roche, 2025).</p>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">04 / 15</span></div>
+</section>
+
+<!-- 5 OUR ANSWER -->
+<section class="slide" data-title="Our answer">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">OncoAgent</span></div>
+  <div class="body">
+    <p class="kicker rv">Our answer</p>
+    <h2 class="rv" style="--d:1">It reads everything.<br><span class="g">The doctor decides everything.</span></h2>
+    <div class="groups c4 mt rv" style="--d:2">
+      <div class="grp"><em>01</em><b>Watches</b><span>every new lab, scan, pathology and gene report on the patient's timeline</span></div>
+      <div class="grp"><em>02</em><b>Finds the cause</b><span>names the responsible gene and protein, graded with OncoKB / CIViC levels</span></div>
+      <div class="grp m"><em>03</em><b>Proposes, with evidence</b><span>next test, treatment, dose and trials, each with its guideline or trial ID</span></div>
+      <div class="grp k"><em>04</em><b>Never acts alone</b><span>approve, modify or reject with a reason; every step is recorded</span></div>
+    </div>
+    <p class="fill"></p>
+    <p class="cap">For doctors and clinical staff only. No patient app. No autonomous orders, prescriptions or patient messages.</p>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">05 / 15</span></div>
+</section>
+
+<!-- 6 HOW IT WORKS -->
+<section class="slide" data-title="How it works">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">How it works</span></div>
+  <div class="body">
+    <p class="kicker rv">How it works</p>
+    <h2 class="rv" style="--d:1">From report to a signed decision.</h2>
+    <div class="flow mt rv" style="--d:2">
+      <div><i>1</i><b>Arrives</b><span>Lab, scan, pathology or gene report, PDF or structured.</span></div>
+      <div><i>2</i><b>Read</b><span>Extracted, de-identified, placed on the timeline.</span></div>
+      <div class="k"><i>3</i><b>Interpreted</b><span>Driver gene, evidence tier, red flags.</span></div>
+      <div><i>4</i><b>Proposed</b><span>Test, treatment, dose, trial: one card each.</span></div>
+      <div><i>5</i><b>Checked</b><span>A safety-critic verifies every claim against its source.</span></div>
+      <div class="m"><i>6</i><b>Doctor decides</b><span>Approve, modify or reject, with a reason.</span></div>
+    </div>
+    <p class="fill"></p>
+    <p class="cap">Every card: proposal · patient facts used · evidence (guideline, OncoKB/CIViC level, PMID, NCT) · confidence · what is uncertain · alternatives · safety checks · status.</p>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">06 / 15</span></div>
+</section>
+
+<!-- 7 ONE CASE -->
+<section class="slide" data-title="One case">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">One case</span></div>
+  <div class="body">
+    <p class="kicker rv">One case · fictional patient</p>
+    <h2 class="rv md" style="--d:1;font-size:60px">Rahela, 54, never smoked.</h2>
+    <table class="tbl mt rv" style="--d:2;margin-top:30px">
+      <thead><tr><th>When</th><th>OncoAgent proposed</th><th>The doctor</th></tr></thead>
+      <tbody>
+        <tr><td>Day 0</td><td>CT of chest and abdomen after a referral: 6-week cough, weight loss</td><td class="dr">Approved</td></tr>
+        <tr><td>Day 4</td><td>Biopsy, PD-L1, full NGS panel and brain MRI</td><td class="dr">Added liquid biopsy: she travels far</td></tr>
+        <tr><td>Day 18</td><td>EGFR L858R is the driver: OncoKB level 1, AMP tier IA</td><td class="dr">Pathologist signed</td></tr>
+        <tr><td>Day 20</td><td>Three guideline options; QT interaction with her antidepressant → ECG first</td><td class="dr">Chose osimertinib with her</td></tr>
+        <tr><td>Month 12</td><td>ctDNA returns before the scan grows: "watch"</td><td class="dr">Kept monitoring</td></tr>
+        <tr><td>Month 14</td><td>EGFR C797S explains resistance in 3D; recruiting 4th-generation EGFR trials</td><td class="dr">Trial screening</td></tr>
+        <tr><td>Month 14</td><td>Dose card: carboplatin by Calvert formula, pemetrexed by body surface</td><td class="dr">Pharmacist and oncologist signed</td></tr>
+      </tbody>
+    </table>
+    <p class="fill"></p>
+    <p class="cap">All case data fictional. Not medical advice.</p>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">07 / 15</span></div>
+</section>
+
+<!-- 8 THERAPY LEVELS -->
+<section class="slide" data-title="Three therapy levels">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Therapy</span></div>
+  <div class="body">
+    <p class="kicker rv">Three therapy levels</p>
+    <h2 class="rv" style="--d:1">Select. Personalise.<br><span class="g">Then research a new molecule.</span></h2>
+    <div class="scale mt rv" style="--d:2">
+      <div class="s1"><i>Level 1 · clinical · today</i><b>Select</b><span>The approved drug, regimen or recruiting trial that matches the responsible protein. In-indication matching works; off-label guessing failed in the SHIVA trial.</span></div>
+      <div class="s2"><i>Level 2 · clinical · today</i><b>Personalise</b><span>Dose by kidneys, liver, body size and genes with label formulas. AI dosing (CURATE.AI): 26 of 27 suggestions accepted, doses 20% lower; still research.</span></div>
+      <div class="s3"><i>Level 3 · research · years</i><b>New molecule</b><span>Resistance patterns become target dossiers for licensed partners. New molecules need years of trials: 0 AI-discovered drugs approved so far.</span></div>
+    </div>
+    <p class="fill"></p>
+    <p class="cap">Is it 100% accurate? No medical system is. AI-discovered molecules pass phase I 80–90% of the time but phase II only ≈ 40%, the industry norm.</p>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">08 / 15</span></div>
+</section>
+
+<!-- 9 AI VS NO AI -->
+<section class="slide" data-title="With AI and without">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Evidence</span></div>
+  <div class="body">
+    <p class="kicker rv">With AI and without</p>
+    <h2 class="rv" style="--d:1">AI already gives doctors time back.</h2>
+    <div class="res mt rv" style="--d:2">
+      <div class="r"><span>Trial screening<small>without AI = 100</small></span><span class="tr"><span class="bar k" style="width:100%"></span></span><span class="v">100</span></div>
+      <div class="r hl"><span>Trial screening<small>with TrialGPT (NCI pilot)</small></span><span class="tr"><span class="bar m" style="width:57.4%"></span></span><span class="v">57.4</span></div>
+      <div class="r"><span>Tumour-board summary<small>20–30 min per case</small></span><span class="tr"><span class="bar k" style="width:100%"></span></span><span class="v">100</span></div>
+      <div class="r hl"><span>Tumour-board summary<small>with AI: 10–15 min</small></span><span class="tr"><span class="bar m" style="width:55%"></span></span><span class="v">≈ 55</span></div>
+      <div class="r"><span>Drug candidate<small>conventional: 2.5–4 years</small></span><span class="tr"><span class="bar k" style="width:100%"></span></span><span class="v">100</span></div>
+      <div class="r hl"><span>Drug candidate<small>AI (Insilico): 12–18 months</small></span><span class="tr"><span class="bar m" style="width:38.5%"></span></span><span class="v">≈ 38</span></div>
+    </div>
+    <p class="fill"></p>
+    <p class="cap">Time index, without AI = 100. TrialGPT, Nature Communications 2024; Northside Hospital pilot 2025; Insilico 2021–24 average against the low end of 2.5–4 years. Small pilots, not yet routine care.</p>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">09 / 15</span></div>
+</section>
+
+<!-- 10 WHY LUNG -->
+<section class="slide" data-title="Why lung cancer first">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Focus</span></div>
+  <div class="body">
+    <p class="kicker rv">Why lung cancer first</p>
+    <h2 class="rv" style="--d:1">Start where the data is.</h2>
+    <table class="heat mt rv" style="--d:2">
+      <thead><tr><th></th><th class="lead-col">Lung (NSCLC)</th><th>Breast</th><th>Colorectal</th></tr></thead>
+      <tbody>
+        <tr><td class="rl">Genomic samples in AACR GENIE</td><td class="h1c">38,000+</td><td class="h3c">21,000+</td><td class="h2c">23,000+</td></tr>
+        <tr><td class="rl">New cases worldwide, 2022</td><td class="h1c">2.48M</td><td class="h2c">2.31M</td><td class="h3c">1.93M</td></tr>
+        <tr><td class="rl">Actionable drivers</td><td class="h1c">40–60% of adenocarcinomas</td><td class="h2c">HR, HER2, PIK3CA, BRCA</td><td class="h3c">KRAS, BRAF, MSI</td></tr>
+        <tr><td class="rl">Targeted approvals</td><td class="h1c">≈ 30 since 2011</td><td class="h2c">Many, HR / HER2</td><td class="h3c">Fewer</td></tr>
+        <tr><td class="rl">Open protein and imaging data</td><td class="h1c">CPTAC, NLST 26,254</td><td class="h2c">TCGA, METABRIC</td><td class="h3c">TCGA</td></tr>
+        <tr><td class="rl">Bangladesh</td><td class="h2c">Top-3 male cancer</td><td class="h1c">#1 female cancer</td><td class="h3c">In icddr,b NGS</td></tr>
+      </tbody>
+    </table>
+    <p class="fill"></p>
+    <p class="cap">Darker cell = stronger on that row. Lung first, breast second, colorectal third; every module is cancer-agnostic.</p>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">10 / 15</span></div>
+</section>
+
+<!-- 11 ARCHITECTURE -->
+<section class="slide" data-title="Architecture">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Architecture</span></div>
+  <div class="body">
+    <p class="kicker rv">How it is built</p>
+    <h2 class="rv" style="--d:1">Seven layers. One open tool layer.</h2>
+    <div class="layers mt rv" style="--d:2;margin-top:34px">
+      <div class="lay"><span>Apps</span><div class="chips"><i>Clinician workspace</i><i>Tumour-board mode</i><i>Research workbench</i><i>Audit</i></div></div>
+      <div class="lay"><span>Doctor control</span><div class="chips"><i class="k">Recommendation cards</i><i class="k">Approve · modify · reject</i><i class="k">E-signature</i><i class="k">Hash-chained audit log</i></div></div>
+      <div class="lay"><span>Agents</span><div class="chips"><i class="m">Orchestrator</i><i>Sentinel</i><i>Genomic</i><i>Guideline</i><i>Trials</i><i>Dose</i><i>Structure</i><i class="k">Safety-critic</i></div></div>
+      <div class="lay"><span>MCP</span><div class="chips"><i class="m">oncoagent-mcp · stdio + Streamable HTTP</i><i>PubMed</i><i>ClinicalTrials.gov</i><i>ICD-10</i></div></div>
+      <div class="lay"><span>Engines</span><div class="chips"><i>Guideline RAG</i><i>CIViC · OncoKB</i><i>NGS pipelines</i><i>Dose calculators</i><i>PDB · AlphaFold DB · Mol*</i></div></div>
+      <div class="lay"><span>Data</span><div class="chips"><i>FHIR + mCODE</i><i>Postgres + pgvector</i><i>Object store</i><i>Knowledge graph</i><i>De-identified research mart</i></div></div>
+      <div class="lay"><span>Sources</span><div class="chips"><i>EHR</i><i>Lab</i><i>PACS</i><i>NGS labs</i><i>Clinician notes</i></div></div>
+    </div>
+    <p class="fill"></p>
+    <p class="cap">Claude Opus 5.5 for full cases, Sonnet 5.5 for agent steps, Haiku 5.5 for extraction, behind a de-identification gateway.</p>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">11 / 15</span></div>
+</section>
+
+<!-- 12 SAFETY -->
+<section class="slide ink" data-title="Safety and trust">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#8a8a86" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Safety</span></div>
+  <div class="body">
+    <p class="kicker rv">Safety and trust</p>
+    <h2 class="rv" style="--d:1">Safe by construction.<br>Private by default.</h2>
+    <div class="groups c3 mt rv" style="--d:2">
+      <div class="grp m"><em>Human</em><b>signs every action</b><span>Only a clinician's session token can approve; the AI can never mint one.</span></div>
+      <div class="grp"><em>Sourced</em><b>or "unverified"</b><span>No drug, dose, trial ID or citation from model memory; a critic checks every claim.</span></div>
+      <div class="grp"><em>Private</em><b>data stays in-country</b><span>De-identified before any model call; designed for Bangladesh PDPO 2025 and FDA CDS 2026.</span></div>
+    </div>
+    <p class="fill"></p>
+    <p class="cap">PDFs and tool outputs are data, never instructions. The research track is limited to human cancer targets and never reaches a patient outside a regulated trial.</p>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">12 / 15</span></div>
+</section>
+
+<!-- 13 STATUS -->
+<section class="slide" data-title="Where we are">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Status</span></div>
+  <div class="body">
+    <p class="kicker rv">Where we are</p>
+    <h2 class="rv" style="--d:1">We say "built" only for what runs.</h2>
+    <div class="rows mt rv" style="--d:2;margin-top:34px">
+      <div><span>Research base, architecture, safety rules, 25-agent build team</span><span class="st built">Built</span></div>
+      <div><span>Clinician workspace, recommendation cards, audit log</span><span class="st mvp">MVP · Today</span></div>
+      <div><span>Genomic and trial agents (CIViC, ClinicalTrials.gov), dose calculators, safety-critic</span><span class="st mvp">MVP · Today</span></div>
+      <div><span>oncoagent-mcp server: six tools, stdio + Streamable HTTP</span><span class="st mvp">MVP · Today</span></div>
+      <div><span>3D structure insight, PDF extraction, guideline RAG</span><span class="st design">Designed</span></div>
+      <div><span>Hospital pilot, imaging and pathology models, breast and colorectal</span><span class="st plan">Planned</span></div>
+      <div><span>Research track with a licensed drug-discovery partner</span><span class="st vision">Vision</span></div>
+    </div>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">13 / 15</span></div>
+</section>
+
+<!-- 14 ROADMAP -->
+<section class="slide" data-title="Roadmap">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Roadmap</span></div>
+  <div class="body">
+    <p class="kicker rv">Roadmap</p>
+    <h2 class="rv" style="--d:1">From demo to a hospital pilot.</h2>
+    <div class="groups c4 mt rv" style="--d:2">
+      <div class="grp k"><em>0–2</em><b>Foundation</b><span>MVP hardened, evaluation harness, hazard log, regulatory classification</span></div>
+      <div class="grp m"><em>2–8</em><b>NSCLC product</b><span>Full agent set, PDF reports, guideline RAG, 3D insight; ≥ 90% gold-case concordance</span></div>
+      <div class="grp"><em>8–14</em><b>Pilot + breast</b><span>Ethics approval, hospital integration, silent-mode study on real cases</span></div>
+      <div class="grp"><em>14–30</em><b>Scale + research</b><span>Live pilot, colorectal, research zone with a discovery partner</span></div>
+    </div>
+    <div class="groups c2 mt rv" style="--d:3">
+      <div class="grp"><b style="margin-top:0">Who pays</b><span>Cancer hospitals (per-oncologist subscription), molecular labs (interpretation module), research partners (de-identified insight under ethics approval).</span></div>
+      <div class="grp"><b style="margin-top:0">Team DatourX</b><span>Product and AI engineering, full-stack, clinical advisor in oncology, data and design; an NRB collaborator if confirmed.</span></div>
+    </div>
+    <p class="fill"></p>
+    <p class="cap">Months from today.</p>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">14 / 15</span></div>
+</section>
+
+<!-- 15 CLOSE -->
+<section class="slide" data-title="Close">
+  <div class="close-in">
+    <p class="t0 rv">OncoAgent · Idea to Unicorn 2026</p>
+    <span class="logo rv" style="--d:1"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="4" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span>
+    <p class="t1 rv" style="--d:2">AI proposes. The doctor decides.</p>
+    <p class="t2 rv bn" style="--d:3">AI প্রস্তাব দেয়, ডাক্তার সিদ্ধান্ত নেন।</p>
+    <p class="t3 rv" style="--d:4">Starting with lung cancer, built for the patients who wait longest.</p>
+  </div>
+</section>
+
+</div>
+<div id="progress"></div>
+<div id="nav" aria-label="Slide controls"><button type="button" id="prev" aria-label="Previous slide">‹</button><span id="count" aria-live="polite">1 / 15</span><button type="button" id="next" aria-label="Next slide">›</button></div>
+
+<script>
+(function () {
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var i = 0, prog = document.getElementById('progress'), count = document.getElementById('count');
+  function fit() {
+    var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    slides.forEach(function (el) { el.style.setProperty('--s', s); });
+  }
+  function go(n, user) {
+    n = Math.max(0, Math.min(slides.length - 1, n));
+    if (user) document.body.classList.add('anim');
+    slides[i].classList.remove('on');
+    i = n;
+    slides[i].classList.add('on');
+    count.textContent = (i + 1) + ' / ' + slides.length;
+    prog.style.width = ((i + 1) / slides.length * 100) + '%';
+    try { history.replaceState(null, '', '#s' + (i + 1)); } catch (e) {}
+  }
+  function fromHash() {
+    var m = /^#s(\d+)$/.exec(location.hash || '');
+    return m ? parseInt(m[1], 10) - 1 : 0;
+  }
+  window.addEventListener('resize', fit);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); go(i + 1, true); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(i - 1, true); }
+    if (e.key === 'Home') go(0, true);
+    if (e.key === 'End') go(slides.length - 1, true);
+  });
+  document.getElementById('next').addEventListener('click', function () { go(i + 1, true); });
+  document.getElementById('prev').addEventListener('click', function () { go(i - 1, true); });
+  var tx = null;
+  document.addEventListener('touchstart', function (e) { tx = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (tx === null) return;
+    var dx = e.changedTouches[0].clientX - tx; tx = null;
+    if (Math.abs(dx) > 40) go(dx < 0 ? i + 1 : i - 1, true);
+  });
+  window.addEventListener('hashchange', function () { go(fromHash(), false); });
+  fit();
+  go(fromHash(), false);
+})();
+</script>

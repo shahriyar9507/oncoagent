@@ -1,0 +1,732 @@
+{
+ "patientId": "P-001",
+ "ranAt": "2026-11-20T01:55:46.468Z",
+ "mode": "claude",
+ "model": "claude-opus-5-5",
+ "steps": [
+  {
+   "agent": "Sentinel",
+   "status": "done",
+   "note": "Treat the 2026-11-16 scan as progression by RECIST 1.1 and review next-line treatment now.",
+   "ms": 1
+  },
+  {
+   "agent": "Genomic-interpreter",
+   "status": "done",
+   "note": "3 variant(s) checked in CIViC (live, live, live)",
+   "ms": 1228
+  },
+  {
+   "agent": "Test-advisor",
+   "status": "done",
+   "note": "Order: Tissue re-biopsy of the new liver lesion; Repeat ECG with potassium and magnesium.",
+   "ms": 0
+  },
+  {
+   "agent": "Guideline",
+   "status": "done",
+   "note": "Discuss Amivantamab + carboplatin + pemetrexed as the leading option; Carboplatin + pemetrexed or Clinical trial of a fourth-generation EGFR inhibitor active against C797S as alternatives.",
+   "ms": 1
+  },
+  {
+   "agent": "Pharmacology-safety",
+   "status": "done",
+   "note": "Repeat ECG and electrolytes before the next line: osimertinib and citalopram both prolong QT.",
+   "ms": 1
+  },
+  {
+   "agent": "Trial-matcher",
+   "status": "done",
+   "note": "9 recruiting studies (live)",
+   "ms": 518
+  },
+  {
+   "agent": "Dose-optimizer",
+   "status": "done",
+   "note": "Dose card ready for Carboplatin + pemetrexed (every 21 days): Carboplatin 460 mg, Pemetrexed 750 mg. Pharmacist and oncologist to verify.",
+   "ms": 1
+  },
+  {
+   "agent": "Synthesis (Claude)",
+   "status": "done",
+   "note": "3 card(s) and a tumour-board summary from claude-opus-5-5",
+   "ms": 22522
+  },
+  {
+   "agent": "Safety-critic",
+   "status": "done",
+   "note": "12 cards checked, 0 flagged",
+   "ms": 4
+  }
+ ],
+ "evidence": [
+  {
+   "id": "pt:e1",
+   "kind": "patient",
+   "label": "2025-09-01 · Referral received",
+   "detail": "Cough for 6 weeks, 5 kg weight loss in 3 months; chest X-ray shadow, right upper zone. (GP referral letter)"
+  },
+  {
+   "id": "pt:e2",
+   "kind": "patient",
+   "label": "2025-09-05 · Contrast CT chest and abdomen",
+   "detail": "3.4 cm right upper lobe mass, enlarged mediastinal nodes, lytic lesion T9. (Radiology report)"
+  },
+  {
+   "id": "pt:e3",
+   "kind": "patient",
+   "label": "2025-09-10 · Brain MRI",
+   "detail": "No intracranial metastases. (Radiology report)"
+  },
+  {
+   "id": "pt:e4",
+   "kind": "patient",
+   "label": "2025-09-15 · CT-guided biopsy",
+   "detail": "Adenocarcinoma, TTF-1 positive. PD-L1 TPS 10%. (Pathology report)"
+  },
+  {
+   "id": "pt:e5",
+   "kind": "patient",
+   "label": "2025-09-19 · Tissue NGS panel",
+   "detail": "EGFR L858R (VAF 31%), TP53 R273H (VAF 28%). ALK, ROS1, BRAF, KRAS, MET, RET, NTRK, ERBB2 negative. (Molecular report)"
+  },
+  {
+   "id": "pt:e6",
+   "kind": "patient",
+   "label": "2025-09-21 · Tumour board",
+   "detail": "Osimertinib chosen with the patient: preference, cost, distance from the centre. (Tumour-board minutes)"
+  },
+  {
+   "id": "pt:e7",
+   "kind": "patient",
+   "label": "2025-09-24 · Osimertinib started",
+   "detail": "Baseline ECG QTc 438 ms; potassium and magnesium normal. (Prescription record)"
+  },
+  {
+   "id": "pt:e8",
+   "kind": "patient",
+   "label": "2026-03-23 · CT restaging",
+   "detail": "Partial response; sum of target lesions 33 mm. (Radiology report)"
+  },
+  {
+   "id": "pt:e9",
+   "kind": "patient",
+   "label": "2026-09-21 · ctDNA re-detected",
+   "detail": "EGFR L858R 0.3% after two undetectable results. (Liquid biopsy report)"
+  },
+  {
+   "id": "pt:e10",
+   "kind": "patient",
+   "label": "2026-11-16 · CT restaging",
+   "detail": "Target lesions 45 mm (nadir 32 mm); new 1.4 cm liver lesion. (Radiology report)"
+  },
+  {
+   "id": "pt:e11",
+   "kind": "patient",
+   "label": "2026-11-17 · Plasma NGS",
+   "detail": "EGFR L858R 2.1%, EGFR C797S 1.2%. No MET amplification detected in plasma. (Liquid biopsy report)"
+  },
+  {
+   "id": "calc:recist",
+   "kind": "calculator",
+   "label": "RECIST 1.1 calculation",
+   "detail": "2025-09-05: 62 mm, Baseline; 2025-12-22: 38 mm, PR; 2026-03-23: 33 mm, PR; 2026-06-22: 32 mm, PR; 2026-09-21: 34 mm, PR; 2026-11-16: 45 mm, PD (new lesion)"
+  },
+  {
+   "id": "civic:EID2994",
+   "kind": "civic",
+   "label": "CIViC EID2994 · level A · predictive",
+   "detail": "sensitivityresponse · Lung Non-small Cell Carcinoma · Erlotinib · PMID 24868098",
+   "url": "https://civicdb.org/evidence/2994/summary"
+  },
+  {
+   "id": "civic:EID2997",
+   "kind": "civic",
+   "label": "CIViC EID2997 · level A · predictive",
+   "detail": "sensitivityresponse · Lung Non-small Cell Carcinoma · Afatinib · PMID 23982599",
+   "url": "https://civicdb.org/evidence/2997/summary"
+  },
+  {
+   "id": "civic:EID4860",
+   "kind": "civic",
+   "label": "CIViC EID4860 · level B · predictive",
+   "detail": "sensitivityresponse · Lung Non-small Cell Carcinoma · Dacomitinib · PMID 26768165",
+   "url": "https://civicdb.org/evidence/4860/summary"
+  },
+  {
+   "id": "civic:EID275",
+   "kind": "civic",
+   "label": "CIViC EID275 · level B · predictive",
+   "detail": "sensitivityresponse · Lung Non-small Cell Carcinoma · Gefitinib, Erlotinib · PMID 24457318",
+   "url": "https://civicdb.org/evidence/275/summary"
+  },
+  {
+   "id": "civic:EID964",
+   "kind": "civic",
+   "label": "CIViC EID964 · level B · predictive",
+   "detail": "resistance · Lung Non-small Cell Carcinoma · Osimertinib · PMID 25939061",
+   "url": "https://civicdb.org/evidence/964/summary"
+  },
+  {
+   "id": "civic:EID8028",
+   "kind": "civic",
+   "label": "CIViC EID8028 · level D · predictive",
+   "detail": "sensitivityresponse · Lung Non-small Cell Carcinoma · Cetuximab, Brigatinib · PMID 28287083",
+   "url": "https://civicdb.org/evidence/8028/summary"
+  },
+  {
+   "id": "civic:EID4837",
+   "kind": "civic",
+   "label": "CIViC EID4837 · level D · predictive",
+   "detail": "sensitivityresponse · Lung Non-small Cell Carcinoma · Cetuximab, Panitumumab, Brigatinib · PMID 28287083",
+   "url": "https://civicdb.org/evidence/4837/summary"
+  },
+  {
+   "id": "civic:EID8057",
+   "kind": "civic",
+   "label": "CIViC EID8057 · level D · predictive",
+   "detail": "resistance · Lung Adenocarcinoma · Osimertinib · PMID 32193290",
+   "url": "https://civicdb.org/evidence/8057/summary"
+  },
+  {
+   "id": "kb:EGFR_POST_OSIMERTINIB:test0",
+   "kind": "guideline",
+   "label": "Knowledge pack · Tissue re-biopsy of the new liver lesion",
+   "detail": "Rules out transformation to small-cell histology and finds MET amplification that plasma can miss.",
+   "url": "https://www.fda.gov/drugs/resources-information-approved-drugs/oncology-cancer-hematologic-malignancies-approval-notifications"
+  },
+  {
+   "id": "kb:EGFR_POST_OSIMERTINIB:test1",
+   "kind": "guideline",
+   "label": "Knowledge pack · Repeat ECG with potassium and magnesium",
+   "detail": "Patient takes two QT-prolonging drugs.",
+   "url": "https://www.fda.gov/drugs/resources-information-approved-drugs/oncology-cancer-hematologic-malignancies-approval-notifications"
+  },
+  {
+   "id": "kb:egfr2-amivantamab-chemo",
+   "kind": "guideline",
+   "label": "Amivantamab + carboplatin + pemetrexed · preferred",
+   "detail": "FDA approval Sep 2024 after osimertinib progression (MARIPOSA-2). Infusion reactions with first doses; weight-band dosing for amivantamab per label. (nsclc-pack 2026-11-20)",
+   "url": "https://www.fda.gov/drugs/resources-information-approved-drugs/oncology-cancer-hematologic-malignancies-approval-notifications"
+  },
+  {
+   "id": "kb:egfr2-platinum-pemetrexed",
+   "kind": "guideline",
+   "label": "Carboplatin + pemetrexed · option",
+   "detail": "Platinum doublet is the standard chemotherapy backbone after EGFR TKI failure. Choose when amivantamab is unavailable or not affordable. (nsclc-pack 2026-11-20)",
+   "url": "https://www.fda.gov/drugs/resources-information-approved-drugs/oncology-cancer-hematologic-malignancies-approval-notifications"
+  },
+  {
+   "id": "kb:egfr2-trial",
+   "kind": "guideline",
+   "label": "Clinical trial of a fourth-generation EGFR inhibitor active against C797S · trial",
+   "detail": "No approved C797S-directed drug; several agents in phase 1–3 trials (e.g. BH-30643 ORR 45% in 40 patients, 2026). Screen early: eligibility often requires measurable disease and adequate organ function. (nsclc-pack 2026-11-20)",
+   "url": "https://clinicaltrials.gov/"
+  },
+  {
+   "id": "label:osimertinib:qt-prolonging:0",
+   "kind": "label",
+   "label": "Osimertinib label, QTc prolongation",
+   "detail": "Osimertinib can prolong QTc. With another QT-prolonging drug, check ECG and electrolytes periodically.",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&query=osimertinib"
+  },
+  {
+   "id": "label:amivantamab:qt-prolonging:1",
+   "kind": "label",
+   "label": "Amivantamab label",
+   "detail": "Not a known QT interaction; continue ECG monitoring while the other QT-prolonging drug is used.",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&query=amivantamab"
+  },
+  {
+   "id": "trial:NCT05256290",
+   "kind": "trial",
+   "label": "NCT05256290 · PHASE1/PHASE2 · recruiting",
+   "detail": "Phase 1/2 Study of Silevertinib (BDTX-1535) in Patients With Glioblastoma or Non-Small Cell Lung Cancer With EGFR Mutations. Sponsor Black Diamond Therapeutics, Inc.. Countries: United States, Canada.",
+   "url": "https://clinicaltrials.gov/study/NCT05256290"
+  },
+  {
+   "id": "trial:NCT07206498",
+   "kind": "trial",
+   "label": "NCT07206498 · PHASE1/PHASE2 · recruiting",
+   "detail": "A Study to Evaluate Safety and Efficacy of WSD0922-FU Combo With Osimertinib for NSCLC. Sponsor Wayshine Biopharm, Inc.. Countries: China.",
+   "url": "https://clinicaltrials.gov/study/NCT07206498"
+  },
+  {
+   "id": "trial:NCT06868485",
+   "kind": "trial",
+   "label": "NCT06868485 · PHASE2 · recruiting",
+   "detail": "A Study to Assess the Efficacy of WSD0922-FU in Patients With C797S+ Advanced Non-small Cell Lung Cancer. Sponsor Wayshine Biopharm, Inc.. Countries: United States, China, France.",
+   "url": "https://clinicaltrials.gov/study/NCT06868485"
+  },
+  {
+   "id": "trial:NCT07699328",
+   "kind": "trial",
+   "label": "NCT07699328 · PHASE1/PHASE2 · recruiting",
+   "detail": "A Study of VRN110755 in Patients With EGFR-Mutant Non-Small Cell Lung Cancer. Sponsor Voronoi, Inc. Countries: Australia, Canada, France, Hong Kong, Malaysia, Singapore.",
+   "url": "https://clinicaltrials.gov/study/NCT07699328"
+  },
+  {
+   "id": "calc:dose",
+   "kind": "calculator",
+   "label": "Dose calculator · Carboplatin + pemetrexed (every 21 days)",
+   "detail": "BSA 1.51 m² (Mosteller); CrCl 67.7 mL/min (Cockcroft–Gault). Carboplatin 460 mg; Pemetrexed 750 mg."
+  },
+  {
+   "id": "label:dose:0:carboplatin",
+   "kind": "label",
+   "label": "Carboplatin label (Calvert formula; FDA advises capping GFR at 125 mL/min)",
+   "detail": "Carboplatin: Day 1, every 21 days",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&query=carboplatin"
+  },
+  {
+   "id": "label:dose:1:pemetrexed",
+   "kind": "label",
+   "label": "Pemetrexed label",
+   "detail": "Pemetrexed: Day 1, every 21 days",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&query=pemetrexed"
+  }
+ ],
+ "cards": [
+  {
+   "id": "P-001-claude-mwobut9c-0",
+   "patientId": "P-001",
+   "agent": "Synthesis (Claude)",
+   "origin": "claude",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "kind": "treatment",
+   "proposal": "Consider amivantamab plus carboplatin and pemetrexed as the leading second-line option, with early screening for a C797S-directed trial (e.g. NCT06868485) in parallel, once re-biopsy has excluded histological transformation.",
+   "why": [
+    "RECIST PD on first-line osimertinib with new liver lesion",
+    "Plasma EGFR C797S 1.2%, no MET amplification in plasma",
+    "ECOG 1",
+    "Original driver EGFR L858R"
+   ],
+   "evidenceIds": [
+    "kb:egfr2-amivantamab-chemo",
+    "kb:egfr2-platinum-pemetrexed",
+    "kb:egfr2-trial",
+    "trial:NCT06868485",
+    "trial:NCT05256290",
+    "trial:NCT07699328",
+    "trial:NCT07206498",
+    "calc:recist",
+    "pt:e10",
+    "pt:e11",
+    "civic:EID964",
+    "calc:dose"
+   ],
+   "confidence": "moderate",
+   "confidenceReason": "Preferred regimen per knowledge pack after osimertinib progression, but tissue confirmation of histology and MET status is pending.",
+   "uncertain": "Small-cell transformation and MET amplification not excluded in tissue. C797S cis/trans configuration with T790M status is not reported. Trial eligibility and site access are not verified: NCT06868485 is in US/China/France and NCT07206498 is China-only and combines with osimertinib. Amivantamab access and cost are unknown, and cost influenced the first-line choice. The draft attributes C797S to pt:e5, but it was detected in plasma (pt:e11).",
+   "alternatives": [
+    "Carboplatin + pemetrexed if amivantamab is unavailable or unaffordable (dose card from calculator, pharmacist and oncologist to verify)",
+    "Fourth-generation EGFR inhibitor trial: NCT06868485 (C797S+), NCT05256290, NCT07699328, depending on location and eligibility"
+   ],
+   "changesIf": "Re-biopsy shows small-cell transformation (switch to small-cell approach), MET amplification (consider MET-directed strategy, not covered in evidence), patient enrols in a trial, or performance status declines.",
+   "safety": [
+    "Infusion reactions with first amivantamab doses",
+    "Amivantamab dosing is weight-band per label, not from this tool",
+    "Confirm osimertinib has been stopped and removed from the medication list"
+   ]
+  },
+  {
+   "id": "P-001-claude-mwobut9c-1",
+   "patientId": "P-001",
+   "agent": "Synthesis (Claude)",
+   "origin": "claude",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "kind": "test",
+   "proposal": "Suggest a tissue re-biopsy of the new liver lesion with histology and NGS. Also consider updated brain imaging, since the only documented brain MRI is from baseline.",
+   "why": [
+    "New 1.4 cm liver lesion",
+    "Plasma negative for MET amplification but may miss it",
+    "Last brain MRI 2025-09-10"
+   ],
+   "evidenceIds": [
+    "kb:EGFR_POST_OSIMERTINIB:test0",
+    "pt:e10",
+    "pt:e11",
+    "pt:e3"
+   ],
+   "confidence": "high",
+   "confidenceReason": "Knowledge pack explicitly recommends re-biopsy to rule out transformation and detect MET amplification that plasma can miss.",
+   "uncertain": "Need for repeat brain imaging is not stated in the evidence list (not verified). Biopsy feasibility is not documented.",
+   "alternatives": [
+    "Repeat plasma NGS if biopsy is not feasible, accepting lower sensitivity"
+   ],
+   "changesIf": "Biopsy is not feasible or the patient declines.",
+   "safety": [
+    "Standard liver biopsy precautions"
+   ]
+  },
+  {
+   "id": "P-001-claude-mwobut9c-2",
+   "patientId": "P-001",
+   "agent": "Synthesis (Claude)",
+   "origin": "claude",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "kind": "safety",
+   "proposal": "Suggest a repeat ECG with potassium and magnesium before the next line, and a review of the ongoing citalopram with continued ECG monitoring while it is used.",
+   "why": [
+    "Baseline QTc 438 ms with normal electrolytes",
+    "Citalopram is QT-prolonging",
+    "Osimertinib (QT-prolonging) still on the medication list"
+   ],
+   "evidenceIds": [
+    "kb:EGFR_POST_OSIMERTINIB:test1",
+    "label:osimertinib:qt-prolonging:0",
+    "label:amivantamab:qt-prolonging:1",
+    "pt:e7"
+   ],
+   "confidence": "high",
+   "confidenceReason": "Label guidance supports ECG and electrolyte checks with concurrent QT-prolonging drugs.",
+   "uncertain": "No QTc measured since 2025-09-24 is documented. QT liability of the trial agents is not verified.",
+   "alternatives": [
+    "Discuss an alternative antidepressant with the prescriber if QTc is prolonged"
+   ],
+   "changesIf": "QTc is prolonged or electrolytes are abnormal.",
+   "safety": [
+    "Correct potassium and magnesium before starting the next line",
+    "Reconcile the medication list: osimertinib stopped 2026-11-16"
+   ]
+  },
+  {
+   "id": "P-001-sentinel-mwobuaj11",
+   "patientId": "P-001",
+   "agent": "Sentinel",
+   "kind": "monitoring",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "Treat the 2026-11-16 scan as progression by RECIST 1.1 and review next-line treatment now.",
+   "why": [
+    "Sum of target lesions 45 mm against a nadir of 32 mm (+40.6%, +13 mm).",
+    "New lesion reported: New liver lesion.",
+    "ctDNA EGFR L858R 2.1% on 2026-11-17, rising.",
+    "Best response on current line: PR."
+   ],
+   "evidenceIds": [
+    "calc:recist",
+    "pt:e10",
+    "pt:e11"
+   ],
+   "confidence": "high",
+   "confidenceReason": "Both RECIST criteria are met: ≥ 20% and ≥ 5 mm growth from nadir, and a new lesion.",
+   "uncertain": "Radiologist confirmation of the new liver lesion is pending in this record.",
+   "alternatives": [
+    "Repeat imaging in 4–6 weeks if the new lesion is equivocal"
+   ],
+   "changesIf": "The radiologist reclassifies the liver lesion as benign and growth stays below 20%.",
+   "safety": []
+  },
+  {
+   "id": "P-001-genomic-interpreter-mwobubh82",
+   "patientId": "P-001",
+   "agent": "Genomic-interpreter",
+   "kind": "summary",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "EGFR L858R is the actionable driver: confirm and sign the molecular interpretation.",
+   "why": [
+    "EGFR L858R (p.Leu858Arg), tissue, VAF 31%, reported 2025-09-19.",
+    "CIViC EGFR L858R: 48 evidence items, 8 in lung cancer; strongest level A (live).",
+    "7 lung evidence item(s) report sensitivity."
+   ],
+   "evidenceIds": [
+    "civic:EID2994",
+    "civic:EID2997",
+    "civic:EID4860",
+    "civic:EID275",
+    "pt:e5"
+   ],
+   "confidence": "high",
+   "confidenceReason": "Strongest CIViC level A.",
+   "uncertain": "Interpretation must be signed by the molecular pathologist.",
+   "alternatives": [],
+   "changesIf": "A tissue re-biopsy shows a different dominant mechanism, such as small-cell transformation or MET amplification.",
+   "safety": []
+  },
+  {
+   "id": "P-001-genomic-interpreter-mwobubh83",
+   "patientId": "P-001",
+   "agent": "Genomic-interpreter",
+   "kind": "summary",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "TP53 R273H is a co-mutation without a matched drug: record as prognostic, not actionable.",
+   "why": [
+    "TP53 R273H (p.Arg273His), tissue, VAF 28%, reported 2025-09-19.",
+    "CIViC TP53 R273H: 13 evidence items, 0 in lung cancer (live).",
+    "No predictive lung evidence in the top results."
+   ],
+   "evidenceIds": [
+    "pt:e5"
+   ],
+   "confidence": "low",
+   "confidenceReason": "No curated evidence found.",
+   "uncertain": "Interpretation must be signed by the molecular pathologist.",
+   "alternatives": [],
+   "changesIf": "A tissue re-biopsy shows a different dominant mechanism, such as small-cell transformation or MET amplification.",
+   "safety": []
+  },
+  {
+   "id": "P-001-genomic-interpreter-mwobubh84",
+   "patientId": "P-001",
+   "agent": "Genomic-interpreter",
+   "kind": "summary",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "EGFR C797S is an acquired resistance alteration: record it as the cause of progression on the current EGFR inhibitor.",
+   "why": [
+    "EGFR C797S (p.Cys797Ser), plasma, VAF 1.2%, reported 2026-11-17.",
+    "CIViC EGFR C797S: 7 evidence items, 5 in lung cancer; strongest level B (live).",
+    "2 lung evidence item(s) report resistance."
+   ],
+   "evidenceIds": [
+    "civic:EID964",
+    "civic:EID8028",
+    "civic:EID4837",
+    "civic:EID8057",
+    "pt:e5"
+   ],
+   "confidence": "high",
+   "confidenceReason": "Strongest CIViC level B.",
+   "uncertain": "Plasma testing can miss alterations present only in tissue (low shedding).",
+   "alternatives": [],
+   "changesIf": "A tissue re-biopsy shows a different dominant mechanism, such as small-cell transformation or MET amplification.",
+   "safety": []
+  },
+  {
+   "id": "P-001-test-advisor-mwobubh85",
+   "patientId": "P-001",
+   "agent": "Test-advisor",
+   "kind": "test",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "Order: Tissue re-biopsy of the new liver lesion; Repeat ECG with potassium and magnesium.",
+   "why": [
+    "Biomarker panel complete for: EGFR, ALK, ROS1, BRAF, KRAS, MET, RET, NTRK, ERBB2, PD-L1.",
+    "All guideline biomarkers for NSCLC are present in the record.",
+    "Tissue re-biopsy of the new liver lesion: Rules out transformation to small-cell histology and finds MET amplification that plasma can miss.",
+    "Repeat ECG with potassium and magnesium: Patient takes two QT-prolonging drugs."
+   ],
+   "evidenceIds": [
+    "kb:EGFR_POST_OSIMERTINIB:test0",
+    "kb:EGFR_POST_OSIMERTINIB:test1"
+   ],
+   "confidence": "moderate",
+   "confidenceReason": "Tests follow the knowledge pack; local availability and turnaround are not known to the system.",
+   "uncertain": "Whether a re-biopsy is feasible and safe for this patient.",
+   "alternatives": [
+    "Repeat plasma NGS in 4 weeks if tissue cannot be obtained"
+   ],
+   "changesIf": "The patient declines biopsy or is clinically too unwell to wait for results.",
+   "safety": []
+  },
+  {
+   "id": "P-001-guideline-mwobubh96",
+   "patientId": "P-001",
+   "agent": "Guideline",
+   "kind": "treatment",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "Discuss Amivantamab + carboplatin + pemetrexed as the leading option; Carboplatin + pemetrexed or Clinical trial of a fourth-generation EGFR inhibitor active against C797S as alternatives.",
+   "why": [
+    "L858R is the sensitising driver. C797S removes the cysteine that osimertinib binds covalently, a known on-target resistance mechanism.",
+    "Setting: Second line after a third-generation EGFR inhibitor.",
+    "1. Amivantamab + carboplatin + pemetrexed: FDA approval Sep 2024 after osimertinib progression (MARIPOSA-2).",
+    "2. Carboplatin + pemetrexed: Platinum doublet is the standard chemotherapy backbone after EGFR TKI failure.",
+    "3. Clinical trial of a fourth-generation EGFR inhibitor active against C797S: No approved C797S-directed drug; several agents in phase 1–3 trials (e.g. BH-30643 ORR 45% in 40 patients, 2026)."
+   ],
+   "evidenceIds": [
+    "kb:egfr2-amivantamab-chemo",
+    "kb:egfr2-platinum-pemetrexed",
+    "kb:egfr2-trial"
+   ],
+   "confidence": "moderate",
+   "confidenceReason": "Options come from the curated knowledge pack; the current NCCN/ESMO version must be checked.",
+   "uncertain": "Drug availability, cost and the patient's preferences are not in the record.",
+   "alternatives": [
+    "Carboplatin + pemetrexed",
+    "Clinical trial of a fourth-generation EGFR inhibitor active against C797S"
+   ],
+   "changesIf": "Continuing osimertinib alone is not advised: Radiological progression with an on-target resistance mutation. First- or second-generation EGFR inhibitor without testing T790M status is not advised: Activity against C797S depends on whether T790M is in cis or trans; not established here.",
+   "safety": []
+  },
+  {
+   "id": "P-001-pharmacology-safety-mwobubha7",
+   "patientId": "P-001",
+   "agent": "Pharmacology-safety",
+   "kind": "safety",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "Repeat ECG and electrolytes before the next line: osimertinib and citalopram both prolong QT.",
+   "why": [
+    "Osimertinib 80 mg daily (First-line EGFR TKI): qt-prolonging.",
+    "Citalopram 20 mg daily (Depression): qt-prolonging.",
+    "osimertinib: monitor. Osimertinib can prolong QTc. With another QT-prolonging drug, check ECG and electrolytes periodically.",
+    "amivantamab: monitor. Not a known QT interaction; continue ECG monitoring while the other QT-prolonging drug is used."
+   ],
+   "evidenceIds": [
+    "label:osimertinib:qt-prolonging:0",
+    "label:amivantamab:qt-prolonging:1"
+   ],
+   "confidence": "high",
+   "confidenceReason": "Rules come from product labels in the interaction table.",
+   "uncertain": "The interaction table is a demonstration subset; a licensed interaction database is needed in production.",
+   "alternatives": [],
+   "changesIf": "The interacting medication is stopped or changed.",
+   "safety": [
+    "osimertinib + qt prolonging: monitor",
+    "amivantamab + qt prolonging: monitor"
+   ]
+  },
+  {
+   "id": "P-001-trial-matcher-mwobubvo8",
+   "patientId": "P-001",
+   "agent": "Trial-matcher",
+   "kind": "trial",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "Screen for NCT05256290 or NCT07206498.",
+   "why": [
+    "ClinicalTrials.gov: 9 recruiting studies for \"EGFR C797S\" in non-small cell lung cancer (live, 2026-11-20).",
+    "NCT05256290: Phase 1/2 Study of Silevertinib (BDTX-1535) in Patients With Glioblastoma or Non-Small Cell Lung Cancer With E…",
+    "NCT07206498: A Study to Evaluate Safety and Efficacy of WSD0922-FU Combo With Osimertinib for NSCLC",
+    "NCT06868485: A Study to Assess the Efficacy of WSD0922-FU in Patients With C797S+ Advanced Non-small Cell Lung Cancer",
+    "NCT07699328: A Study of VRN110755 in Patients With EGFR-Mutant Non-Small Cell Lung Cancer"
+   ],
+   "evidenceIds": [
+    "trial:NCT05256290",
+    "trial:NCT07206498",
+    "trial:NCT06868485",
+    "trial:NCT07699328"
+   ],
+   "confidence": "moderate",
+   "confidenceReason": "Matched by biomarker in title/keywords; full eligibility needs the investigator.",
+   "uncertain": "Distance to sites, prior-therapy limits and organ-function criteria are not checked automatically yet.",
+   "alternatives": [
+    "NCT06868485",
+    "NCT07699328"
+   ],
+   "changesIf": "The investigator finds an exclusion criterion.",
+   "safety": []
+  },
+  {
+   "id": "P-001-dose-optimizer-mwobubvp9",
+   "patientId": "P-001",
+   "agent": "Dose-optimizer",
+   "kind": "dose",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "Dose card ready for Carboplatin + pemetrexed (every 21 days): Carboplatin 460 mg, Pemetrexed 750 mg. Pharmacist and oncologist to verify.",
+   "why": [
+    "Weight and height from the record; creatinine 0.8 mg/dL on 2026-11-17",
+    "Carboplatin: Dose = AUC × (GFR + 25) = 5 × (67.7 + 25) = 463.7 mg",
+    "Pemetrexed: Dose = 500 mg/m² × 1.51 m² = 755.0 mg"
+   ],
+   "evidenceIds": [
+    "calc:dose",
+    "label:dose:0:carboplatin",
+    "label:dose:1:pemetrexed"
+   ],
+   "confidence": "high",
+   "confidenceReason": "Deterministic, unit-tested formulas with label parameters.",
+   "uncertain": "Regimen choice is still the doctor's; the card is recalculated if the choice changes.",
+   "alternatives": [],
+   "changesIf": "Weight, creatinine or the chosen regimen changes.",
+   "safety": [
+    "Premedication: Folic acid 400–1000 mcg orally once daily, starting 7 days before the first dose (pemetrexed label)",
+    "Premedication: Vitamin B12 1 mg intramuscularly 1 week before the first dose, then every 3 cycles (pemetrexed label)",
+    "Premedication: Dexamethasone 4 mg orally twice daily the day before, the day of and the day after pemetrexed (pemetrexed label)"
+   ]
+  }
+ ],
+ "boardSummary": "Woman in her 50s, never-smoker, stage IVB EGFR L858R lung adenocarcinoma (TP53 R273H co-mutation, PD-L1 TPS 10%), ECOG 1. First-line osimertinib gave a partial response. ctDNA re-emerged in 2026-09, then RECIST 1.1 progression on 2026-11-16 (45 mm vs 32 mm nadir, new 1.4 cm liver lesion). Plasma NGS shows EGFR C797S (VAF 1.2%) and no MET amplification. Plasma can miss MET amplification and cannot exclude small-cell transformation, so a liver re-biopsy is suggested before committing to a regimen. The knowledge pack lists amivantamab plus carboplatin-pemetrexed as preferred after osimertinib. Alternatives are carboplatin-pemetrexed or a C797S-directed trial. QT safety needs review: the medication list still shows osimertinib and citalopram. No brain imaging since baseline is documented. Doses come only from the dose calculator, pending pharmacist verification.",
+ "warnings": [],
+ "usage": {
+  "inputTokens": 5930,
+  "outputTokens": 2261
+ },
+ "dose": {
+  "regimenKey": "carboplatin-pemetrexed",
+  "regimenName": "Carboplatin + pemetrexed (every 21 days)",
+  "bsa": 1.5099668870541498,
+  "crcl": 67.734375,
+  "lines": [
+   {
+    "drug": "Carboplatin",
+    "method": "Calvert",
+    "formula": "Dose = AUC × (GFR + 25) = 5 × (67.7 + 25)",
+    "inputs": [
+     "Target AUC 5 mg/mL·min (regimen protocol)",
+     "GFR ≈ CrCl 67.7 mL/min (Cockcroft–Gault)"
+    ],
+    "raw": 463.671875,
+    "rounded": 460,
+    "text": "460 mg",
+    "schedule": "Day 1, every 21 days",
+    "source": "Carboplatin label (Calvert formula; FDA advises capping GFR at 125 mL/min)",
+    "url": "https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&query=carboplatin"
+   },
+   {
+    "drug": "Pemetrexed",
+    "method": "Body surface area",
+    "formula": "Dose = 500 mg/m² × 1.51 m²",
+    "inputs": [
+     "Height 152 cm, weight 54 kg",
+     "BSA 1.51 m² (Mosteller)"
+    ],
+    "raw": 754.9834435270749,
+    "rounded": 750,
+    "text": "750 mg",
+    "schedule": "Day 1, every 21 days",
+    "source": "Pemetrexed label",
+    "url": "https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&query=pemetrexed"
+   }
+  ],
+  "premedication": [
+   "Folic acid 400–1000 mcg orally once daily, starting 7 days before the first dose (pemetrexed label)",
+   "Vitamin B12 1 mg intramuscularly 1 week before the first dose, then every 3 cycles (pemetrexed label)",
+   "Dexamethasone 4 mg orally twice daily the day before, the day of and the day after pemetrexed (pemetrexed label)"
+  ],
+  "blocks": [],
+  "warnings": [],
+  "asOf": "Weight and height from the record; creatinine 0.8 mg/dL on 2026-11-17"
+ }
+}

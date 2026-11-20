@@ -1,0 +1,563 @@
+{
+ "patientId": "P-002",
+ "ranAt": "2026-11-20T01:56:28.369Z",
+ "mode": "claude",
+ "model": "claude-opus-5-5",
+ "steps": [
+  {
+   "agent": "Sentinel",
+   "status": "done",
+   "note": "Record the baseline (71 mm) and schedule the first response scan per protocol after treatment starts.",
+   "ms": 3
+  },
+  {
+   "agent": "Genomic-interpreter",
+   "status": "done",
+   "note": "2 variant(s) checked in CIViC (live, live)",
+   "ms": 1499
+  },
+  {
+   "agent": "Test-advisor",
+   "status": "done",
+   "note": "Order: HbA1c and baseline thyroid function.",
+   "ms": 3
+  },
+  {
+   "agent": "Guideline",
+   "status": "done",
+   "note": "Discuss Pembrolizumab monotherapy as the leading option; Pembrolizumab + carboplatin + pemetrexed or Clinical trial of a KRAS G12C inhibitor in first line as alternatives.",
+   "ms": 2
+  },
+  {
+   "agent": "Pharmacology-safety",
+   "status": "done",
+   "note": "No interaction found",
+   "ms": 2
+  },
+  {
+   "agent": "Trial-matcher",
+   "status": "done",
+   "note": "54 recruiting studies (live)",
+   "ms": 550
+  },
+  {
+   "agent": "Dose-optimizer",
+   "status": "done",
+   "note": "Dose card ready for Pembrolizumab monotherapy: Pembrolizumab 200 mg every 3 weeks or 400 mg every 6 weeks. Pharmacist and oncologist to verify.",
+   "ms": 2
+  },
+  {
+   "agent": "Synthesis (Claude)",
+   "status": "done",
+   "note": "3 card(s) and a tumour-board summary from claude-opus-5-5",
+   "ms": 20305
+  },
+  {
+   "agent": "Safety-critic",
+   "status": "done",
+   "note": "10 cards checked, 0 flagged",
+   "ms": 2
+  }
+ ],
+ "evidence": [
+  {
+   "id": "pt:e1",
+   "kind": "patient",
+   "label": "2026-10-20 · Referral received",
+   "detail": "Right upper abdominal pain, weight loss; ultrasound shows liver lesions. (Referral letter)"
+  },
+  {
+   "id": "pt:e2",
+   "kind": "patient",
+   "label": "2026-10-28 · Contrast CT chest and abdomen",
+   "detail": "4.1 cm left lower lobe mass, two liver lesions, 2.2 cm left adrenal lesion. (Radiology report)"
+  },
+  {
+   "id": "pt:e3",
+   "kind": "patient",
+   "label": "2026-11-05 · Brain MRI",
+   "detail": "No intracranial metastases. (Radiology report)"
+  },
+  {
+   "id": "pt:e4",
+   "kind": "patient",
+   "label": "2026-11-06 · Liver biopsy",
+   "detail": "Metastatic adenocarcinoma, lung primary (TTF-1 positive). (Pathology report)"
+  },
+  {
+   "id": "pt:e5",
+   "kind": "patient",
+   "label": "2026-11-08 · PD-L1 (22C3)",
+   "detail": "Tumour proportion score 60%. (Pathology report)"
+  },
+  {
+   "id": "pt:e6",
+   "kind": "patient",
+   "label": "2026-11-12 · Tissue NGS panel",
+   "detail": "KRAS G12C (VAF 22%), TP53 R248Q. EGFR, ALK, ROS1, BRAF, MET, RET, NTRK, ERBB2 negative. STK11 and KEAP1 wild-type. (Molecular report)"
+  },
+  {
+   "id": "calc:recist",
+   "kind": "calculator",
+   "label": "RECIST 1.1 calculation",
+   "detail": "2026-10-28: 71 mm, Baseline"
+  },
+  {
+   "id": "civic:EID9431",
+   "kind": "civic",
+   "label": "CIViC EID9431 · level A · predictive",
+   "detail": "sensitivityresponse · Lung Non-small Cell Carcinoma · Sotorasib · PMID 34096690",
+   "url": "https://civicdb.org/evidence/9431/summary"
+  },
+  {
+   "id": "civic:EID11652",
+   "kind": "civic",
+   "label": "CIViC EID11652 · level B · predictive",
+   "detail": "sensitivityresponse · Lung Non-small Cell Carcinoma · Divarasib · PMID 37611121",
+   "url": "https://civicdb.org/evidence/11652/summary"
+  },
+  {
+   "id": "civic:EID1217",
+   "kind": "civic",
+   "label": "CIViC EID1217 · level B · prognostic",
+   "detail": "poor outcome · Lung Non-small Cell Carcinoma · PMID 22247021",
+   "url": "https://civicdb.org/evidence/1217/summary"
+  },
+  {
+   "id": "civic:EID7455",
+   "kind": "civic",
+   "label": "CIViC EID7455 · level B · predictive",
+   "detail": "sensitivityresponse · Lung Non-small Cell Carcinoma · Sotorasib",
+   "url": "https://civicdb.org/evidence/7455/summary"
+  },
+  {
+   "id": "civic:EID7162",
+   "kind": "civic",
+   "label": "CIViC EID7162 · level D · oncogenic",
+   "detail": "oncogenicity · Lung Cancer · PMID 21187651",
+   "url": "https://civicdb.org/evidence/7162/summary"
+  },
+  {
+   "id": "kb:KRAS_G12C_1L:test0",
+   "kind": "guideline",
+   "label": "Knowledge pack · HbA1c and baseline thyroid function",
+   "detail": "Diabetic patient starting a checkpoint inhibitor.",
+   "url": "https://www.fda.gov/drugs/resources-information-approved-drugs/oncology-cancer-hematologic-malignancies-approval-notifications"
+  },
+  {
+   "id": "kb:kras1-pembrolizumab",
+   "kind": "guideline",
+   "label": "Pembrolizumab monotherapy · preferred",
+   "detail": "PD-L1 TPS ≥ 50% without EGFR/ALK alteration: approved first-line monotherapy (KEYNOTE-024). Flat dose per label; no calculation needed. (nsclc-pack 2026-11-20)",
+   "url": "https://www.fda.gov/drugs/resources-information-approved-drugs/oncology-cancer-hematologic-malignancies-approval-notifications"
+  },
+  {
+   "id": "kb:kras1-pembro-chemo",
+   "kind": "guideline",
+   "label": "Pembrolizumab + carboplatin + pemetrexed · option",
+   "detail": "Approved first-line combination for non-squamous NSCLC (KEYNOTE-189). Consider with high disease burden or visceral crisis. (nsclc-pack 2026-11-20)",
+   "url": "https://www.fda.gov/drugs/resources-information-approved-drugs/oncology-cancer-hematologic-malignancies-approval-notifications"
+  },
+  {
+   "id": "kb:kras1-trial",
+   "kind": "guideline",
+   "label": "Clinical trial of a KRAS G12C inhibitor in first line · trial",
+   "detail": "First-line KRAS G12C combinations are being tested in recruiting trials. Check eligibility before starting standard therapy. (nsclc-pack 2026-11-20)",
+   "url": "https://clinicaltrials.gov/"
+  },
+  {
+   "id": "kb:kras2-sotorasib-adagrasib",
+   "kind": "guideline",
+   "label": "Sotorasib or adagrasib (at progression) · later-line",
+   "detail": "Approved after at least one prior systemic therapy (CodeBreaK 100, KRYSTAL-1). Plan for second line. (nsclc-pack 2026-11-20)",
+   "url": "https://www.fda.gov/drugs/resources-information-approved-drugs/oncology-cancer-hematologic-malignancies-approval-notifications"
+  },
+  {
+   "id": "trial:NCT04613596",
+   "kind": "trial",
+   "label": "NCT04613596 · PHASE2/PHASE3 · recruiting",
+   "detail": "Phase 2 Trial of Adagrasib Monotherapy and in Combination With Pembrolizumab and a Phase 3 Trial of Adagrasib in Combination in Patients With a KRAS G12C Mutation KRYSTAL-7. Sponsor Mirati Therapeutics Inc.. Countries: United States, Argentina, Australia, Austria, Belgium, Brazil.",
+   "url": "https://clinicaltrials.gov/study/NCT04613596"
+  },
+  {
+   "id": "trial:NCT05786924",
+   "kind": "trial",
+   "label": "NCT05786924 · PHASE1/PHASE2 · recruiting",
+   "detail": "Phase 1/2 Trial of S241656 in Selected RAS/MAPK Mutation- Positive Malignancies. Sponsor Institut de Recherches Internationales Servier. Countries: United States, Australia, China, Denmark, France, Hong Kong.",
+   "url": "https://clinicaltrials.gov/study/NCT05786924"
+  },
+  {
+   "id": "trial:NCT06875310",
+   "kind": "trial",
+   "label": "NCT06875310 · PHASE3 · recruiting",
+   "detail": "A Study of Adagrasib Plus Pembrolizumab Plus Chemotherapy vs. Placebo Plus Pembrolizumab Plus Chemotherapy in Participants With Previously Untreated Non-squamous Non-small Cell Lung Cancer With KRAS G12C Mutation (KRYSTAL-4). Sponsor Mirati Therapeutics Inc.. Countries: United States, Argentina, Australia, Austria, Belgium, Brazil.",
+   "url": "https://clinicaltrials.gov/study/NCT06875310"
+  },
+  {
+   "id": "trial:NCT06983743",
+   "kind": "trial",
+   "label": "NCT06983743 · PHASE1 · recruiting",
+   "detail": "A Study of ERAS-0015 in Patients With Advanced or Metastatic Solid Tumors. Sponsor Erasca, Inc.. Countries: United States, Canada, South Korea.",
+   "url": "https://clinicaltrials.gov/study/NCT06983743"
+  },
+  {
+   "id": "calc:dose",
+   "kind": "calculator",
+   "label": "Dose calculator · Pembrolizumab monotherapy",
+   "detail": "BSA 1.78 m² (Mosteller); CrCl 67.8 mL/min (Cockcroft–Gault). Pembrolizumab 200 mg every 3 weeks or 400 mg every 6 weeks."
+  },
+  {
+   "id": "label:dose:0:pembrolizumab",
+   "kind": "label",
+   "label": "Pembrolizumab label",
+   "detail": "Pembrolizumab: Intravenous infusion",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&query=pembrolizumab"
+  }
+ ],
+ "cards": [
+  {
+   "id": "P-002-claude-mwobvpl9-0",
+   "patientId": "P-002",
+   "agent": "Synthesis (Claude)",
+   "origin": "claude",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "kind": "treatment",
+   "proposal": "Consider screening for the first-line KRAS G12C trial NCT06875310 (KRYSTAL-4) before starting; if he is ineligible or declines, discuss pembrolizumab monotherapy as the leading standard option, or pembrolizumab with carboplatin and pemetrexed given his symptomatic visceral disease.",
+   "why": [
+    "Stage IVB adenocarcinoma, liver and adrenal metastases",
+    "PD-L1 TPS 60%",
+    "KRAS G12C; no EGFR/ALK or other driver",
+    "Treatment-naive, ECOG 1",
+    "Symptomatic: pain, weight loss"
+   ],
+   "evidenceIds": [
+    "pt:e2",
+    "pt:e4",
+    "pt:e5",
+    "pt:e6",
+    "pt:e1",
+    "kb:kras1-pembrolizumab",
+    "kb:kras1-pembro-chemo",
+    "kb:kras1-trial",
+    "trial:NCT06875310",
+    "trial:NCT04613596",
+    "civic:EID9431",
+    "kb:kras2-sotorasib-adagrasib",
+    "calc:dose"
+   ],
+   "confidence": "moderate",
+   "confidenceReason": "PD-L1 ≥50% without EGFR/ALK supports guideline-preferred pembrolizumab. The choice between monotherapy and the chemo combination depends on disease burden and symptoms, which call for clinical judgement.",
+   "uncertain": "Trial eligibility and site access are not verified. Listed countries for NCT04613596 and NCT06875310 do not include South Asia, so the trial-matcher's site claim is unsupported. The pace of liver disease and whether it amounts to visceral crisis is not documented.",
+   "alternatives": [
+    "Pembrolizumab + carboplatin + pemetrexed if burden is high or disease is progressing rapidly",
+    "NCT04613596 (KRYSTAL-7) if eligible and accessible",
+    "Early-phase NCT05786924 or NCT06983743 are less suited to the first-line standard setting",
+    "Sotorasib or adagrasib are later-line, approved only after prior systemic therapy, so not first-line options here"
+   ],
+   "changesIf": "Rapid clinical deterioration or a visceral crisis would favour the chemo-immunotherapy combination. Confirmed eligibility at an accessible site would favour trial enrolment.",
+   "safety": [
+    "Doses only from the dose calculator; pharmacist and oncologist to verify",
+    "Check renal function before pemetrexed if the combination is chosen"
+   ]
+  },
+  {
+   "id": "P-002-claude-mwobvpl9-1",
+   "patientId": "P-002",
+   "agent": "Synthesis (Claude)",
+   "origin": "claude",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "kind": "test",
+   "proposal": "Suggest baseline HbA1c and thyroid function before starting a checkpoint inhibitor.",
+   "why": [
+    "On metformin (diabetic)",
+    "Planned checkpoint inhibitor"
+   ],
+   "evidenceIds": [
+    "kb:KRAS_G12C_1L:test0",
+    "kb:kras1-pembrolizumab"
+   ],
+   "confidence": "high",
+   "confidenceReason": "Standard immunotherapy baseline checks, supported by the knowledge pack.",
+   "uncertain": "Current glycaemic control and prior thyroid status are not documented.",
+   "alternatives": [],
+   "changesIf": "Poor glycaemic control would warrant diabetes team input before immunotherapy.",
+   "safety": [
+    "Watch for immune-related endocrinopathies, including diabetes and thyroiditis",
+    "Review metformin if pemetrexed and contrast scans are planned and renal function changes"
+   ]
+  },
+  {
+   "id": "P-002-claude-mwobvpl9-2",
+   "patientId": "P-002",
+   "agent": "Synthesis (Claude)",
+   "origin": "claude",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "kind": "monitoring",
+   "proposal": "Record the RECIST baseline sum of 71 mm and the ctDNA KRAS G12C baseline, then plan the first response scan per protocol after treatment starts.",
+   "why": [
+    "Baseline RECIST 71 mm (2026-10-28)",
+    "ctDNA KRAS G12C 4.6% (2026-11-10)",
+    "Brain MRI negative at baseline"
+   ],
+   "evidenceIds": [
+    "calc:recist",
+    "pt:e2",
+    "pt:e3",
+    "pt:e6"
+   ],
+   "confidence": "high",
+   "confidenceReason": "Baseline measurements are documented.",
+   "uncertain": "The value of ctDNA kinetics for treatment decisions is not verified in the evidence list.",
+   "alternatives": [],
+   "changesIf": "Trial enrolment would bring protocol-mandated imaging schedules.",
+   "safety": [
+    "Re-image the brain if neurological symptoms develop"
+   ]
+  },
+  {
+   "id": "P-002-sentinel-mwobv8bv1",
+   "patientId": "P-002",
+   "agent": "Sentinel",
+   "kind": "monitoring",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "Record the baseline (71 mm) and schedule the first response scan per protocol after treatment starts.",
+   "why": [
+    "Baseline sum of target lesions 71 mm on 2026-10-28.",
+    "Baseline ctDNA KRAS G12C 4.6% on 2026-11-10.",
+    "ECOG 1."
+   ],
+   "evidenceIds": [
+    "calc:recist",
+    "pt:e3",
+    "pt:e6"
+   ],
+   "confidence": "high",
+   "confidenceReason": "Measurements come from the radiology report in the record.",
+   "uncertain": "Response interval depends on the regimen chosen (commonly every 6–9 weeks).",
+   "alternatives": [],
+   "changesIf": "New symptoms or a red-flag result arrive before the planned scan.",
+   "safety": []
+  },
+  {
+   "id": "P-002-genomic-interpreter-mwobv9ho2",
+   "patientId": "P-002",
+   "agent": "Genomic-interpreter",
+   "kind": "summary",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "KRAS G12C is the actionable driver: confirm and sign the molecular interpretation.",
+   "why": [
+    "KRAS G12C (p.Gly12Cys), tissue, VAF 22%, reported 2026-11-12.",
+    "CIViC KRAS G12C: 63 evidence items, 8 in lung cancer; strongest level A (live).",
+    "1 lung evidence item(s) report resistance."
+   ],
+   "evidenceIds": [
+    "civic:EID9431",
+    "civic:EID11652",
+    "civic:EID1217",
+    "civic:EID7455",
+    "pt:e6"
+   ],
+   "confidence": "high",
+   "confidenceReason": "Strongest CIViC level A.",
+   "uncertain": "Interpretation must be signed by the molecular pathologist.",
+   "alternatives": [],
+   "changesIf": "A tissue re-biopsy shows a different dominant mechanism, such as small-cell transformation or MET amplification.",
+   "safety": []
+  },
+  {
+   "id": "P-002-genomic-interpreter-mwobv9ho3",
+   "patientId": "P-002",
+   "agent": "Genomic-interpreter",
+   "kind": "summary",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "TP53 R248Q is a co-mutation without a matched drug: record as prognostic, not actionable.",
+   "why": [
+    "TP53 R248Q (p.Arg248Gln), tissue, VAF 19%, reported 2026-11-12.",
+    "CIViC TP53 R248Q: 12 evidence items, 1 in lung cancer; strongest level D (live).",
+    "No predictive lung evidence in the top results."
+   ],
+   "evidenceIds": [
+    "civic:EID7162",
+    "pt:e6"
+   ],
+   "confidence": "moderate",
+   "confidenceReason": "Strongest CIViC level D.",
+   "uncertain": "Interpretation must be signed by the molecular pathologist.",
+   "alternatives": [],
+   "changesIf": "A tissue re-biopsy shows a different dominant mechanism, such as small-cell transformation or MET amplification.",
+   "safety": []
+  },
+  {
+   "id": "P-002-test-advisor-mwobv9hr4",
+   "patientId": "P-002",
+   "agent": "Test-advisor",
+   "kind": "test",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "Order: HbA1c and baseline thyroid function.",
+   "why": [
+    "Biomarker panel complete for: EGFR, ALK, ROS1, BRAF, KRAS, MET, RET, NTRK, ERBB2, PD-L1.",
+    "All guideline biomarkers for NSCLC are present in the record.",
+    "HbA1c and baseline thyroid function: Diabetic patient starting a checkpoint inhibitor."
+   ],
+   "evidenceIds": [
+    "kb:KRAS_G12C_1L:test0"
+   ],
+   "confidence": "moderate",
+   "confidenceReason": "Tests follow the knowledge pack; local availability and turnaround are not known to the system.",
+   "uncertain": "Whether a re-biopsy is feasible and safe for this patient.",
+   "alternatives": [
+    "Repeat plasma NGS in 4 weeks if tissue cannot be obtained"
+   ],
+   "changesIf": "The patient declines biopsy or is clinically too unwell to wait for results.",
+   "safety": []
+  },
+  {
+   "id": "P-002-guideline-mwobv9hs5",
+   "patientId": "P-002",
+   "agent": "Guideline",
+   "kind": "treatment",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "Discuss Pembrolizumab monotherapy as the leading option; Pembrolizumab + carboplatin + pemetrexed or Clinical trial of a KRAS G12C inhibitor in first line as alternatives.",
+   "why": [
+    "Oncogenic driver. KRAS G12C inhibitors are approved after at least one prior systemic therapy, not first line.",
+    "Setting: First line.",
+    "1. Pembrolizumab monotherapy: PD-L1 TPS ≥ 50% without EGFR/ALK alteration: approved first-line monotherapy (KEYNOTE-024).",
+    "2. Pembrolizumab + carboplatin + pemetrexed: Approved first-line combination for non-squamous NSCLC (KEYNOTE-189).",
+    "3. Clinical trial of a KRAS G12C inhibitor in first line: First-line KRAS G12C combinations are being tested in recruiting trials."
+   ],
+   "evidenceIds": [
+    "kb:kras1-pembrolizumab",
+    "kb:kras1-pembro-chemo",
+    "kb:kras1-trial",
+    "kb:kras2-sotorasib-adagrasib"
+   ],
+   "confidence": "moderate",
+   "confidenceReason": "Options come from the curated knowledge pack; the current NCCN/ESMO version must be checked.",
+   "uncertain": "Drug availability, cost and the patient's preferences are not in the record.",
+   "alternatives": [
+    "Pembrolizumab + carboplatin + pemetrexed",
+    "Clinical trial of a KRAS G12C inhibitor in first line",
+    "Sotorasib or adagrasib (at progression) (later line)"
+   ],
+   "changesIf": "KRAS G12C inhibitor as first line outside a trial is not advised: Approved indication is after prior systemic therapy.",
+   "safety": []
+  },
+  {
+   "id": "P-002-trial-matcher-mwobv9x66",
+   "patientId": "P-002",
+   "agent": "Trial-matcher",
+   "kind": "trial",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "Screen for NCT04613596 or NCT05786924; NCT04613596 has sites in South Asia.",
+   "why": [
+    "ClinicalTrials.gov: 54 recruiting studies for \"KRAS G12C\" in non-small cell lung cancer (live, 2026-11-20).",
+    "NCT04613596: Phase 2 Trial of Adagrasib Monotherapy and in Combination With Pembrolizumab and a Phase 3 Trial of Adagrasib …",
+    "NCT05786924: Phase 1/2 Trial of S241656 in Selected RAS/MAPK Mutation- Positive Malignancies",
+    "NCT06875310: A Study of Adagrasib Plus Pembrolizumab Plus Chemotherapy vs. Placebo Plus Pembrolizumab Plus Chemotherapy in …",
+    "NCT06983743: A Study of ERAS-0015 in Patients With Advanced or Metastatic Solid Tumors"
+   ],
+   "evidenceIds": [
+    "trial:NCT04613596",
+    "trial:NCT05786924",
+    "trial:NCT06875310",
+    "trial:NCT06983743"
+   ],
+   "confidence": "moderate",
+   "confidenceReason": "Matched by biomarker in title/keywords; full eligibility needs the investigator.",
+   "uncertain": "Distance to sites, prior-therapy limits and organ-function criteria are not checked automatically yet.",
+   "alternatives": [
+    "NCT06875310",
+    "NCT06983743"
+   ],
+   "changesIf": "The investigator finds an exclusion criterion.",
+   "safety": []
+  },
+  {
+   "id": "P-002-dose-optimizer-mwobv9x77",
+   "patientId": "P-002",
+   "agent": "Dose-optimizer",
+   "kind": "dose",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "Dose card ready for Pembrolizumab monotherapy: Pembrolizumab 200 mg every 3 weeks or 400 mg every 6 weeks. Pharmacist and oncologist to verify.",
+   "why": [
+    "Weight and height from the record; creatinine 1.1 mg/dL on 2026-11-14",
+    "Pembrolizumab: No calculation: fixed dose from the label"
+   ],
+   "evidenceIds": [
+    "calc:dose",
+    "label:dose:0:pembrolizumab"
+   ],
+   "confidence": "high",
+   "confidenceReason": "Deterministic, unit-tested formulas with label parameters.",
+   "uncertain": "Regimen choice is still the doctor's; the card is recalculated if the choice changes.",
+   "alternatives": [],
+   "changesIf": "Weight, creatinine or the chosen regimen changes.",
+   "safety": []
+  }
+ ],
+ "boardSummary": "Man in his 60s, former smoker (30 pack-years), ECOG 1, with newly diagnosed stage IVB lung adenocarcinoma (liver, left adrenal; brain MRI negative). He is symptomatic, with abdominal pain and weight loss. PD-L1 TPS is 60%. Tissue NGS shows KRAS G12C and TP53 R248Q. EGFR, ALK, ROS1, BRAF, MET, RET, NTRK and ERBB2 are negative, and STK11 and KEAP1 are wild-type. He is treatment-naive. The knowledge pack lists pembrolizumab monotherapy as preferred, and pembrolizumab with carboplatin and pemetrexed as an option for high or visceral burden. Sotorasib and adagrasib are later-line only. KRYSTAL-4 (NCT06875310), a first-line KRAS G12C trial, is recruiting. The trial-matcher's claim of South Asian sites is not verified by the evidence. He is on metformin, so baseline HbA1c and thyroid function are suggested before immunotherapy. Doses come from the dose calculator and require pharmacist and oncologist verification.",
+ "warnings": [],
+ "usage": {
+  "inputTokens": 4186,
+  "outputTokens": 2306
+ },
+ "dose": {
+  "regimenKey": "pembrolizumab",
+  "regimenName": "Pembrolizumab monotherapy",
+  "bsa": 1.781385228784985,
+  "crcl": 67.82828282828282,
+  "lines": [
+   {
+    "drug": "Pembrolizumab",
+    "method": "Fixed dose",
+    "formula": "No calculation: fixed dose from the label",
+    "inputs": [],
+    "text": "200 mg every 3 weeks or 400 mg every 6 weeks",
+    "schedule": "Intravenous infusion",
+    "source": "Pembrolizumab label",
+    "url": "https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&query=pembrolizumab"
+   }
+  ],
+  "premedication": [],
+  "blocks": [],
+  "warnings": [],
+  "asOf": "Weight and height from the record; creatinine 1.1 mg/dL on 2026-11-14"
+ }
+}

@@ -1,0 +1,1351 @@
+<title>অনকোএজেন্ট প্রকল্প ব্রিফ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Tiro+Bangla:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a case file read like a lab report. H&E stain colours carry meaning everywhere:
+   hematoxylin indigo = what the AI proposes, eosin pink = what the doctor decides, amber = research track. */
+:root {
+  --bg: #fbf8f9;
+  --surface: #ffffff;
+  --surface-2: #f4eff3;
+  --ink: #1d1a2b;
+  --muted: #5d586e;
+  --line: #e7e0e6;
+  --line-strong: #c9bfca;
+  --hema: #3d3a9c;
+  --hema-soft: #ecebfa;
+  --eosin: #b8195a;
+  --eosin-soft: #fbe7ef;
+  --amber: #a8620f;
+  --amber-soft: #fbf0df;
+  --ok: #1d7448;
+  --ok-soft: #e4f4ea;
+  --warn: #8a5a00;
+  --warn-soft: #fbf1d6;
+  --crit: #b42318;
+  --crit-soft: #fde8e6;
+  --font-display: "Tiro Bangla", "Noto Serif Bengali", "Nirmala UI", Georgia, serif;
+  --font-body: "Hind Siliguri", "Noto Sans Bengali", "Nirmala UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --step--1: 0.875rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.25rem;
+  --step-2: 1.6rem;
+  --step-3: 2.2rem;
+  --step-4: clamp(2.6rem, 7vw, 4.4rem);
+  --radius: 10px;
+  --s-base: #0a9384;
+  --s-ai: #5450c8;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121119; --surface: #1a1925; --surface-2: #22202f; --ink: #ecebf3; --muted: #a8a4b9;
+    --line: #2d2a3c; --line-strong: #474259; --hema: #a3a1f5; --hema-soft: #25244b;
+    --eosin: #f37aa6; --eosin-soft: #3b1b2b; --amber: #f2b552; --amber-soft: #3a2a12;
+    --ok: #5fd39a; --ok-soft: #173326; --warn: #f2c35c; --warn-soft: #362b10;
+    --crit: #ff8a7a; --crit-soft: #3d1a17; --s-base: #12a08f; --s-ai: #7672e3; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121119; --surface: #1a1925; --surface-2: #22202f; --ink: #ecebf3; --muted: #a8a4b9;
+  --line: #2d2a3c; --line-strong: #474259; --hema: #a3a1f5; --hema-soft: #25244b;
+  --eosin: #f37aa6; --eosin-soft: #3b1b2b; --amber: #f2b552; --amber-soft: #3a2a12;
+  --ok: #5fd39a; --ok-soft: #173326; --warn: #f2c35c; --warn-soft: #362b10;
+  --crit: #ff8a7a; --crit-soft: #3d1a17; --s-base: #12a08f; --s-ai: #7672e3; color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: var(--step-0); line-height: 1.75;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1040px; margin: 0 auto; padding-block: 40px 80px; display: flex; flex-direction: column; gap: 72px; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.3; text-wrap: balance; margin: 0; }
+h2 { font-size: var(--step-3); }
+h3 { font-size: var(--step-1); font-family: var(--font-body); font-weight: 600; }
+p { margin: 0; }
+a { color: var(--hema); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid var(--hema); outline-offset: 2px; }
+.mono { font-family: var(--font-mono); font-size: 0.86em; letter-spacing: 0.01em; }
+.eyebrow { font-family: var(--font-mono); font-size: var(--step--1); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.lede { font-size: var(--step-1); color: var(--muted); max-width: 62ch; }
+.prose { max-width: 70ch; display: flex; flex-direction: column; gap: 14px; }
+.section { display: flex; flex-direction: column; gap: 28px; }
+.section-head { display: flex; flex-direction: column; gap: 10px; max-width: 74ch; }
+.ai { color: var(--hema); }
+.dr { color: var(--eosin); }
+.tag { display: inline-flex; align-items: center; gap: 6px; font-size: var(--step--1); font-weight: 600; padding: 2px 10px; border-radius: 999px; white-space: nowrap; }
+.tag-ai { background: var(--hema-soft); color: var(--hema); }
+.tag-dr { background: var(--eosin-soft); color: var(--eosin); }
+.tag-ok { background: var(--ok-soft); color: var(--ok); }
+.tag-warn { background: var(--warn-soft); color: var(--warn); }
+.tag-crit { background: var(--crit-soft); color: var(--crit); }
+.tag-amber { background: var(--amber-soft); color: var(--amber); }
+
+/* hero */
+.hero { display: flex; flex-direction: column; gap: 22px; padding-top: 12px; }
+.hero h1 { font-size: var(--step-4); }
+.thesis { font-family: var(--font-display); font-size: var(--step-2); line-height: 1.45; }
+.thesis .ai, .thesis .dr { border-bottom: 3px solid currentColor; padding-bottom: 1px; }
+.audience { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 16px; font-size: 0.98rem; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; color: var(--muted); font-size: var(--step--1); }
+.nav { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: var(--step--1); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding-block: 12px; }
+.nav a { color: var(--ink); text-decoration: none; }
+.nav a:hover { color: var(--hema); text-decoration: underline; }
+
+/* stats and bars */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.stats.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; }
+.stat .n { font-family: var(--font-display); font-size: var(--step-3); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stat .d { font-size: 0.9rem; color: var(--muted); }
+.stat.hl { border-color: var(--hema); }
+.stat.hl .n { color: var(--hema); }
+.subhead { font-family: var(--font-mono); font-size: var(--step--1); color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; }
+.bars { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; }
+.bar-row { display: grid; grid-template-columns: 120px minmax(0, 1fr) 90px; gap: 12px; align-items: center; font-size: 0.95rem; }
+.bar-track { background: var(--surface-2); border-radius: 4px; height: 22px; overflow: hidden; }
+.bar { height: 100%; background: var(--line-strong); border-radius: 4px; }
+.bar.lead { background: var(--hema); }
+.bar-row .v { font-variant-numeric: tabular-nums; text-align: right; }
+.figcap { font-size: var(--step--1); color: var(--muted); }
+
+/* tables */
+.table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 0.96rem; }
+th, td { text-align: left; vertical-align: top; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+th { font-family: var(--font-mono); font-size: var(--step--1); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); background: var(--surface-2); }
+tr:last-child td { border-bottom: 0; }
+td.win { background: var(--hema-soft); }
+.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* levels */
+.levels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.level { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; gap: 10px; border-top: 4px solid var(--line-strong); }
+.level.l1 { border-top-color: var(--ok); }
+.level.l2 { border-top-color: var(--warn); }
+.level.l3 { border-top-color: var(--amber); }
+.level .lk { font-family: var(--font-mono); font-size: var(--step--1); color: var(--muted); }
+.level ul { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 5px; font-size: 0.95rem; }
+.level .verdict-line { margin-top: auto; border-top: 1px solid var(--line); padding-top: 10px; font-size: 0.95rem; display: flex; flex-direction: column; gap: 6px; }
+.answer { background: var(--surface); border: 2px solid var(--ink); border-radius: var(--radius); padding: 22px 24px; display: flex; flex-direction: column; gap: 12px; }
+.answer h3 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-2); }
+.answer ol { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 8px; }
+.callout { background: var(--surface-2); border-radius: var(--radius); padding: 20px 22px; display: flex; flex-direction: column; gap: 10px; }
+.compare { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+.compare > div { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; font-size: 0.95rem; }
+
+/* two tracks */
+.tracks { display: grid; grid-template-columns: minmax(0, 1fr) 14px minmax(0, 1fr); gap: 16px; align-items: stretch; }
+.track { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+.wall { background: repeating-linear-gradient(180deg, var(--line-strong) 0 10px, transparent 10px 16px); border-radius: 4px; }
+.track ul { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 4px; }
+
+/* patient file + timeline */
+.patient { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 22px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 20px; }
+.patient div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.patient .k { font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+.timeline { display: flex; flex-direction: column; }
+.step { display: grid; grid-template-columns: 116px minmax(0, 1fr); gap: 22px; padding-bottom: 34px; position: relative; }
+.step::before { content: ""; position: absolute; left: 116px; margin-left: 11px; top: 30px; bottom: 0; width: 2px; background: var(--line); }
+.step:last-child::before { display: none; }
+.when { font-family: var(--font-mono); font-size: var(--step--1); color: var(--muted); padding-top: 4px; display: flex; flex-direction: column; gap: 2px; }
+.when b { color: var(--ink); font-weight: 500; font-size: 0.95rem; }
+.step-body { display: flex; flex-direction: column; gap: 12px; padding-left: 28px; position: relative; min-width: 0; }
+.step-body::before { content: ""; position: absolute; left: 4px; top: 8px; width: 16px; height: 16px; border-radius: 50%; background: var(--surface); border: 3px solid var(--ink); }
+.step.research .step-body::before { border-color: var(--amber); }
+.facts strong { font-weight: 600; }
+.card { border-radius: var(--radius); padding: 14px 18px; display: flex; flex-direction: column; gap: 6px; border: 1px solid var(--line); background: var(--surface); }
+.card.ai-card { border-left: 4px solid var(--hema); }
+.card.dr-card { border-left: 4px solid var(--eosin); background: var(--eosin-soft); border-color: transparent; border-left-color: var(--eosin); }
+.card.st-card { border-left: 4px solid var(--amber); }
+.card .who { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: var(--step--1); color: var(--muted); }
+.card .proposal { font-weight: 600; }
+.card .meta { font-size: 0.95rem; color: var(--muted); }
+.card .meta b { color: var(--ink); font-weight: 600; }
+.options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 4px; }
+.opt { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-size: 0.93rem; display: flex; flex-direction: column; gap: 4px; background: var(--surface); }
+.opt.chosen { border: 2px solid var(--eosin); }
+.dose { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 6px 14px; font-size: 0.93rem; margin-top: 4px; }
+.dose .dk { color: var(--muted); }
+.formula { font-family: var(--font-mono); font-size: 0.9rem; background: var(--surface-2); border-radius: 6px; padding: 6px 10px; overflow-x: auto; }
+.figure { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 10px; margin: 0; }
+.figure svg { width: 100%; height: auto; display: block; }
+.figure figcaption { font-size: var(--step--1); color: var(--muted); }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: var(--step--1); color: var(--muted); align-items: center; }
+.swatch-line { display: inline-block; width: 26px; height: 0; border-top: 2px dashed currentColor; vertical-align: middle; margin-right: 6px; }
+.ctdna { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; font-size: 0.8rem; text-align: center; }
+.ctdna div { background: var(--surface-2); border-radius: 6px; padding: 6px 4px; display: flex; flex-direction: column; gap: 2px; }
+.ctdna .up { background: var(--crit-soft); color: var(--crit); }
+.ctdna .nd { background: var(--ok-soft); color: var(--ok); }
+.pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+.pair ul { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; }
+
+/* architecture */
+.stack { display: flex; flex-direction: column; gap: 8px; }
+.layer { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; align-items: start; }
+.layer .lname { font-family: var(--font-mono); font-size: var(--step--1); color: var(--muted); display: flex; flex-direction: column; }
+.layer .lname b { font-family: var(--font-body); color: var(--ink); font-size: 1rem; font-weight: 600; }
+.layer.l-agents { border-color: var(--hema); background: var(--hema-soft); }
+.layer.l-hitl { border-color: var(--eosin); background: var(--eosin-soft); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 0.88rem; padding: 3px 10px; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--line); }
+.l-agents .chip, .l-hitl .chip { background: var(--surface); }
+.chip.research { border-color: var(--amber); color: var(--amber); }
+.crosscut { font-size: var(--step--1); color: var(--muted); border: 1px dashed var(--line-strong); border-radius: 8px; padding: 10px 16px; }
+
+/* demo card */
+.demo { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
+.demo-main { padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; border-right: 1px solid var(--line); }
+.demo-side { padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; background: var(--surface-2); min-width: 0; }
+.field { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 12px; font-size: 0.95rem; }
+.field .fk { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); padding-top: 4px; }
+.meter { display: inline-flex; gap: 3px; vertical-align: middle; margin-right: 8px; }
+.meter i { width: 18px; height: 8px; border-radius: 2px; background: var(--line-strong); }
+.meter i.on { background: var(--hema); }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; }
+button { font: inherit; font-size: 0.95rem; font-weight: 600; border-radius: 8px; padding: 8px 16px; cursor: pointer; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); }
+button.primary { background: var(--eosin); color: var(--surface); border-color: var(--eosin); }
+button[aria-pressed="true"] { outline: 2px solid var(--eosin); outline-offset: 1px; }
+select, textarea { font: inherit; font-size: 0.95rem; width: 100%; border: 1px solid var(--line-strong); border-radius: 8px; padding: 8px 10px; background: var(--surface); color: var(--ink); }
+textarea { min-height: 64px; resize: vertical; }
+label { font-size: var(--step--1); color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
+.audit { font-family: var(--font-mono); font-size: 0.78rem; display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.audit li { border-left: 2px solid var(--line-strong); padding-left: 8px; overflow-wrap: anywhere; }
+
+/* team */
+.teams { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.team { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }
+.team ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.team li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px; font-size: 0.95rem; border-bottom: 1px dotted var(--line); padding-bottom: 5px; }
+.team li:last-child { border-bottom: 0; }
+.team li .mono { color: var(--muted); }
+
+/* roadmap */
+.road { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.phase { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; }
+.phase .pt { font-family: var(--font-mono); font-size: var(--step--1); color: var(--muted); }
+.phase ul { margin: 0; padding-left: 1.1em; font-size: 0.93rem; display: flex; flex-direction: column; gap: 3px; }
+.phase .exit { font-size: 0.88rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 8px; margin-top: auto; }
+
+.qs { margin: 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: 10px; max-width: 75ch; }
+.sources { columns: 2; column-gap: 32px; font-size: 0.88rem; margin: 0; padding-left: 1.2em; }
+.sources li { break-inside: avoid; margin-bottom: 6px; }
+.foot { font-size: var(--step--1); color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; }
+
+/* comparison charts: teal = without AI, indigo = with AI (validated pair); forecasts are text-only */
+.charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.chart { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.chart.wide { grid-column: 1 / -1; }
+.chart h3 { font-size: 1.05rem; }
+.chart .sub, .chart .note { font-size: var(--step--1); color: var(--muted); }
+.keys { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: var(--step--1); color: var(--muted); }
+.key::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; background: var(--k); }
+.hc { display: grid; grid-template-columns: minmax(0, 10rem) minmax(0, 1fr) auto; column-gap: 12px; align-items: center; font-size: 0.9rem; }
+.hc .lab { line-height: 1.35; padding-block: 4px; }
+.hc .lab small { display: block; color: var(--muted); font-size: 0.76rem; }
+.hc .grp { grid-column: 1 / -1; font-family: var(--font-mono); font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); padding-top: 8px; }
+.hc .plot { position: relative; height: 30px; background: linear-gradient(to right, var(--line) 1px, transparent 1px) 0 0 / 25% 100% repeat-x; border-right: 1px solid var(--line); box-shadow: inset 1px 0 0 var(--line-strong); }
+.hc .val { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; font-size: 0.88rem; min-width: 4.5rem; }
+.bar-s { position: absolute; top: 6px; height: 18px; left: var(--a, 0%); width: var(--w); background: var(--c); border-radius: 0 4px 4px 0; }
+.bar-s.range { border-radius: 4px; }
+.bar-s::after { content: ""; position: absolute; inset: -6px -3px; }
+.bar-s:hover, .bar-s:focus-visible { filter: brightness(1.15); }
+.bar-s:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.hc .axis { position: relative; height: 18px; font-size: 0.74rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.hc .axis span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
+.hc .axis span:first-child { transform: none; }
+.hc .axis span:last-child { transform: translateX(-100%); }
+.segbar { display: flex; gap: 2px; height: 28px; }
+.segbar > div { border-radius: 4px; display: flex; align-items: center; padding-left: 8px; font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: visible; }
+.segbar .s-yes { background: var(--s-base); color: #ffffff; }
+.segbar .s-no { background: var(--line-strong); color: var(--ink); }
+.tv summary { cursor: pointer; font-size: var(--step--1); color: var(--hema); }
+.tv table { min-width: 0; font-size: 0.86rem; }
+.tv th, .tv td { padding: 6px 10px; }
+.tip { position: fixed; z-index: 30; pointer-events: none; background: var(--ink); color: var(--bg); border-radius: 6px; padding: 6px 10px; font-size: 0.82rem; line-height: 1.4; max-width: 260px; display: flex; flex-direction: column; }
+.tip strong { font-size: 0.95rem; }
+.tag-neutral { background: var(--surface-2); color: var(--muted); }
+.tag-fc { background: transparent; border: 1px dashed var(--line-strong); color: var(--muted); }
+.matrix td { font-size: 0.9rem; }
+.matrix td .tag { margin-bottom: 4px; }
+.matrix th.fc { background: var(--surface); }
+.takeaway { border-left: 4px solid var(--s-ai); background: var(--surface); border-radius: 0 var(--radius) var(--radius) 0; padding: 16px 20px; display: flex; flex-direction: column; gap: 6px; max-width: 80ch; }
+
+@media (max-width: 860px) {
+  .charts { grid-template-columns: minmax(0, 1fr); }
+  .teams, .pair, .levels, .compare { grid-template-columns: minmax(0, 1fr); }
+  .road, .stats, .stats.three { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .options { grid-template-columns: minmax(0, 1fr); }
+  .demo { grid-template-columns: minmax(0, 1fr); }
+  .demo-main { border-right: 0; border-bottom: 1px solid var(--line); }
+  .patient { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sources { columns: 1; }
+}
+@media (max-width: 600px) {
+  .wrap { gap: 56px; padding-block: 24px 56px; }
+  .tracks { grid-template-columns: minmax(0, 1fr); }
+  .wall { height: 12px; background: repeating-linear-gradient(90deg, var(--line-strong) 0 10px, transparent 10px 16px); }
+  .step { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .step::before { left: 0; margin-left: 11px; top: 56px; }
+  .when { flex-direction: row; gap: 10px; padding-left: 28px; }
+  .layer { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .road, .stats, .stats.three { grid-template-columns: minmax(0, 1fr); }
+  .field, .dose { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .ctdna { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .bar-row { grid-template-columns: 84px minmax(0, 1fr) 72px; gap: 8px; }
+  .hc { grid-template-columns: minmax(0, 6.5rem) minmax(0, 1fr) auto; column-gap: 8px; }
+  .hc .val { min-width: 3.5rem; font-size: 0.8rem; }
+  .chart { padding: 14px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  button { transition: background-color .15s ease, border-color .15s ease; }
+}
+</style>
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">Agentic AI-based Precision Oncology Platform · গবেষণা ব্রিফ · সংস্করণ ০.২ · ২০ নভেম্বর ২০২৬</p>
+    <h1>অনকোএজেন্ট</h1>
+    <p class="thesis">ক্যান্সার বিশেষজ্ঞের পাশে একজন AI সহকারী দল। <span class="ai">AI প্রস্তাব দেয়</span>, প্রমাণ ও কারণসহ। প্রতিটি গুরুত্বপূর্ণ ধাপে <span class="dr">ডাক্তার সিদ্ধান্ত নেন</span>।</p>
+    <div class="audience">
+      <span class="tag tag-dr">কে ব্যবহার করবেন</span>
+      <span>শুধু ডাক্তার ও ক্লিনিক্যাল টিম: অনকোলজিস্ট, প্যাথলজিস্ট, রেডিওলজিস্ট, টিউমার বোর্ড, ফার্মাসিস্ট, অনকোলজি নার্স, গবেষক। রোগী বা সাধারণ মানুষের জন্য কোনো অ্যাপ নেই।</span>
+    </div>
+    <div class="audience">
+      <span class="tag tag-ai">প্রথম ক্যান্সার</span>
+      <span>ফুসফুসের নন-স্মল-সেল ক্যান্সার (NSCLC)। এরপর স্তন, তারপর কোলোরেক্টাল। প্রতিটি মডিউল এমনভাবে বানানো হবে যাতে নতুন ক্যান্সার যোগ করা যায়।</span>
+    </div>
+    <div class="legend">
+      <span>রঙের মানে:</span>
+      <span class="tag tag-ai">নীলচে = AI-এর প্রস্তাব</span>
+      <span class="tag tag-dr">গোলাপি = ডাক্তারের সিদ্ধান্ত</span>
+      <span class="tag tag-amber">অ্যাম্বার = গবেষণা ট্র্যাক</span>
+    </div>
+    <nav class="nav" aria-label="সূচি">
+      <a href="#numbers">বাস্তব সংখ্যা</a>
+      <a href="#focus">কেন ফুসফুস ক্যান্সার</a>
+      <a href="#compare">তুলনা: AI ছাড়া, AI-সহ, ভবিষ্যৎ</a>
+      <a href="#medicine">ওষুধের তিন স্তর</a>
+      <a href="#world">বিশ্বের উদাহরণ</a>
+      <a href="#feasibility">কোনটা সম্ভব</a>
+      <a href="#example">উদাহরণ: রাহেলার কেস</a>
+      <a href="#card">প্রস্তাব-কার্ড</a>
+      <a href="#architecture">আর্কিটেকচার</a>
+      <a href="#team">এক্সপার্ট টিম</a>
+      <a href="#roadmap">রোডম্যাপ</a>
+      <a href="#decisions">আপনার সিদ্ধান্ত</a>
+      <a href="#sources">সূত্র</a>
+    </nav>
+  </header>
+
+  <section class="section" id="numbers">
+    <div class="section-head">
+      <p class="eyebrow">GLOBOCAN ২০২২ · আন্তর্জাতিক ক্যান্সার গবেষণা সংস্থা (IARC)</p>
+      <h2>বিশ্বে ক্যান্সার: আজকের সংখ্যা</h2>
+    </div>
+    <p class="subhead">বিশ্ব</p>
+    <div class="stats">
+      <div class="stat"><span class="n">২ কোটি</span><span class="d">নতুন ক্যান্সার রোগী, ২০২২</span></div>
+      <div class="stat"><span class="n">৯৭ লাখ</span><span class="d">ক্যান্সারে মৃত্যু, ২০২২</span></div>
+      <div class="stat"><span class="n">৩.৫৩ কোটি</span><span class="d">২০৫০ সালে প্রত্যাশিত নতুন রোগী, মূলত জনসংখ্যা বাড়া ও বার্ধক্যের কারণে</span></div>
+      <div class="stat hl"><span class="n">১৮.২ লাখ</span><span class="d">ফুসফুস ক্যান্সারে মৃত্যু; সব ক্যান্সার-মৃত্যুর ১৮.৭%, এক নম্বরে</span></div>
+    </div>
+    <div class="bars" role="img" aria-label="২০২২ সালে নতুন রোগী: ফুসফুস ২৪.৮ লাখ, স্তন ২৩.১ লাখ, কোলোরেক্টাল ১৯.৩ লাখ">
+      <p class="subhead">নতুন রোগী, ২০২২ · শীর্ষ তিন ক্যান্সার</p>
+      <div class="bar-row"><span>ফুসফুস</span><div class="bar-track"><div class="bar lead" style="width:100%"></div></div><span class="v">২৪.৮ লাখ</span></div>
+      <div class="bar-row"><span>স্তন</span><div class="bar-track"><div class="bar" style="width:93.1%"></div></div><span class="v">২৩.১ লাখ</span></div>
+      <div class="bar-row"><span>কোলোরেক্টাল</span><div class="bar-track"><div class="bar" style="width:77.8%"></div></div><span class="v">১৯.৩ লাখ</span></div>
+      <p class="figcap">ফুসফুস ক্যান্সার নতুন রোগীর ১২.৪%; ২০৫০ সালে বছরে ৪৬.২ লাখ নতুন রোগী প্রত্যাশিত।</p>
+    </div>
+    <p class="subhead">বাংলাদেশ</p>
+    <div class="stats">
+      <div class="stat"><span class="n">১,৬৭,২৫৬</span><span class="d">নতুন ক্যান্সার রোগী, ২০২২</span></div>
+      <div class="stat"><span class="n">১,১৬,৫৯৮</span><span class="d">ক্যান্সারে মৃত্যু, ২০২২</span></div>
+      <div class="stat"><span class="n">১২,৯৮৯</span><span class="d">স্তন ক্যান্সার: নারীদের এক নম্বর ক্যান্সার</span></div>
+      <div class="stat"><span class="n">শীর্ষ ৩</span><span class="d">পুরুষদের মধ্যে খাদ্যনালি, মুখগহ্বর ও ফুসফুস ক্যান্সার সবচেয়ে বেশি</span></div>
+    </div>
+    <p class="figcap">বাংলাদেশে জাতীয় ক্যান্সার রেজিস্ট্রি নেই, তাই এগুলো আনুমানিক হিসাব; প্রকৃত সংখ্যা বেশি হতে পারে।</p>
+  </section>
+
+  <section class="section" id="focus">
+    <div class="section-head">
+      <p class="eyebrow">শুরুতে একটি ক্যান্সার</p>
+      <h2>কেন প্রথমে ফুসফুস ক্যান্সার (NSCLC)</h2>
+      <p class="lede">যে ক্যান্সারে বিশ্লেষণ ও AI প্রশিক্ষণের জন্য সবচেয়ে বেশি উন্মুক্ত ডেটা, সবচেয়ে বেশি টার্গেটেড ওষুধ, আর প্রোটিন-গঠনের তথ্য সবচেয়ে সমৃদ্ধ, সেটা দিয়েই শুরু করা উচিত। তিনটি প্রার্থীর তুলনা:</p>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>মাপকাঠি</th><th>ফুসফুস (NSCLC)</th><th>স্তন</th><th>কোলোরেক্টাল</th></tr></thead>
+        <tbody>
+          <tr><td>AACR GENIE জিনোমিক ডেটা (মোট ২,৬৮,০০০+ নমুনা)</td><td class="win num">৩৮,০০০+ নমুনা</td><td class="num">২১,০০০+</td><td class="num">২৩,০০০+</td></tr>
+          <tr><td>বিশ্বে নতুন রোগী, ২০২২</td><td class="win num">২৪.৮ লাখ (১ নম্বর)</td><td class="num">২৩.১ লাখ</td><td class="num">১৯.৩ লাখ</td></tr>
+          <tr><td>টার্গেট করা যায় এমন জিন পরিবর্তন</td><td class="win">অ্যাডেনোকার্সিনোমার ৪০–৬০%: EGFR, ALK, ROS1, BRAF, KRAS G12C, MET, RET, NTRK, HER2</td><td>HR, HER2, PIK3CA, BRCA</td><td>KRAS, BRAF, MSI, HER2</td></tr>
+          <tr><td>টার্গেটেড ওষুধের অনুমোদন</td><td class="win">২০১১ থেকে প্রায় ৩০টি নতুন ওষুধ; শুধু ২০২৪-এ ৭টি নতুন অনুমোদন বা ইঙ্গিত</td><td>অনেক, মূলত HR/HER2</td><td>তুলনায় কম</td></tr>
+          <tr><td>উন্মুক্ত মাল্টি-ওমিক্স ও ইমেজিং ডেটা</td><td class="win">TCGA (~১,০০০ রোগীর স্লাইড), CPTAC প্রোটিওজিনোমিক্স (~১১০ টিউমার, প্রোটিন-স্তরের ডেটা), NLST CT (২৬,২৫৪ জন, ১১.৩ TB)</td><td>TCGA, METABRIC, ম্যামোগ্রাফি</td><td>TCGA</td></tr>
+          <tr><td>প্রতিরোধ (resistance) ও 3D গঠনের জ্ঞান</td><td class="win">সবচেয়ে বিস্তারিত: EGFR T790M, C797S, ALK; অসংখ্য প্রোটিন গঠন</td><td>মাঝারি</td><td>মাঝারি</td></tr>
+          <tr><td>বাংলাদেশে প্রাসঙ্গিকতা</td><td>পুরুষদের শীর্ষ ৩-এ; icddr,b-র NGS পরীক্ষায় আছে</td><td class="win">নারীদের ১ নম্বর; icddr,b-তে আছে</td><td>icddr,b-তে আছে</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout">
+      <h3>সিদ্ধান্ত: ধাপ ১-এ NSCLC, ধাপ ২-এ স্তন, ধাপ ৩-এ কোলোরেক্টাল</h3>
+      <p>NSCLC-তে ডেটা সবচেয়ে বেশি, টার্গেটেড ওষুধ সবচেয়ে বেশি, আর “দায়ী প্রোটিন খুঁজে ওষুধ বাছাই” ধারণাটা সবচেয়ে পরিষ্কারভাবে দেখানো যায়। EGFR পরিবর্তন এশিয়ায় সম্মিলিতভাবে ৩৮.৪%, ভারতে অঞ্চলভেদে ২০–৩৯.৬%। বাংলাদেশের একটি একক-কেন্দ্র গবেষণায় হার পশ্চিমা দেশের চেয়ে বেশি, পূর্ব এশিয়ার চেয়ে কম পাওয়া গেছে; জাতীয় হিসাব নেই। স্তন ক্যান্সার বাংলাদেশের নারীদের এক নম্বর, তাই দ্বিতীয় ধাপে।</p>
+    </div>
+  </section>
+
+  <section class="section" id="compare">
+    <div class="section-head">
+      <p class="eyebrow">তুলনা · প্রকাশিত সংখ্যা দিয়ে</p>
+      <h2>AI ছাড়া, AI-সহ, আর ভবিষ্যৎ</h2>
+      <p class="lede">চার্টে শুধু প্রকাশিত গবেষণা বা রিপোর্টের সংখ্যা আছে। ভবিষ্যৎ নিয়ে কোনো সংখ্যা বানানো হয়নি; শেষের টেবিলে ভবিষ্যতের অংশটি আমাদের পূর্বাভাস, আলাদা করে চিহ্নিত।</p>
+    </div>
+    <div class="keys" aria-label="চার্টের রং">
+      <span class="key" style="--k:var(--s-base)">AI ছাড়া (প্রচলিত পদ্ধতি)</span>
+      <span class="key" style="--k:var(--s-ai)">AI-সহ (যা প্রমাণিত বা পরীক্ষিত)</span>
+    </div>
+
+    <div class="charts">
+
+      <figure class="chart" aria-labelledby="c1-t">
+        <h3 id="c1-t">নতুন ওষুধের প্রার্থী পেতে সময়</h3>
+        <p class="sub">লক্ষ্য-প্রোটিন বাছাই থেকে প্রি-ক্লিনিক্যাল প্রার্থী পর্যন্ত · বছর</p>
+        <div class="keys"><span class="key" style="--k:var(--s-base)">AI ছাড়া</span><span class="key" style="--k:var(--s-ai)">AI-সহ</span></div>
+        <div class="hc">
+          <span class="lab">প্রচলিত পদ্ধতি<small>বিভিন্ন সূত্রের পরিসর</small></span>
+          <div class="plot"><span class="bar-s range" style="--a:41.67%;--w:25%;--c:var(--s-base)" data-v="২.৫–৪ বছর" data-l="AI ছাড়া · প্রচলিত আবিষ্কার"></span></div>
+          <span class="val">২.৫–৪ বছর</span>
+          <span class="lab">Insilico, ২২টি প্রার্থী<small>২০২১–২০২৪ সালের গড়</small></span>
+          <div class="plot"><span class="bar-s range" style="--a:16.67%;--w:8.33%;--c:var(--s-ai)" data-v="১–১.৫ বছর" data-l="AI-সহ · Insilico-র ২২টি প্রার্থী"></span></div>
+          <span class="val">১–১.৫ বছর</span>
+          <span></span>
+          <div class="axis"><span style="left:0">০</span><span style="left:25%">১.৫</span><span style="left:50%">৩</span><span style="left:75%">৪.৫</span><span style="left:100%">৬ বছর</span></div>
+          <span></span>
+        </div>
+        <p class="note">খরচ: rentosertib-এর প্রি-ক্লিনিক্যাল কাজ প্রায় ২৬ লাখ ডলারে, প্রচলিত হিসাবে ১.৫–২.৫ কোটি ডলার (মাধ্যমিক সূত্র)। আবিষ্কার দ্রুত হলেও পুরো পথ এখনো ট্রায়ালের ওপর নির্ভরশীল।</p>
+        <details class="tv"><summary>টেবিল দেখুন</summary><div class="table-scroll"><table>
+          <thead><tr><th>পদ্ধতি</th><th>সময়</th><th>সূত্র</th></tr></thead>
+          <tbody><tr><td>প্রচলিত</td><td>২.৫–৪ বছর</td><td>Insilico-র তুলনা; অন্য সূত্রে ৪.৫–৬ বছর পর্যন্ত</td></tr><tr><td>AI-সহ</td><td>১২–১৮ মাস</td><td>Insilico, ২২টি প্রার্থী (২০২১–২৪)</td></tr></tbody>
+        </table></div></details>
+      </figure>
+
+      <figure class="chart" aria-labelledby="c2-t">
+        <h3 id="c2-t">ট্রায়ালের ধাপ পার হওয়ার হার</h3>
+        <p class="sub">কত শতাংশ ওষুধ পরের ধাপে যেতে পারে · %</p>
+        <div class="keys"><span class="key" style="--k:var(--s-base)">AI ছাড়া (শিল্পের ঐতিহাসিক হার)</span><span class="key" style="--k:var(--s-ai)">AI-জাত অণু</span></div>
+        <div class="hc">
+          <span class="grp">ফেজ ১ (নিরাপত্তা)</span>
+          <span class="lab">AI ছাড়া<small>২০০৬–২০১৫, ৩,৫৮২টি</small></span>
+          <div class="plot"><span class="bar-s" style="--w:63.2%;--c:var(--s-base)" data-v="৬৩.২%" data-l="ফেজ ১ · AI ছাড়া (BIO ২০০৬–২০১৫)"></span></div>
+          <span class="val">৬৩.২%</span>
+          <span class="lab">AI-জাত<small>২৪টির ২১টি</small></span>
+          <div class="plot"><span class="bar-s" style="--w:87.5%;--c:var(--s-ai)" data-v="৮৭.৫%" data-l="ফেজ ১ · AI-জাত অণু (২৪টির ২১টি)"></span></div>
+          <span class="val">৮৭.৫%</span>
+          <span class="grp">ফেজ ২ (রোগে কাজ করে কি না)</span>
+          <span class="lab">AI ছাড়া<small>২০০৬–২০১৫, ৩,৮৬২টি</small></span>
+          <div class="plot"><span class="bar-s" style="--w:30.7%;--c:var(--s-base)" data-v="৩০.৭%" data-l="ফেজ ২ · AI ছাড়া (BIO ২০০৬–২০১৫)"></span></div>
+          <span class="val">৩০.৭%</span>
+          <span class="lab">AI-জাত<small>১০টির ৪টি</small></span>
+          <div class="plot"><span class="bar-s" style="--w:40%;--c:var(--s-ai)" data-v="৪০%" data-l="ফেজ ২ · AI-জাত অণু (১০টির ৪টি)"></span></div>
+          <span class="val">৪০%</span>
+          <span></span>
+          <div class="axis"><span style="left:0">০</span><span style="left:25%">২৫</span><span style="left:50%">৫০</span><span style="left:75%">৭৫</span><span style="left:100%">১০০%</span></div>
+          <span></span>
+        </div>
+        <p class="note">AI-এর নমুনা খুব ছোট (২৪ ও ১০টি), সময়কালও আলাদা। ফেজ ২-এর পার্থক্য পরিসংখ্যানগতভাবে নিশ্চিত নয়। ক্যান্সারের ওষুধের মাত্র ~৫% ফেজ ১ থেকে অনুমোদন পর্যন্ত যায়।</p>
+        <details class="tv"><summary>টেবিল দেখুন</summary><div class="table-scroll"><table>
+          <thead><tr><th>ধাপ</th><th>AI ছাড়া</th><th>AI-জাত</th></tr></thead>
+          <tbody><tr><td>ফেজ ১</td><td>৬৩.২% (BIO, ২০০৬–১৫)</td><td>৮৭.৫% (২১/২৪)</td></tr><tr><td>ফেজ ২</td><td>৩০.৭% (BIO, ২০০৬–১৫)</td><td>৪০% (৪/১০)</td></tr></tbody>
+        </table></div></details>
+      </figure>
+
+      <figure class="chart" aria-labelledby="c3-t">
+        <h3 id="c3-t">ক্লিনিকের কাজে সময়</h3>
+        <p class="sub">একই কাজ AI ছাড়া = ১০০ ধরে, AI-সহ কতটা সময় লাগে</p>
+        <div class="keys"><span class="key" style="--k:var(--s-base)">AI ছাড়া</span><span class="key" style="--k:var(--s-ai)">AI-সহ</span></div>
+        <div class="hc">
+          <span class="grp">ট্রায়ালের যোগ্যতা যাচাই</span>
+          <span class="lab">AI ছাড়া</span>
+          <div class="plot"><span class="bar-s" style="--w:100%;--c:var(--s-base)" data-v="১০০" data-l="ট্রায়াল যাচাই · AI ছাড়া (ভিত্তি)"></span></div>
+          <span class="val">১০০</span>
+          <span class="lab">AI-সহ<small>TrialGPT, NCI পাইলট</small></span>
+          <div class="plot"><span class="bar-s" style="--w:57.4%;--c:var(--s-ai)" data-v="৫৭.৪ (৪২.৬% কম)" data-l="ট্রায়াল যাচাই · AI-সহ, TrialGPT"></span></div>
+          <span class="val">৫৭.৪</span>
+          <span class="grp">টিউমার বোর্ডের কেস-সারাংশ</span>
+          <span class="lab">AI ছাড়া<small>কেস-প্রতি ২০–৩০ মিনিট</small></span>
+          <div class="plot"><span class="bar-s" style="--w:100%;--c:var(--s-base)" data-v="১০০ (২০–৩০ মিনিট)" data-l="কেস-সারাংশ · AI ছাড়া"></span></div>
+          <span class="val">১০০</span>
+          <span class="lab">AI-সহ<small>কেস-প্রতি ১০–১৫ মিনিট</small></span>
+          <div class="plot"><span class="bar-s" style="--w:55%;--c:var(--s-ai)" data-v="~৫৫ (৫০–৬০)" data-l="কেস-সারাংশ · AI-সহ, একটি হাসপাতালের পাইলট"></span></div>
+          <span class="val">~৫৫</span>
+          <span></span>
+          <div class="axis"><span style="left:0">০</span><span style="left:25%">২৫</span><span style="left:50%">৫০</span><span style="left:75%">৭৫</span><span style="left:100%">১০০</span></div>
+          <span></span>
+        </div>
+        <p class="note">দুটোই ছোট পাইলট। TrialGPT-এ শর্ত-যাচাইয়ের নির্ভুলতা ৮৭.৩%, বিশেষজ্ঞের কাছাকাছি; কেস-সারাংশের পাইলটে কিছু ভুল পাওয়া গেছে। তাই ডাক্তারের যাচাই বাধ্যতামূলক।</p>
+        <details class="tv"><summary>টেবিল দেখুন</summary><div class="table-scroll"><table>
+          <thead><tr><th>কাজ</th><th>AI ছাড়া</th><th>AI-সহ</th><th>সূত্র</th></tr></thead>
+          <tbody><tr><td>ট্রায়ালের যোগ্যতা যাচাই</td><td>১০০</td><td>৫৭.৪</td><td>TrialGPT, Nature Communications ২০২৪</td></tr><tr><td>টিউমার বোর্ডের কেস-সারাংশ</td><td>২০–৩০ মিনিট</td><td>১০–১৫ মিনিট</td><td>Northside হাসপাতালের পাইলট, ২০২৫</td></tr></tbody>
+        </table></div></details>
+      </figure>
+
+      <figure class="chart" aria-labelledby="c4-t">
+        <h3 id="c4-t">AI-জাত ওষুধ এখন কোন ধাপে</h3>
+        <p class="sub">মানুষের ওপর ট্রায়ালে থাকা AI-জাত প্রকল্প, ২০২৬-এর শুরু · সংখ্যা</p>
+        <div class="hc">
+          <span class="lab">ফেজ ১</span>
+          <div class="plot"><span class="bar-s" style="--w:94%;--c:var(--s-ai)" data-v="~৯৪টি" data-l="ফেজ ১-এ AI-জাত প্রকল্প"></span></div>
+          <span class="val">~৯৪</span>
+          <span class="lab">ফেজ ২</span>
+          <div class="plot"><span class="bar-s" style="--w:56%;--c:var(--s-ai)" data-v="~৫৬টি" data-l="ফেজ ২-এ AI-জাত প্রকল্প"></span></div>
+          <span class="val">~৫৬</span>
+          <span class="lab">ফেজ ৩</span>
+          <div class="plot"><span class="bar-s" style="--w:15%;--c:var(--s-ai)" data-v="~১৫টি" data-l="ফেজ ৩-এ AI-জাত প্রকল্প"></span></div>
+          <span class="val">~১৫</span>
+          <span class="lab">অনুমোদিত নতুন অণু</span>
+          <div class="plot"></div>
+          <span class="val">০</span>
+          <span></span>
+          <div class="axis"><span style="left:0">০</span><span style="left:25%">২৫</span><span style="left:50%">৫০</span><span style="left:75%">৭৫</span><span style="left:100%">১০০</span></div>
+          <span></span>
+        </div>
+        <p class="note">মোট প্রায় ১৭৩টি; ট্র্যাকার সাইটের হিসাব, কোম্পানির ঘোষণায় যাচাই দরকার। প্রথম অনুমোদন সম্ভবত zasocitinib (FDA সিদ্ধান্ত ২০২৭-এর শুরুতে প্রত্যাশিত)।</p>
+        <details class="tv"><summary>টেবিল দেখুন</summary><div class="table-scroll"><table>
+          <thead><tr><th>ধাপ</th><th>প্রকল্প</th></tr></thead>
+          <tbody><tr><td>ফেজ ১</td><td>~৯৪</td></tr><tr><td>ফেজ ২</td><td>~৫৬</td></tr><tr><td>ফেজ ৩</td><td>~১৫</td></tr><tr><td>অনুমোদিত নতুন অণু</td><td>০</td></tr></tbody>
+        </table></div></details>
+      </figure>
+
+      <figure class="chart" aria-labelledby="c5-t">
+        <h3 id="c5-t">চিকিৎসা শুরুর আগে বায়োমার্কার পরীক্ষা</h3>
+        <p class="sub">NSCLC রোগী, যুক্তরাষ্ট্র, ২০২৫ · AI ছাড়া আজকের অবস্থা</p>
+        <div class="segbar" role="img" aria-label="৪৫% রোগীর প্রথম চিকিৎসার আগে পরীক্ষার প্রমাণ আছে, ৫৫% রোগীর নেই">
+          <div class="s-yes" style="width:45%">৪৫%</div>
+          <div class="s-no" style="width:55%">৫৫%</div>
+        </div>
+        <div class="keys"><span class="key" style="--k:var(--s-base)">পরীক্ষার প্রমাণ আছে</span><span class="key" style="--k:var(--line-strong)">প্রমাণ নেই</span></div>
+        <p class="note">উন্নত দেশেও অর্ধেকের বেশি রোগীর প্রথম চিকিৎসার আগে পরীক্ষার প্রমাণ মেলেনি (JAMA Network Open ২০২৫, সংবাদ-সারাংশ থেকে)। টার্গেটেড ওষুধ বাছাইয়ের আগে এই পরীক্ষাই লাগে। <b>AI-সহ লক্ষ্য:</b> Test-advisor এজেন্ট প্রত্যেক যোগ্য রোগীর জন্য পূর্ণ পরীক্ষার অনুস্মারক দেবে; কতটা বাড়বে তা পাইলটে মাপা হবে।</p>
+      </figure>
+
+      <figure class="chart" aria-labelledby="c6-t">
+        <h3 id="c6-t">একজন অনকোলজিস্টের ভাগে বছরে নতুন রোগী</h3>
+        <p class="sub">মোট নতুন রোগী ÷ বিশেষজ্ঞের সংখ্যা · আমাদের হিসাব</p>
+        <div class="hc">
+          <span class="lab">বাংলাদেশ<small>শুধু মেডিকেল অনকোলজিস্ট, ২২ জন</small></span>
+          <div class="plot"><span class="bar-s" style="--w:95.04%;--c:var(--s-base)" data-v="~৭,৬০৩ জন" data-l="বাংলাদেশ · ১,৬৭,২৫৬ ÷ ২২"></span></div>
+          <span class="val">~৭,৬০৩</span>
+          <span class="lab">বাংলাদেশ<small>মেডিকেল + রেডিয়েশন, ~২৭২ জন</small></span>
+          <div class="plot"><span class="bar-s" style="--w:7.69%;--c:var(--s-base)" data-v="~৬১৫ জন" data-l="বাংলাদেশ · ১,৬৭,২৫৬ ÷ ২৭২"></span></div>
+          <span class="val">~৬১৫</span>
+          <span class="lab">যুক্তরাষ্ট্র<small>হেমাটোলজি ও মেডিকেল অনকোলজিস্ট, ১৪,৫৪৭ জন</small></span>
+          <div class="plot"><span class="bar-s" style="--w:1.72%;--c:var(--s-base)" data-v="~১৩৭ জন" data-l="যুক্তরাষ্ট্র · ২০ লাখের বেশি ÷ ১৪,৫৪৭"></span></div>
+          <span class="val">~১৩৭</span>
+          <span></span>
+          <div class="axis"><span style="left:0">০</span><span style="left:25%">২,০০০</span><span style="left:50%">৪,০০০</span><span style="left:75%">৬,০০০</span><span style="left:100%">৮,০০০</span></div>
+          <span></span>
+        </div>
+        <p class="note">বিশেষজ্ঞের সংজ্ঞা দুই দেশে আলাদা, তাই এটা মোটামুটি তুলনা। তবু বাংলাদেশে একজন বিশেষজ্ঞের ওপর চাপ যুক্তরাষ্ট্রের চেয়ে কয়েক গুণ থেকে অর্ধশত গুণ বেশি। এখানে ডাক্তারের সময় বাঁচানোই AI-এর সবচেয়ে বড় কাজ।</p>
+        <details class="tv"><summary>টেবিল দেখুন</summary><div class="table-scroll"><table>
+          <thead><tr><th>দেশ ও বিশেষজ্ঞ</th><th>নতুন রোগী</th><th>বিশেষজ্ঞ</th><th>প্রতি জনে</th></tr></thead>
+          <tbody><tr><td>বাংলাদেশ, মেডিকেল অনকোলজিস্ট</td><td>১,৬৭,২৫৬</td><td>২২</td><td>~৭,৬০৩</td></tr><tr><td>বাংলাদেশ, মেডিকেল + রেডিয়েশন</td><td>১,৬৭,২৫৬</td><td>~২৭২</td><td>~৬১৫</td></tr><tr><td>যুক্তরাষ্ট্র, হেমাটোলজি ও মেডিকেল অনকোলজিস্ট</td><td>২০ লাখের বেশি</td><td>১৪,৫৪৭</td><td>~১৩৭</td></tr></tbody>
+        </table></div></details>
+      </figure>
+
+    </div>
+
+    <div class="table-scroll">
+      <table class="matrix" style="min-width:900px">
+        <thead><tr><th>কাজ</th><th>AI ছাড়া, আজ</th><th>AI-সহ, আজ (২০২৬)</th><th class="fc">২০২৭–২০৩০ · পূর্বাভাস</th><th class="fc">২০৩০-এর পর · পূর্বাভাস</th></tr></thead>
+        <tbody>
+          <tr><td><b>রোগীর ডেটা নজরদারি</b></td><td><span class="tag tag-neutral">প্রচলিত</span><br>ডাক্তার নিজে রিপোর্ট খুঁজে পড়েন; ব্যস্ত ক্লিনিকে নতুন ফল চোখ এড়াতে পারে</td><td><span class="tag tag-warn">পাইলট</span><br>এজেন্ট প্রতিটি নতুন ফল পড়ে সতর্ক করে; Microsoft, Stanford, Johns Hopkins পরীক্ষা করছে</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>যাচাই শেষে হাসপাতালে রুটিন ব্যবহার</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>বহু হাসপাতালের ডেটা মিলিয়ে ঝুঁকির আগাম অনুমান</td></tr>
+          <tr><td><b>পরীক্ষার পরামর্শ</b></td><td><span class="tag tag-crit">ঘাটতি</span><br>যুক্তরাষ্ট্রেই মাত্র ৪৫% NSCLC রোগীর প্রথম চিকিৎসার আগে পরীক্ষার প্রমাণ মেলে</td><td><span class="tag tag-warn">পাইলট</span><br>গাইডলাইন-ভিত্তিক অনুস্মারক; আমাদের MVP-র প্রথম কাজ</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>প্রায় প্রত্যেক যোগ্য রোগীর পূর্ণ পরীক্ষা (লক্ষ্য)</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>রক্ত ও স্লাইড থেকে AI-এর প্রাথমিক বাছাই, তারপর নিশ্চিত পরীক্ষা</td></tr>
+          <tr><td><b>টিউমার বোর্ড প্রস্তুতি</b></td><td><span class="tag tag-neutral">প্রচলিত</span><br>কেস-প্রতি সারাংশে ২০–৩০ মিনিট</td><td><span class="tag tag-warn">পাইলট</span><br>১০–১৫ মিনিট; কিছু ভুল ধরা পড়েছে, তাই যাচাই লাগে</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>যাচাই করা সারাংশ রুটিন</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>বোর্ডের আগে পূর্ণ প্রমাণ-প্যাকেট স্বয়ংক্রিয়</td></tr>
+          <tr><td><b>জিন রিপোর্ট ব্যাখ্যা</b></td><td><span class="tag tag-neutral">প্রচলিত</span><br>প্যাথলজিস্ট হাতে ডেটাবেস মেলান; বাংলাদেশে মলিকুলার ল্যাব ১–২টি</td><td><span class="tag tag-ok">প্রমাণিত</span><br>OncoKB/CIViC-ভিত্তিক স্বয়ংক্রিয় টিয়ারিং বাণিজ্যিক সফটওয়্যারে চালু; প্যাথলজিস্ট সই করেন</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>বাংলাদেশি রোগীর ডেটায় স্থানীয় যাচাই</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>DNA, RNA আর প্রোটিন একসাথে মিলিয়ে ব্যাখ্যা</td></tr>
+          <tr><td><b>ট্রায়াল খোঁজা</b></td><td><span class="tag tag-neutral">প্রচলিত</span><br>হাতে যোগ্যতার শর্ত মেলানো</td><td><span class="tag tag-warn">পাইলট</span><br>সময় ৪২.৬% কম, শর্ত-যাচাই ৮৭.৩% নির্ভুল (TrialGPT)</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>দেশজুড়ে স্বয়ংক্রিয় স্ক্রিনিং, ডাক্তার চূড়ান্ত করেন</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>বহু দেশের ট্রায়ালের সাথে রিয়েল-টাইম মিল</td></tr>
+          <tr><td><b>ওষুধ বাছাই (স্তর ১)</b></td><td><span class="tag tag-neutral">প্রচলিত</span><br>গাইডলাইন আর টিউমার বোর্ড</td><td><span class="tag tag-ok">প্রমাণিত</span><br>একাধিক জিন মিলিয়ে বেশি মিল মানে ভালো ফল (I-PREDICT); অনুমানে অফ-লেবেল দেওয়া কাজ করেনি (SHIVA)</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>প্রমাণ-র‍্যাঙ্কিংসহ প্রস্তাব রুটিন</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>কম্বিনেশন থেরাপির ব্যক্তিগত পরিকল্পনা</td></tr>
+          <tr><td><b>ডোজ (স্তর ২)</b></td><td><span class="tag tag-neutral">প্রচলিত</span><br>শরীরের মাপ, কিডনির কার্যক্ষমতা আর লেবেলের সূত্র</td><td><span class="tag tag-amber">গবেষণা</span><br>CURATE.AI: ১০ জন রোগী, ডোজ গড়ে ২০% কম, ২৭টির ২৬টি প্রস্তাব গৃহীত</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>র‍্যান্ডমাইজড ট্রায়ালের ফল আসার কথা</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>প্রমাণ মিললে মডেল-ভিত্তিক ডোজ রুটিন</td></tr>
+          <tr><td><b>প্রোটিন গঠন</b></td><td><span class="tag tag-neutral">প্রচলিত</span><br>পরীক্ষাগারে গঠন নির্ণয়ে মাস থেকে বছর</td><td><span class="tag tag-ok">প্রমাণিত</span><br>মিনিটে অনুমান; ওষুধ কোথায় বসবে ~৭৬% সঠিক (AlphaFold 3)</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>বাঁধন-শক্তির অনুমান আরও নির্ভুল (IsoDDE-এর মতো ইঞ্জিন)</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>প্রোটিনের নড়াচড়াসহ পূর্ণ অনুমান</td></tr>
+          <tr><td><b>নতুন অণু (স্তর ৩)</b></td><td><span class="tag tag-neutral">প্রচলিত</span><br>প্রার্থী পেতে ২.৫–৪ বছর; ক্যান্সারে ফেজ ১ থেকে অনুমোদন ~৫%</td><td><span class="tag tag-amber">গবেষণা</span><br>১–১.৫ বছর; ফেজ ১-এ ৮০–৯০% সফল, ফেজ ২-এ ~৪০%; অনুমোদিত নতুন অণু ০</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>প্রথম AI-ডিজাইন অণুর অনুমোদন সম্ভব (zasocitinib, সিদ্ধান্ত ২০২৭)</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>ফেজ ২-এ সফলতা বাড়বে কি না, এটাই বড় প্রশ্ন; এখনো অনিশ্চিত</td></tr>
+          <tr><td><b>রোগী-প্রতি কাস্টম ওষুধ</b></td><td><span class="tag tag-neutral">প্রচলিত</span><br>CAR-T: রোগীর নিজের কোষ বদলে চিকিৎসা, ২০১৭ থেকে অনুমোদিত</td><td><span class="tag tag-amber">গবেষণা</span><br>রোগী-নির্দিষ্ট mRNA ভ্যাকসিন ফেজ ৩-এ ঝুঁকি ৪২% কমিয়েছে; কম্পিউটারে নিওঅ্যান্টিজেন বাছাই</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>প্রথম রোগী-নির্দিষ্ট ক্যান্সার ভ্যাকসিনের অনুমোদন সম্ভব</td><td><span class="tag tag-fc">পূর্বাভাস</span><br>রোগী-প্রতি নতুন রাসায়নিক অণু: এখনো অনিশ্চিত</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="takeaway">
+      <h3>সারকথা</h3>
+      <p>আজ AI-এর প্রমাণিত লাভ দুই জায়গায়: ডাক্তারের কাজের সময় প্রায় ৪০–৫০% কমানো, আর ওষুধের প্রার্থী খোঁজায় প্রায় ২–৩ গুণ গতি। রোগে ওষুধ কাজ করবে কি না (ফেজ ২), সেই সফলতা এখনো খুব একটা বাড়েনি। বাংলাদেশে একজন অনকোলজিস্টের ওপর চাপ সবচেয়ে বেশি, তাই আমাদের প্ল্যাটফর্মের প্রথম কাজ ডাক্তারের সময় বাঁচানো আর কোনো পরীক্ষা বা ঝুঁকি বাদ না পড়তে দেওয়া।</p>
+    </div>
+  </section>
+
+  <section class="section" id="medicine">
+    <div class="section-head">
+      <p class="eyebrow">আপনার ভাবনা: “নতুন ওষুধ” মানে কী</p>
+      <h2>ওষুধের তিন স্তর</h2>
+      <p class="lede">প্রথমে প্রোটিন অনুযায়ী সঠিক ওষুধ বাছাই, তারপর রোগী অনুযায়ী রুটিন ও ডোজ ঠিক করা। কাজ না করলে ওষুধের রাসায়নিক গঠন বদলে নতুন বা কাস্টম ওষুধ। তিনটিই বিশ্বে হচ্ছে, তবে তিনটির বাস্তবতা খুব আলাদা।</p>
+    </div>
+    <div class="levels">
+      <article class="level l1">
+        <span class="lk">স্তর ১ · ক্লিনিক্যাল ট্র্যাক</span>
+        <h3>বাছাই: প্রোটিন অনুযায়ী অনুমোদিত ওষুধ</h3>
+        <ul>
+          <li>দায়ী জিন বা প্রোটিন → গাইডলাইন, OncoKB → অনুমোদিত ওষুধ বা চলমান ট্রায়াল</li>
+          <li>নিজের ক্যান্সারে অনুমোদিত মিল সবচেয়ে নির্ভরযোগ্য</li>
+          <li>অন্য ক্যান্সারের ওষুধ অনুমান করে দেওয়া দুর্বল: SHIVA ট্রায়ালে কাজ করেনি</li>
+        </ul>
+        <div class="verdict-line"><span class="tag tag-ok" style="align-self:flex-start">আজই সম্ভব</span><span>ডাক্তার অনুমোদন করেন।</span></div>
+      </article>
+      <article class="level l2">
+        <span class="lk">স্তর ২ · ক্লিনিক্যাল ট্র্যাক</span>
+        <h3>ব্যক্তিগতকরণ: রুটিন ও ডোজ</h3>
+        <ul>
+          <li>কিডনি-লিভারের কার্যক্ষমতা, ওজন-উচ্চতা, জিন (যেমন DPYD), পার্শ্বপ্রতিক্রিয়া অনুযায়ী ডোজ</li>
+          <li>সূত্র-ভিত্তিক হিসাব আজকের মানসম্মত চর্চা</li>
+          <li>AI দিয়ে প্রতি রোগীর আলাদা ডোজ (CURATE.AI) ও রোগীর কোষে ওষুধ পরীক্ষা (EXALT) সফল, তবে ছোট গবেষণায়</li>
+        </ul>
+        <div class="verdict-line"><span class="tag tag-warn" style="align-self:flex-start">সম্ভব, AI-অংশ গবেষণা পর্যায়ে</span><span>ফার্মাসিস্ট ও ডাক্তার যাচাই করে সই করেন।</span></div>
+      </article>
+      <article class="level l3">
+        <span class="lk">স্তর ৩ · গবেষণা ট্র্যাক</span>
+        <h3>পরিবর্তিত বা নতুন অণু</h3>
+        <ul>
+          <li>মিউটেশনের কারণে ওষুধ কাজ না করলে রাসায়নিক গঠন বদলে নতুন অণুর প্রস্তাব</li>
+          <li>বিশ্বে হচ্ছে মিউটেশন-প্রতি, রোগী-প্রতি নয়; প্রতিটি নতুন অণুতে বছর লাগে</li>
+          <li>রোগী-প্রতি কাস্টম ওষুধ আজ সম্ভব mRNA ভ্যাকসিন, ASO, জিন এডিটিং, CAR-T-এ</li>
+        </ul>
+        <div class="verdict-line"><span class="tag tag-amber" style="align-self:flex-start">সম্ভব, তবে বছর লাগে</span><span>ল্যাব, প্রি-ক্লিনিক্যাল আর ট্রায়াল পেরোতে হয়; সরাসরি রোগীকে নয়।</span></div>
+      </article>
+    </div>
+
+    <div class="callout">
+      <h3>রোগী-প্রতি ভ্যাকসিন সম্ভব, অথচ রোগী-প্রতি নতুন রাসায়নিক ওষুধ কেন নয়</h3>
+      <div class="compare">
+        <div><b>“প্রোগ্রামযোগ্য” ওষুধ: mRNA, ASO, জিন এডিটিং</b><span>প্ল্যাটফর্ম একই থাকে, শুধু জেনেটিক সিকোয়েন্স বদলায়। নিরাপত্তা ও উৎপাদনের জ্ঞান আগে থেকেই আছে, তাই একজন রোগীর জন্য ৬–১২ মাসে বানানো গেছে (milasen ২০১৯, baby KJ ২০২৫)।</span></div>
+        <div><b>ছোট-অণু (small molecule) রাসায়নিক ওষুধ</b><span>একটি পরমাণু বদলালেই শরীরে আচরণ বদলে যেতে পারে: বিষাক্ততা, বিপাক, অন্য প্রোটিনে বসা। তাই প্রতিটি নতুন অণুর সংশ্লেষণ, বিষাক্ততা পরীক্ষা, মানসম্মত উৎপাদন আর নিয়ন্ত্রক অনুমতি লাগে।</span></div>
+      </div>
+    </div>
+
+    <div class="answer">
+      <h3>তাহলে কি এটা ১০০% সম্ভব?</h3>
+      <p>না। চিকিৎসায় কোনো পদ্ধতিই ১০০% নির্ভুল নয়, আর AI-এর অনুমান মাঝারি মানের। তবে প্রতিটি স্তরের উত্তর আলাদা:</p>
+      <ol>
+        <li><b>স্তর ১ আজই বানানো যায়।</b> রোগীর সবচেয়ে বড় ও দ্রুত উপকার এখানেই।</li>
+        <li><b>স্তর ২-এর হিসাব-ভিত্তিক অংশ আজই বানানো যায়।</b> AI-ভিত্তিক ব্যক্তিগত ডোজের জন্য বড় র‍্যান্ডমাইজড প্রমাণ এখনো বাকি; তাই এটা প্রস্তাব হিসেবে দেখাবে, ডাক্তার সিদ্ধান্ত নেবেন।</li>
+        <li><b>স্তর ৩ বাস্তব, তবে গবেষণার পথ।</b> প্ল্যাটফর্ম অণুর প্রস্তাব আর তার অনিশ্চয়তা দেখাবে, যা মেডিসিনাল কেমিস্ট ও অংশীদার ল্যাব যাচাই করবে। আজকের রোগী উপকার পাবেন নতুন প্রজন্মের ওষুধের ট্রায়ালে যুক্ত হয়ে।</li>
+      </ol>
+    </div>
+
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>নির্ভুলতার মাপ</th><th>সংখ্যা</th><th>মানে</th></tr></thead>
+        <tbody>
+          <tr><td>AI-আবিষ্কৃত অণু, ফেজ ১ সফলতা</td><td class="num">৮০–৯০% (২৪টির ২১টি)</td><td>নিরাপত্তা ও শরীরে আচরণের অনুমানে AI ভালো</td></tr>
+          <tr><td>AI-আবিষ্কৃত অণু, ফেজ ২ সফলতা</td><td class="num">~৪০% (১০টির ৪টি)</td><td>রোগে কাজ করবে কি না, সেই অনুমানে AI এখনো সাধারণ শিল্প-গড়ের সমান</td></tr>
+          <tr><td>ক্যান্সারের ওষুধ, ফেজ ১ থেকে অনুমোদন</td><td class="num">~৫% (২০০৬–২০১৫)</td><td>সব রোগের মধ্যে সবচেয়ে কম; ক্যান্সারে নতুন ওষুধ সবচেয়ে কঠিন</td></tr>
+          <tr><td>AlphaFold 3: ওষুধ প্রোটিনে কোথায় বসবে</td><td class="num">~৭৬% সঠিক (পকেট জানা থাকলে ~৯০%)</td><td>গঠন বোঝায় খুব কাজের, তবে প্রতি চারটির একটি ভুল হতে পারে</td></tr>
+          <tr><td>বাঁধন-শক্তির অনুমান (Boltz-2 বনাম পদার্থবিদ্যা-ভিত্তিক FEP+)</td><td class="num">r = ০.৬৬ বনাম ০.৭৮</td><td>অণুগুলো মোটামুটি ক্রমে সাজাতে পারে; ল্যাবে যাচাই বাধ্যতামূলক</td></tr>
+          <tr><td>AI-আবিষ্কৃত ওষুধের FDA অনুমোদন</td><td class="num">মধ্য-২০২৬ পর্যন্ত ০টি</td><td>সবচেয়ে এগিয়ে থাকা rentosertib ফেজ ৩-এ (জুলাই ২০২৬ থেকে)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" id="world">
+    <div class="section-head">
+      <p class="eyebrow">বিশ্বে এখন কী হচ্ছে</p>
+      <h2>বারোটি বাস্তব উদাহরণ, সংখ্যাসহ</h2>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>স্তর</th><th>উদাহরণ</th><th>কী করা হয়েছে</th><th>ফলাফল</th><th>আমাদের জন্য শিক্ষা</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag tag-ok">১</span></td><td>SHIVA, ফ্রান্স (২০১৫)</td><td>জিন দেখে অন্য ক্যান্সারের টার্গেটেড ওষুধ অফ-লেবেলে, র‍্যান্ডমাইজড</td><td>মাত্র ২৬% রোগী ওষুধ-মিলের যোগ্য; রোগ নিয়ন্ত্রণের সময় উল্লেখযোগ্যভাবে বাড়েনি</td><td>অনুমান করে মেলানো দুর্বল; গাইডলাইন-ভিত্তিক মিল আগে</td></tr>
+          <tr><td><span class="tag tag-ok">১</span></td><td>NCI-MATCH, যুক্তরাষ্ট্র</td><td>টিউমারের জিন দেখে ওষুধ, ক্যান্সারের ধরন নির্বিশেষে</td><td>~৩৮%-এর টার্গেটযোগ্য মিউটেশন, ~১৮% ওষুধ পেয়েছেন; বেশিরভাগ শাখা লক্ষ্যে পৌঁছায়নি; BRAF V600E শাখায় ৩৩–৩৮% সাড়া</td><td>সঠিক জিন-ওষুধ জোড়ায় কাজ করে, সবখানে নয়</td></tr>
+          <tr><td><span class="tag tag-ok">১</span></td><td>I-PREDICT, যুক্তরাষ্ট্র (২০১৯)</td><td>একাধিক জিন পরিবর্তন একসাথে মিলিয়ে কম্বিনেশন ওষুধ</td><td>বেশি মিল (matching score) মানে ভালো রোগ নিয়ন্ত্রণ, বেশি দিন অগ্রগতি-মুক্ত ও বেশি আয়ু</td><td>জটিল মিলানোর কাজটা AI-এর জন্য আদর্শ</td></tr>
+          <tr><td><span class="tag tag-warn">২</span></td><td>CURATE.AI, সিঙ্গাপুর</td><td>রোগীর নিজের ডেটা থেকে AI দিয়ে প্রতি চক্রের ডোজ</td><td>১০ জন রোগী; ডাক্তার ২৭টির মধ্যে ২৬টি প্রস্তাব গ্রহণ করেন; ডোজ গড়ে ২০% কম</td><td>স্তর ২ সম্ভব; র‍্যান্ডমাইজড প্রমাণ বাকি</td></tr>
+          <tr><td><span class="tag tag-warn">২</span></td><td>EXALT, ভিয়েনা</td><td>রোগীর ক্যান্সার কোষে ল্যাবে বহু ওষুধ পরীক্ষা করে বাছাই</td><td>৫৬ জনের ৫৪% আগের চিকিৎসার চেয়ে অন্তত ১.৩ গুণ বেশি সময় রোগ নিয়ন্ত্রণে</td><td>রক্তের ক্যান্সারে প্রমাণ আছে; কঠিন টিউমারে গবেষণা চলছে</td></tr>
+          <tr><td><span class="tag tag-amber">৩</span></td><td>চতুর্থ প্রজন্মের EGFR ওষুধ</td><td>osimertinib-প্রতিরোধী C797S মিউটেশনের জন্য রাসায়নিকভাবে নতুন অণু</td><td>BH-30643: ৪০ জনে ৪৫% সাড়া (ফেজ ১/২, ২০২৬); এখনো অনুমোদিত নয়</td><td>“ওষুধ বদলানো” সত্যিই হচ্ছে, মিউটেশন-প্রতি; C797S চিহ্নিত হওয়ার ১০ বছর পরও অনুমোদন নেই</td></tr>
+          <tr><td><span class="tag tag-amber">৩</span></td><td>Daraxonrasib (RAS)</td><td>দশকের পর দশক “ওষুধ-অযোগ্য” ধরা RAS প্রোটিনের জন্য নতুন অণু</td><td>ফেজ ৩: গড় আয়ু ১৩.২ বনাম ৬.৭ মাস, মৃত্যুঝুঁকি ৬০% কম (অগ্ন্যাশয় ক্যান্সার, NEJM ২০২৬)</td><td>প্রোটিন-গঠন-ভিত্তিক ডিজাইন বড় সাফল্য আনতে পারে</td></tr>
+          <tr><td><span class="tag tag-amber">৩</span></td><td>Zasocitinib</td><td>কম্পিউটেশনাল পদ্ধতিতে ডিজাইন করা অণু (সোরিয়াসিস)</td><td>দুটি ফেজ ৩ ট্রায়ালে সব লক্ষ্য পূরণ (১,৮০১ জন); FDA আবেদন গৃহীত</td><td>কম্পিউটার-ডিজাইন অণু অনুমোদনের দোরগোড়ায়</td></tr>
+          <tr><td><span class="tag tag-amber">৩</span></td><td>Milasen (২০১৯)</td><td>একজন শিশুর নির্দিষ্ট মিউটেশনের জন্য বানানো antisense ওষুধ</td><td>প্রথম যোগাযোগের ১ বছরের মধ্যে চিকিৎসা শুরু</td><td>প্রোগ্রামযোগ্য ওষুধে রোগী-প্রতি চিকিৎসা সম্ভব</td></tr>
+          <tr><td><span class="tag tag-amber">৩</span></td><td>Baby KJ (২০২৫)</td><td>একজন শিশুর জন্য CRISPR base editing</td><td>প্রায় ৬ মাসে তৈরি; NEJM-এ প্রকাশিত</td><td>একই শিক্ষা; ক্যান্সার নয়, বিরল জেনেটিক রোগ</td></tr>
+          <tr><td><span class="tag tag-amber">৩</span></td><td>Autogene cevumeran (অগ্ন্যাশয়)</td><td>প্রতি রোগীর টিউমার থেকে আলাদা mRNA ভ্যাকসিন</td><td>১৬ জনের ৮ জনে শক্তিশালী ইমিউন সাড়া; তাদের ৬ জন ৩ বছর রোগমুক্ত; ফেজ ২ চলছে</td><td>ক্যান্সারে রোগী-প্রতি ওষুধের সবচেয়ে বাস্তব পথ</td></tr>
+          <tr><td><span class="tag tag-amber">৩</span></td><td>Intismeran (মেলানোমা)</td><td>রোগী-নির্দিষ্ট mRNA ভ্যাকসিন + pembrolizumab</td><td>ফেজ ৩: ফিরে আসা বা মৃত্যুর ঝুঁকি ৪২% কম (ESMO ২০২৬)</td><td>রোগী-প্রতি ওষুধ এখন বড় ট্রায়ালে প্রমাণিত হচ্ছে</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" id="feasibility">
+    <div class="section-head">
+      <p class="eyebrow">আপনার ভাবনার প্রতিটি ধাপ</p>
+      <h2>কোন ধাপ কতটা বাস্তব</h2>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>ধাপ</th><th>২০২৬ সালের বাস্তবতা</th><th>অবস্থা</th></tr></thead>
+        <tbody>
+          <tr><td>রিপোর্ট, লক্ষণ, স্ক্যান রিয়েল-টাইমে নজরে রাখা; কখন কোন টেস্ট দরকার বলা</td><td>নিয়ম-ভিত্তিক ইঞ্জিন + AI এজেন্ট + গাইডলাইন খোঁজা। Microsoft, Stanford এমন এজেন্ট পরীক্ষা করছে; ২০২৬-এর এক গবেষণায় ৯৪% ক্ষেত্রে সঠিক গাইডলাইন।</td><td><span class="tag tag-ok">সম্ভব</span></td></tr>
+          <tr><td>দায়ী জিন বা প্রোটিন খুঁজে বের করা</td><td>NGS + OncoKB/CIViC + AMP টিয়ার। H&amp;E স্লাইড থেকে AI কিছু মিউটেশন আন্দাজ করে (AUC ০.৬–০.৮৯), শুধু নিশ্চিত পরীক্ষার আগে বাছাইয়ে।</td><td><span class="tag tag-ok">সম্ভব</span></td></tr>
+          <tr><td>AlphaFold 3-এর মতো মডেলে প্রোটিনের 3D গঠন</td><td>ব্যাখ্যা ও গবেষণায় চমৎকার। AF3 weights শুধু অবাণিজ্যিক কাজে; বাণিজ্যিক পণ্যে লাইসেন্স বা বিকল্প মডেল লাগবে।</td><td><span class="tag tag-warn">শর্তসাপেক্ষ</span></td></tr>
+          <tr><td>ওষুধ বাছাই ও ডোজ (স্তর ১–২)</td><td>গাইডলাইন, লেবেল আর সূত্র-ভিত্তিক হিসাব; AI-ভিত্তিক ব্যক্তিগত ডোজ গবেষণা পর্যায়ে।</td><td><span class="tag tag-ok">সম্ভব</span></td></tr>
+          <tr><td>IsoDDE-এর মতো ইঞ্জিনে নতুন অণু (স্তর ৩)</td><td>IsoDDE (ফেব্রুয়ারি ২০২৬) শুধু অংশীদার কোম্পানির জন্য; পারফরম্যান্সের দাবি কোম্পানির নিজের।</td><td><span class="tag tag-amber">গবেষণা পর্যায়</span></td></tr>
+          <tr><td>নতুন অণু রোগীকে দেওয়া</td><td>প্রি-ক্লিনিক্যাল পরীক্ষা, নিয়ন্ত্রক অনুমতি আর ফেজ ১–৩ ট্রায়াল বাধ্যতামূলক।</td><td><span class="tag tag-crit">বছর লাগে</span></td></tr>
+          <tr><td>চূড়ান্ত সিদ্ধান্ত ডাক্তারের</td><td>FDA-র Clinical Decision Support নির্দেশিকা (জানুয়ারি ২০২৬) ঠিক এটাই চায়: ডাক্তার যেন প্রস্তাবের ভিত্তি নিজে যাচাই করতে পারেন।</td><td><span class="tag tag-ok">আবশ্যিক</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tracks" aria-label="দুই ট্র্যাক">
+      <div class="track">
+        <span class="tag tag-ai" style="align-self:flex-start">ক্লিনিক্যাল ট্র্যাক · স্তর ১–২</span>
+        <h3>রোগীর চিকিৎসা</h3>
+        <ul>
+          <li>অনুমোদিত ওষুধ, গাইডলাইন, নিবন্ধিত ট্রায়াল, যাচাই করা ডোজ</li>
+          <li>ডাক্তারের অনুমোদন ছাড়া কোনো প্রস্তাব কার্যকর হয় না</li>
+          <li>রোগীর পরিচয়সহ ডেটা, দেশের ভেতরে সংরক্ষিত</li>
+        </ul>
+      </div>
+      <div class="wall" aria-hidden="true"></div>
+      <div class="track">
+        <span class="tag tag-amber" style="align-self:flex-start">গবেষণা ট্র্যাক · স্তর ৩</span>
+        <h3>নতুন বা পরিবর্তিত অণু</h3>
+        <ul>
+          <li>পরিচয়-মোছা (de-identified) কোহর্ট ডেটা</li>
+          <li>টার্গেট ডসিয়ার → Analog Lab → মেডিসিনাল কেমিস্ট → অংশীদার ল্যাব → ট্রায়াল</li>
+          <li>এখানকার ফল কখনো রোগীর চার্টে চিকিৎসা-প্রস্তাব হয় না</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="example">
+    <div class="section-head">
+      <p class="eyebrow">ডাক্তারের স্ক্রিনে একটি পূর্ণ কেস</p>
+      <h2>রাহেলা খাতুনের কেস</h2>
+      <p class="lede">রাহেলা একজন কাল্পনিক রোগী। দেখানো হলো ডাক্তার ও ক্লিনিক্যাল টিম স্ক্রিনে কী দেখেন: কোন এজেন্ট কখন কী প্রস্তাব দেয়, কেন দেয়, আর কোথায় ডাক্তার সিদ্ধান্ত নেন। সব ডেটা উদাহরণ; এটি চিকিৎসা-পরামর্শ নয়।</p>
+    </div>
+
+    <div class="patient" aria-label="রোগীর তথ্য">
+      <div><span class="k">রোগী</span><span>রাহেলা খাতুন (কাল্পনিক)</span></div>
+      <div><span class="k">বয়স · লিঙ্গ</span><span>৫৪ · নারী</span></div>
+      <div><span class="k">ধূমপান</span><span>কখনো করেননি</span></div>
+      <div><span class="k">চলমান ওষুধ</span><span>বিষণ্নতার একটি ওষুধ</span></div>
+    </div>
+
+    <div class="timeline">
+
+      <div class="step">
+        <div class="when"><b>ধাপ ১</b><span>দিন ০</span></div>
+        <div class="step-body">
+          <h3>রেফারেল আসা</h3>
+          <p class="facts">স্থানীয় ডাক্তারের রেফারেল চিঠি আর এক্স-রে হাসপাতালের সিস্টেমে এল। চিঠিতে লেখা: <strong>৬ সপ্তাহ ধরে কাশি</strong>, ৩ মাসে <strong>৫ কেজি ওজন কমা</strong>; এক্স-রে-তে ডান ফুসফুসে ছায়া।</p>
+          <div class="card ai-card">
+            <div class="who"><span class="tag tag-ai">AI · Sentinel এজেন্ট</span><span>জরুরিতা: আজকের তালিকায়</span></div>
+            <p class="proposal">বুক ও পেটের কনট্রাস্ট CT করান, আর দুই সপ্তাহের মধ্যে অনকোলজি ক্লিনিকে সময় দিন।</p>
+            <p class="meta"><b>কারণ:</b> দীর্ঘ কাশি, ওজন কমা আর এক্স-রে-তে ছায়া একসাথে ফুসফুস ক্যান্সারের সন্দেহ জাগায়; গাইডলাইনে প্রথম ধাপ CT। <b>উৎস:</b> রেফারেল চিঠি, এক্স-রে রিপোর্ট। <b>আত্মবিশ্বাস:</b> উচ্চ।</p>
+          </div>
+          <div class="card dr-card">
+            <div class="who"><span class="tag tag-dr">ডাক্তার · সিদ্ধান্ত</span></div>
+            <p>অনুমোদন করলেন। CT-র অর্ডার তার সই নিয়ে হাসপাতালের সিস্টেমে গেল।</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="when"><b>ধাপ ২</b><span>দিন ৪</span></div>
+        <div class="step-body">
+          <h3>CT রিপোর্ট আর পরের পরীক্ষা</h3>
+          <p class="facts">CT: ডান ফুসফুসে <strong>৩.৪ সেমি টিউমার</strong>, বুকের মাঝে বড় লিম্ফ নোড, একটি হাড়ে ক্ষত। স্টেজ IV-এর সন্দেহ।</p>
+          <div class="card ai-card">
+            <div class="who"><span class="tag tag-ai">AI · Test-advisor এজেন্ট</span></div>
+            <p class="proposal">CT-গাইডেড বায়োপসি; টিস্যু থেকে PD-L1 আর বড় NGS প্যানেল (EGFR, ALK, ROS1, BRAF, KRAS, MET, RET, NTRK, HER2); স্টেজিংয়ের জন্য ব্রেইন MRI।</p>
+            <p class="meta"><b>কারণ:</b> অ-ধূমপায়ী নারীর ফুসফুসের অ্যাডেনোকার্সিনোমায় EGFR পরিবর্তনের সম্ভাবনা বেশি; গাইডলাইন চিকিৎসা শুরুর আগে পূর্ণ বায়োমার্কার পরীক্ষা চায়। <b>অনিশ্চয়তা:</b> টিস্যু কম হলে NGS ব্যর্থ হতে পারে।</p>
+          </div>
+          <div class="card dr-card">
+            <div class="who"><span class="tag tag-dr">ডাক্তার · পরিবর্তনসহ অনুমোদন</span></div>
+            <p>সাথে রক্ত থেকে লিকুইড বায়োপসি (ctDNA) যোগ করলেন। কারণ লিখলেন: “রোগী দূর থেকে আসেন, দ্বিতীয়বার বায়োপসি এড়াতে চাই।” সিস্টেম কারণটি সংরক্ষণ করে; পরে মূল্যায়নে কাজে লাগে।</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="when"><b>ধাপ ৩</b><span>দিন ১৮</span></div>
+        <div class="step-body">
+          <h3>জিন রিপোর্ট: দায়ী প্রোটিন খুঁজে পাওয়া</h3>
+          <p class="facts">প্যাথলজি: <strong>ফুসফুসের অ্যাডেনোকার্সিনোমা, স্টেজ IV</strong>। NGS: <span class="mono">EGFR L858R</span> (exon 21, VAF ৩১%), <span class="mono">TP53</span> মিউটেশন, PD-L1 TPS ১০%।</p>
+          <div class="card ai-card">
+            <div class="who"><span class="tag tag-ai">AI · Genomic-interpreter এজেন্ট</span></div>
+            <p class="proposal">EGFR L858R এই ক্যান্সারের চালক (driver)। OncoKB Level 1, AMP/ASCO/CAP Tier IA। TP53 রোগের গতি বোঝায়, সরাসরি ওষুধের লক্ষ্য নয়। বংশগত (germline) উৎসের ইঙ্গিত নেই।</p>
+            <p class="meta"><b>প্রমাণ:</b> OncoKB ও গাইডলাইনে EGFR L858R-এর জন্য অনুমোদিত ওষুধ আছে। <b>আত্মবিশ্বাস:</b> উচ্চ।</p>
+          </div>
+          <div class="card dr-card">
+            <div class="who"><span class="tag tag-dr">মলিকুলার প্যাথলজিস্ট · যাচাই ও সই</span></div>
+            <p>ভ্যারিয়েন্টের ব্যাখ্যা মিলিয়ে দেখে রিপোর্টে সই করলেন।</p>
+          </div>
+          <figure class="figure">
+            <svg viewBox="0 0 560 300" role="img" aria-labelledby="egfr-t egfr-d">
+              <title id="egfr-t">EGFR কাইনেজ অংশের স্কিম্যাটিক</title>
+              <desc id="egfr-d">উপরে N-lobe, নিচে C-lobe, মাঝখানে ওষুধের পকেট। পকেটের কিনারায় C797, নিচের activation loop-এ L858R।</desc>
+              <ellipse cx="200" cy="92" rx="140" ry="58" fill="var(--hema-soft)" stroke="var(--hema)" stroke-width="1.5"/>
+              <ellipse cx="215" cy="214" rx="175" ry="66" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.5"/>
+              <text x="120" y="84" fill="var(--hema)" font-family="IBM Plex Mono, monospace" font-size="13">N-lobe</text>
+              <text x="120" y="250" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="13">C-lobe</text>
+              <ellipse cx="262" cy="152" rx="50" ry="17" fill="var(--surface)" stroke="var(--ink)" stroke-dasharray="4 3" stroke-width="1.2"/>
+              <polygon points="250,143 262,137 274,143 274,159 262,165 250,159" fill="var(--amber)"/>
+              <path d="M150 196 C 170 222, 215 226, 240 200" fill="none" stroke="var(--ink)" stroke-width="2.5"/>
+              <circle cx="196" cy="216" r="7" fill="var(--crit)"/>
+              <circle cx="306" cy="146" r="7" fill="var(--surface)" stroke="var(--crit)" stroke-width="3"/>
+              <line x1="313" y1="143" x2="378" y2="112" stroke="var(--muted)" stroke-width="1"/>
+              <text x="382" y="108" fill="var(--ink)" font-family="Hind Siliguri, sans-serif" font-size="14">C797: ওষুধ এখানে</text>
+              <text x="382" y="126" fill="var(--ink)" font-family="Hind Siliguri, sans-serif" font-size="14">শক্ত বন্ধনে আটকায়</text>
+              <line x1="276" y1="156" x2="378" y2="168" stroke="var(--muted)" stroke-width="1"/>
+              <text x="382" y="172" fill="var(--amber)" font-family="Hind Siliguri, sans-serif" font-size="14">ওষুধ (EGFR TKI)</text>
+              <line x1="190" y1="222" x2="120" y2="284" stroke="var(--muted)" stroke-width="1"/>
+              <text x="8" y="296" fill="var(--crit)" font-family="Hind Siliguri, sans-serif" font-size="14">L858R · activation loop</text>
+            </svg>
+            <figcaption><span class="tag tag-amber">Structure-insight এজেন্ট</span> L858R পরিবর্তনটি EGFR প্রোটিনের কাইনেজ অংশের activation loop-এ। এতে প্রোটিনটি সারাক্ষণ “চালু” থাকে আর কোষকে থামাহীন বিভাজনের সংকেত দেয়। EGFR TKI ওষুধ মাঝখানের পকেটে বসে সংকেত বন্ধ করে। এটি স্কিম্যাটিক; অ্যাপে Mol* দিয়ে আসল 3D গঠন ঘোরানো যাবে। গঠন শুধু ব্যাখ্যার জন্য; ওষুধ বাছাই হয় গাইডলাইনের প্রমাণে।</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="when"><b>ধাপ ৪</b><span>দিন ২০</span></div>
+        <div class="step-body">
+          <h3>টিউমার বোর্ড: স্তর ১, ওষুধ বাছাই</h3>
+          <p class="facts">Report-writer এজেন্ট সভার আগেই এক পাতার কেস-সারাংশ বানাল; Guideline, Trial-matcher আর Pharmacology-safety এজেন্টের ফল তাতে যুক্ত।</p>
+          <div class="card ai-card">
+            <div class="who"><span class="tag tag-ai">AI · Guideline এজেন্ট · তিনটি অপশন</span></div>
+            <div class="options">
+              <div class="opt chosen"><b>A. Osimertinib একক</b><span>NCCN/ESMO-র প্রথম সারির অপশন (FLAURA ট্রায়াল)। মুখে খাওয়ার ওষুধ।</span></div>
+              <div class="opt"><b>B. Osimertinib + কেমোথেরাপি</b><span>FLAURA2 ট্রায়ালে রোগ নিয়ন্ত্রণ দীর্ঘ, তবে পার্শ্বপ্রতিক্রিয়া ও হাসপাতালে আসা বেশি।</span></div>
+              <div class="opt"><b>C. Amivantamab + lazertinib</b><span>MARIPOSA ট্রায়াল। দেশে প্রাপ্যতা ও খরচ যাচাই দরকার।</span></div>
+            </div>
+            <p class="meta"><b>নিরাপত্তা পরীক্ষা:</b> রাহেলার বিষণ্নতার ওষুধ হৃদস্পন্দনের QT ব্যবধান বাড়াতে পারে; osimertinib-ও পারে। প্রস্তাব: শুরুর আগে ECG ও ইলেক্ট্রোলাইট, আর লেবেল অনুযায়ী পর্যবেক্ষণ। <b>স্থানীয় তথ্য:</b> দেশের ফর্মুলারি থেকে প্রতিটি ওষুধের প্রাপ্যতা ও আনুমানিক খরচ।</p>
+          </div>
+          <div class="card dr-card">
+            <div class="who"><span class="tag tag-dr">টিউমার বোর্ড · সিদ্ধান্ত</span></div>
+            <p>অপশন A বেছে নিলেন। কারণ: রোগীর সাথে আলোচনায় তার পছন্দ, খরচ, আর দূর থেকে বারবার কেমো নিতে আসার কষ্ট। এই বিবেচনাগুলো মানুষের; AI শুধু অপশনগুলো প্রমাণসহ সাজিয়ে দিয়েছে।</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="when"><b>ধাপ ৫</b><span>মাস ১–১৩</span></div>
+        <div class="step-body">
+          <h3>নিয়মিত নজরদারি</h3>
+          <p class="facts">Sentinel এজেন্ট রক্ত পরীক্ষা, প্রতি তিন মাসের CT (RECIST মাপ), ctDNA আর নার্সের ফলো-আপ কলের লক্ষণ-এন্ট্রি দেখে। ষষ্ঠ সপ্তাহে নার্স গ্রেড-২ ডায়রিয়া লিখলেন; সতর্কতা অনকোলজিস্টের আজকের তালিকায় গেল, তিনি সহায়ক চিকিৎসা অনুমোদন করলেন।</p>
+          <figure class="figure">
+            <svg viewBox="0 0 600 222" role="img" aria-labelledby="recist-t recist-d">
+              <title id="recist-t">টিউমারের মোট মাপ, মাস অনুযায়ী</title>
+              <desc id="recist-d">মাস ০-তে ৬২ মিমি, মাস ৩-এ ৩৮, মাস ৬-এ ৩৩, মাস ৯-এ ৩২ (সবচেয়ে কম), মাস ১২-তে ৩৪, মাস ১৪-তে ৪৫ মিমি।</desc>
+              <g stroke="var(--line)" stroke-width="1">
+                <line x1="60" y1="190" x2="570" y2="190"/>
+                <line x1="60" y1="141.4" x2="570" y2="141.4"/>
+                <line x1="60" y1="92.9" x2="570" y2="92.9"/>
+                <line x1="60" y1="44.3" x2="570" y2="44.3"/>
+              </g>
+              <g fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="12" text-anchor="end">
+                <text x="52" y="194">0</text>
+                <text x="52" y="145">20</text>
+                <text x="52" y="97">40</text>
+                <text x="52" y="48">60</text>
+              </g>
+              <g fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="12" text-anchor="middle">
+                <text x="60" y="210">0</text>
+                <text x="169.3" y="210">3</text>
+                <text x="278.6" y="210">6</text>
+                <text x="387.9" y="210">9</text>
+                <text x="497.1" y="210">12</text>
+                <text x="570" y="210">14</text>
+              </g>
+              <text x="60" y="14" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="12">মিমি · মাস</text>
+              <line x1="60" y1="84.6" x2="570" y2="84.6" stroke="var(--ok)" stroke-width="1.5" stroke-dasharray="6 4"/>
+              <line x1="387.9" y1="96.7" x2="570" y2="96.7" stroke="var(--crit)" stroke-width="1.5" stroke-dasharray="6 4"/>
+              <polyline points="60,39.4 169.3,97.7 278.6,109.9 387.9,112.3 497.1,107.4 570,80.7" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>
+              <g fill="var(--ink)">
+                <circle cx="60" cy="39.4" r="4.5"/>
+                <circle cx="169.3" cy="97.7" r="4.5"/>
+                <circle cx="278.6" cy="109.9" r="4.5"/>
+                <circle cx="387.9" cy="112.3" r="4.5"/>
+                <circle cx="497.1" cy="107.4" r="4.5"/>
+              </g>
+              <circle cx="570" cy="80.7" r="6" fill="var(--crit)"/>
+              <text x="562" y="66" fill="var(--crit)" font-family="Hind Siliguri, sans-serif" font-size="13" text-anchor="end">মাস ১৪: ৪৫ মিমি</text>
+            </svg>
+            <div class="chart-legend">
+              <span><span class="swatch-line" style="color:var(--ok)"></span>আংশিক সাড়ার রেখা (শুরুর চেয়ে −৩০%)</span>
+              <span><span class="swatch-line" style="color:var(--crit)"></span>অগ্রগতির সীমা (সবচেয়ে কম মাপ + ২০%)</span>
+            </div>
+            <div class="ctdna" aria-label="ctDNA ফলাফল">
+              <div><span class="mono">মাস ০</span><span>ctDNA ৩১%</span></div>
+              <div><span class="mono">মাস ৩</span><span>০.৪%</span></div>
+              <div class="nd"><span class="mono">মাস ৬</span><span>ধরা পড়েনি</span></div>
+              <div class="nd"><span class="mono">মাস ৯</span><span>ধরা পড়েনি</span></div>
+              <div class="up"><span class="mono">মাস ১২</span><span>০.৩% ফিরেছে</span></div>
+              <div class="up"><span class="mono">মাস ১৪</span><span>২.১%</span></div>
+            </div>
+            <figcaption>কাল্পনিক উদাহরণ ডেটা। টিউমারের মোট মাপ ৬২ থেকে ৩২ মিমিতে নামল (৪৮% ছোট, আংশিক সাড়া)। মাস ১২-তে ctDNA আবার দেখা দিল; CT-তে বাড়ার আগেই Sentinel এটাকে “নজরে রাখুন” হিসেবে দেখাল। ctDNA দেখে আপনাআপনি চিকিৎসা বদলায় না; প্রমাণ এখনো সব ক্ষেত্রে তা সমর্থন করে না।</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="when"><b>ধাপ ৬</b><span>মাস ১৪</span></div>
+        <div class="step-body">
+          <h3>ওষুধ কাজ কমাচ্ছে: কেন, আর এরপর কী</h3>
+          <p class="facts">CT-তে নতুন ক্ষত, মাপ অগ্রগতির সীমা পেরিয়েছে। নতুন লিকুইড বায়োপসিতে পাওয়া গেল <span class="mono">EGFR C797S</span>।</p>
+          <div class="card st-card">
+            <div class="who"><span class="tag tag-amber">AI · Structure-insight এজেন্ট</span></div>
+            <p class="proposal">Osimertinib যে C797 অবস্থানের সিস্টেইনের সাথে শক্ত রাসায়নিক বন্ধন তৈরি করে, সেখানে এখন সেরিন। ওষুধ আর আগের মতো আঁকড়ে ধরতে পারছে না, তাই কাজ কমেছে।</p>
+            <p class="meta">উপরের ছবিতে C797-এর জায়গাটা দেখুন।</p>
+          </div>
+          <div class="card ai-card">
+            <div class="who"><span class="tag tag-ai">AI · Guideline + Trial-matcher এজেন্ট · স্তর ১</span></div>
+            <p class="proposal">গাইডলাইন-ভিত্তিক পরবর্তী চিকিৎসা (প্ল্যাটিনাম-পেমেট্রেক্সেড কেমোথেরাপি-ভিত্তিক রেজিমেন, প্রাপ্যতা অনুযায়ী amivantamab-সহ), আর C797S-এর জন্য চতুর্থ প্রজন্মের EGFR ওষুধের এখন রোগী নিচ্ছে এমন ট্রায়াল।</p>
+            <p class="meta">প্রতিটি ট্রায়ালের NCT নম্বর, ফেজ, নিকটতম সেন্টার, আর কোন শর্ত মেলে বা মেলে না, সব ClinicalTrials.gov থেকে সরাসরি আনা। AI নিজে থেকে কোনো ট্রায়াল নম্বর বানায় না।</p>
+          </div>
+          <div class="card dr-card">
+            <div class="who"><span class="tag tag-dr">ডাক্তার · সিদ্ধান্ত</span></div>
+            <p>ট্রায়ালের স্ক্রিনিংয়ে পাঠালেন। কাছের সেন্টারে জায়গা না থাকায় (উদাহরণ) কেমোথেরাপি-ভিত্তিক রেজিমেন বেছে নিলেন।</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="when"><b>ধাপ ৭</b><span>মাস ১৪</span></div>
+        <div class="step-body">
+          <h3>স্তর ২: রাহেলার জন্য ডোজ</h3>
+          <div class="card ai-card">
+            <div class="who"><span class="tag tag-ai">AI · Dose-optimizer এজেন্ট · ডোজ কার্ড</span></div>
+            <p class="proposal">কার্বোপ্ল্যাটিন ও পেমেট্রেক্সেডের ডোজ হিসাব, সব ইনপুট ও উৎসসহ।</p>
+            <div class="dose">
+              <span class="dk">কার্বোপ্ল্যাটিন</span><span class="formula">ডোজ (mg) = লক্ষ্য AUC × (GFR + ২৫)  · Calvert সূত্র</span>
+              <span class="dk">GFR কোথা থেকে</span><span>ক্রিয়েটিনিন (তারিখসহ), বয়স, ওজন থেকে creatinine clearance; ৭ দিনের পুরোনো ফল হলে কার্ড আটকে যায়</span>
+              <span class="dk">লক্ষ্য AUC</span><span>অনুমোদিত রেজিমেনের গাইডলাইন থেকে, সংস্করণসহ</span>
+              <span class="dk">পেমেট্রেক্সেড</span><span>ওজন ও উচ্চতা থেকে শরীরের পৃষ্ঠতল (BSA) অনুযায়ী; কিডনির সীমা পরীক্ষা</span>
+              <span class="dk">স্মরণ করিয়ে দেওয়া</span><span>লেবেল অনুযায়ী ফলিক অ্যাসিড ও ভিটামিন B12 প্রিমেডিকেশন</span>
+              <span class="dk">ঝুঁকি পরীক্ষা</span><span>QT-দীর্ঘকারী ওষুধ, কিডনি, রক্তকণিকার সংখ্যা</span>
+            </div>
+          </div>
+          <div class="card dr-card">
+            <div class="who"><span class="tag tag-dr">ফার্মাসিস্ট ও অনকোলজিস্ট · দুজনের যাচাই</span></div>
+            <p>ফার্মাসিস্ট হিসাব মিলিয়ে দেখলেন, অনকোলজিস্ট সই করলেন। এরপর অর্ডার হাসপাতালের সিস্টেমে গেল।</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step research">
+        <div class="when"><b>ধাপ ৮</b><span>গবেষণা ট্র্যাক</span></div>
+        <div class="step-body">
+          <h3>স্তর ৩: রাহেলার পরিচয় ছাড়া, ভবিষ্যতের রোগীদের জন্য</h3>
+          <p class="facts">প্ল্যাটফর্মে (কাল্পনিক) ১২০ জন EGFR রোগীর মধ্যে ১৪ জনের একই C797S প্রতিরোধ-প্যাটার্ন। পরিচয় মুছে কোহর্ট-স্তরের তথ্য গবেষণা অংশে যায়।</p>
+          <div class="card st-card">
+            <div class="who"><span class="tag tag-amber">AI · Discovery-liaison + Analog-lab এজেন্ট</span></div>
+            <p class="proposal">টার্গেট ডসিয়ার, তারপর C797S-যুক্ত EGFR-এ বসতে পারে এমন পরিবর্তিত অণুর প্রস্তাবের তালিকা। প্রতিটির সাথে অনুমিত বাঁধন-শক্তি, নির্বাচনী ক্ষমতা, শরীরে আচরণের ঝুঁকি আর অনিশ্চয়তা।</p>
+            <p class="meta">প্রধান বিজ্ঞানী ও বায়োসেফটি অফিসার অনুমোদন দেন → কম্পিউটেশনাল মেডিসিনাল কেমিস্ট যাচাই করেন → অংশীদার ল্যাবে সংশ্লেষণ ও পরীক্ষা → প্রি-ক্লিনিক্যাল → ট্রায়াল। বাস্তবে C797S চিহ্নিত হওয়ার প্রায় ১০ বছর পর এমন অণু (যেমন BH-30643) এখন ফেজ ১/২-এ।</p>
+          </div>
+          <p class="facts">আজকের রাহেলা উপকার পান অনুমোদিত ওষুধ, সঠিক ডোজ আর ট্রায়াল থেকে। ভবিষ্যতের রোগীরা উপকার পাবেন এই ডেটা থেকে জন্ম নেওয়া নতুন ওষুধে।</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pair">
+      <div class="card ai-card">
+        <h3 class="ai">এই কেসে AI কোথায় কাজে লাগল</h3>
+        <ul>
+          <li>রেফারেলের প্যাটার্ন দেখে দ্রুত CT-র প্রস্তাব</li>
+          <li>কোনো জরুরি বায়োমার্কার বাদ পড়েনি</li>
+          <li>টিউমার বোর্ডের সারাংশ আগেই তৈরি</li>
+          <li>ওষুধের পারস্পরিক ঝুঁকি (QT) ধরা পড়ল</li>
+          <li>ctDNA ফেরা আগেই নজরে আনা</li>
+          <li>প্রতিরোধের কারণ 3D-তে ব্যাখ্যা, সাথে সাথে ট্রায়াল খোঁজা</li>
+          <li>ডোজের হিসাব উৎসসহ, পুরোনো ল্যাব-ফলে আটকানো</li>
+        </ul>
+      </div>
+      <div class="card dr-card">
+        <h3 class="dr">ডাক্তার কোথায় অপরিহার্য ছিলেন</h3>
+        <ul>
+          <li>রোগীর দূরত্ব বুঝে লিকুইড বায়োপসি যোগ করা</li>
+          <li>ভ্যারিয়েন্ট যাচাই করে রিপোর্টে সই</li>
+          <li>রোগীর পছন্দ, খরচ আর জীবনযাত্রা মিলিয়ে ওষুধ বাছাই</li>
+          <li>রোগীর সাথে কঠিন খবরের আলোচনা</li>
+          <li>ট্রায়াল আর পরের চিকিৎসার সিদ্ধান্ত</li>
+          <li>ডোজের চূড়ান্ত যাচাই ও সই</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="card">
+    <div class="section-head">
+      <p class="eyebrow">সিস্টেমের মূল একক</p>
+      <h2>প্রস্তাব-কার্ড: AI যা দেখায়, ডাক্তার যা সই করেন</h2>
+      <p class="lede">প্রতিটি AI প্রস্তাব এই কাঠামোয় আসে। বোতাম চেপে দেখুন অনুমোদন, পরিবর্তন বা বাতিল কীভাবে অডিট লগে জমা হয়। এটি একটি ডেমো।</p>
+    </div>
+    <div class="demo">
+      <div class="demo-main">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center"><span class="tag tag-ai">AI · Test-advisor</span><span class="tag tag-warn" id="status-pill">ডাক্তারের পর্যালোচনার অপেক্ষায়</span></div>
+        <div class="field"><span class="fk">প্রস্তাব</span><span><b>CT-গাইডেড বায়োপসি + PD-L1 + বড় NGS প্যানেল + ব্রেইন MRI</b></span></div>
+        <div class="field"><span class="fk">কারণ</span><span>৩.৪ সেমি টিউমার, লিম্ফ নোড ও হাড়ে ক্ষত (CT, দিন ৪); অ-ধূমপায়ী নারী</span></div>
+        <div class="field"><span class="fk">প্রমাণ</span><span>NSCLC গাইডলাইন: চিকিৎসার আগে পূর্ণ বায়োমার্কার পরীক্ষা <span class="mono">[গাইডলাইন + সংস্করণ টুল থেকে]</span></span></div>
+        <div class="field"><span class="fk">আত্মবিশ্বাস</span><span><span class="meter" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>উচ্চ</span></div>
+        <div class="field"><span class="fk">অনিশ্চয়তা</span><span>টিস্যু কম হলে NGS ব্যর্থ হতে পারে</span></div>
+        <div class="field"><span class="fk">বিকল্প</span><span>শুধু লিকুইড বায়োপসি (কম সংবেদনশীল)</span></div>
+        <div class="field"><span class="fk">যা বদলালে</span><span>ব্রেইনে মেটাস্টেসিস পেলে আগে রেডিয়েশন অনকোলজি</span></div>
+        <div class="btns" role="group" aria-label="সিদ্ধান্ত">
+          <button type="button" class="primary" id="btn-approve" aria-pressed="false">অনুমোদন</button>
+          <button type="button" id="btn-modify" aria-pressed="false">পরিবর্তন</button>
+          <button type="button" id="btn-reject" aria-pressed="false">বাতিল</button>
+        </div>
+        <form id="reason-form" hidden>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <label for="reason-code">কারণ (বাধ্যতামূলক)
+              <select id="reason-code">
+                <option value="রোগীর পরিস্থিতি">রোগীর পরিস্থিতি (দূরত্ব, খরচ, পছন্দ)</option>
+                <option value="ক্লিনিক্যাল বিবেচনা">ক্লিনিক্যাল বিবেচনা</option>
+                <option value="তথ্য অসম্পূর্ণ">AI-এর তথ্য অসম্পূর্ণ</option>
+                <option value="প্রমাণ পুরোনো">প্রমাণ বা গাইডলাইন পুরোনো</option>
+              </select>
+            </label>
+            <label for="reason-text">ব্যাখ্যা
+              <textarea id="reason-text">সাথে লিকুইড বায়োপসি যোগ করছি; রোগী দূর থেকে আসেন।</textarea>
+            </label>
+            <div class="btns"><button type="submit" class="primary" id="btn-save">সিদ্ধান্ত সংরক্ষণ</button></div>
+          </div>
+        </form>
+      </div>
+      <div class="demo-side">
+        <p class="eyebrow">অডিট লগ (শুধু যোগ হয়, মোছা যায় না)</p>
+        <ul class="audit" id="audit">
+          <li>০৯:১২ · Test-advisor · প্রস্তাব তৈরি · মডেল ও প্রম্পট সংস্করণ সংরক্ষিত</li>
+          <li>০৯:১২ · Safety-critic · উৎস যাচাই পাস</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="architecture">
+    <div class="section-head">
+      <p class="eyebrow">পূর্ণ আর্কিটেকচার</p>
+      <h2>ছয় স্তরের সিস্টেম</h2>
+      <p class="lede">নিচ থেকে উপরে ডেটা ওঠে; উপরে ডাক্তারের সিদ্ধান্ত। প্রযুক্তিগত বিস্তারিত <span class="mono">docs/ARCHITECTURE.md</span> ফাইলে।</p>
+    </div>
+    <div class="stack">
+      <div class="layer">
+        <div class="lname"><span>L6</span><b>অ্যাপ (শুধু ক্লিনিক্যাল টিম)</b></div>
+        <div class="chips"><span class="chip">ডাক্তারের ওয়ার্কস্পেস</span><span class="chip">টিউমার বোর্ড মোড</span><span class="chip">ফার্মাসিস্টের ডোজ যাচাই</span><span class="chip">নার্সের কাজের তালিকা</span><span class="chip research">গবেষণা ওয়ার্কবেঞ্চ</span><span class="chip">অ্যাডমিন ও কমপ্লায়েন্স</span></div>
+      </div>
+      <div class="layer l-hitl">
+        <div class="lname"><span>L5</span><b class="dr">ডাক্তারের নিয়ন্ত্রণ</b></div>
+        <div class="chips"><span class="chip">প্রস্তাব-কার্ড</span><span class="chip">ডোজ কার্ড</span><span class="chip">অনুমোদনের তালিকা</span><span class="chip">ই-সই</span><span class="chip">পরিবর্তন/বাতিলের কারণ</span><span class="chip">জরুরি এস্কেলেশন</span><span class="chip">অপরিবর্তনীয় অডিট লগ</span></div>
+      </div>
+      <div class="layer l-agents">
+        <div class="lname"><span>L4</span><b class="ai">AI এজেন্ট</b></div>
+        <div class="chips"><span class="chip">Orchestrator</span><span class="chip">Sentinel</span><span class="chip">Test-advisor</span><span class="chip">Genomic-interpreter</span><span class="chip">Imaging</span><span class="chip">Pathology</span><span class="chip">Guideline</span><span class="chip">Trial-matcher</span><span class="chip">Pharmacology-safety</span><span class="chip">Dose-optimizer</span><span class="chip">Structure-insight</span><span class="chip">Report-writer</span><span class="chip">Safety-critic</span><span class="chip research">Discovery-liaison</span><span class="chip research">Analog-lab</span></div>
+      </div>
+      <div class="layer">
+        <div class="lname"><span>L3</span><b>বিশ্লেষণ ইঞ্জিন</b></div>
+        <div class="chips"><span class="chip">NGS পাইপলাইন (nf-core)</span><span class="chip">ভ্যারিয়েন্ট জ্ঞানভান্ডার</span><span class="chip">ইমেজিং AI (MONAI)</span><span class="chip">প্যাথলজি ফাউন্ডেশন মডেল</span><span class="chip">ক্লিনিক্যাল NLP</span><span class="chip">ডোজ ক্যালকুলেটর</span><span class="chip">গাইডলাইন RAG</span><span class="chip">প্রোটিন গঠন সার্ভিস</span><span class="chip research">অণু স্কোরিং (গবেষণা)</span></div>
+      </div>
+      <div class="layer">
+        <div class="lname"><span>L2</span><b>ডেটা প্ল্যাটফর্ম</b></div>
+        <div class="chips"><span class="chip">FHIR সার্ভার (mCODE)</span><span class="chip">PostgreSQL + pgvector</span><span class="chip">ফাইল স্টোর (BAM/VCF/স্লাইড)</span><span class="chip">DICOM সার্ভার</span><span class="chip">জিন–ওষুধ–ট্রায়াল নলেজ গ্রাফ</span><span class="chip research">OMOP গবেষণা মার্ট (পরিচয়-মোছা)</span></div>
+      </div>
+      <div class="layer">
+        <div class="lname"><span>L1</span><b>ডেটার উৎস</b></div>
+        <div class="chips"><span class="chip">হাসপাতালের EHR</span><span class="chip">ল্যাব সিস্টেম</span><span class="chip">PACS স্ক্যান</span><span class="chip">NGS ল্যাব (PDF রিপোর্টসহ)</span><span class="chip">প্যাথলজি স্লাইড</span><span class="chip">ডাক্তার ও নার্সের নোট, লক্ষণ-এন্ট্রি</span><span class="chip">রেফারেল চিঠি</span></div>
+      </div>
+      <p class="crosscut">সব স্তরে: পরিচয় ও সম্মতি (consent) · নিরাপত্তা জোন · বাইরের AI-তে পাঠানোর আগে পরিচয় মোছা · AI মূল্যায়ন ও মনিটরিং · কোয়ালিটি ম্যানেজমেন্ট সিস্টেম</p>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>অংশ</th><th>প্রস্তাবিত প্রযুক্তি</th><th>কেন</th></tr></thead>
+        <tbody>
+          <tr><td>ফ্রন্টএন্ড</td><td>Next.js, TypeScript, Tailwind, next-intl (ইংরেজি, বাংলা লেবেল)</td><td>দ্রুত, টাইপ-নিরাপদ</td></tr>
+          <tr><td>ভিজুয়াল</td><td>Mol* (3D প্রোটিন), igv.js (জিনোম), Cornerstone3D/OHIF (স্ক্যান), Plotly/D3</td><td>এই ক্ষেত্রের মানসম্মত ভিউয়ার</td></tr>
+          <tr><td>ব্যাকএন্ড</td><td>Python FastAPI, PostgreSQL, HAPI FHIR, Temporal ওয়ার্কফ্লো</td><td>বায়ো/ML ইকোসিস্টেম, নির্ভরযোগ্য ধাপ</td></tr>
+          <tr><td>বায়োইনফরমেটিক্স</td><td>Nextflow + nf-core (sarek, rnaseq, rnafusion), Ensembl VEP</td><td>পুনরুৎপাদনযোগ্য পাইপলাইন</td></tr>
+          <tr><td>AI মডেল</td><td>Claude Opus 5.5 (জটিল কেস), Sonnet 5.5 (এজেন্টের ধাপ), Haiku 5.5 (তথ্য বের করা); পরিচয়-মোছা গেটওয়ের পেছনে</td><td>মান ও নিয়ন্ত্রণ; প্রতিটি পরিবর্তন মূল্যায়ন-পরীক্ষা পেরিয়ে</td></tr>
+          <tr><td>অবকাঠামো</td><td>Docker Compose (ডেভেলপমেন্ট), Kubernetes (প্রোডাকশন), দেশের ভেতরে হোস্টিংয়ের বিকল্প</td><td>ডেটা সুরক্ষা আইন মানা</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" id="team">
+    <div class="section-head">
+      <p class="eyebrow">তৈরি করা হয়েছে · .claude/agents ও .claude/skills</p>
+      <h2>আপনার এক্সপার্ট টিম: ২৫ জন এজেন্ট, ১৩টি প্রকল্প-স্কিল</h2>
+      <p class="lede">এরা বাস্তব কোনো নামী ব্যক্তির নকল নয়। প্রত্যেকে বিশ্বের শীর্ষ ক্যান্সার সেন্টারের সিনিয়র কনসালট্যান্টের মানে, NCCN/ESMO/ASCO গাইডলাইন মেনে কাজ করা একটি ভূমিকা।</p>
+    </div>
+    <div class="teams">
+      <div class="team">
+        <h3>চিকিৎসক দল</h3>
+        <ul>
+          <li><span>প্রধান মেডিকেল অনকোলজিস্ট, টিউমার বোর্ড চেয়ার</span><span class="mono">chief-medical-oncologist</span></li>
+          <li><span>মলিকুলার প্যাথলজিস্ট</span><span class="mono">molecular-pathologist</span></li>
+          <li><span>অনকোলজিক রেডিওলজিস্ট</span><span class="mono">oncologic-radiologist</span></li>
+          <li><span>রেডিয়েশন অনকোলজিস্ট</span><span class="mono">radiation-oncologist</span></li>
+          <li><span>সার্জিক্যাল অনকোলজিস্ট</span><span class="mono">surgical-oncologist</span></li>
+          <li><span>ক্যান্সার জেনেটিসিস্ট</span><span class="mono">cancer-geneticist</span></li>
+          <li><span>ক্লিনিক্যাল ফার্মাকোলজিস্ট (ডোজ)</span><span class="mono">clinical-pharmacologist</span></li>
+          <li><span>অনকোলজি নার্স স্পেশালিস্ট</span><span class="mono">oncology-nurse-specialist</span></li>
+          <li><span>ট্রায়াল বিশেষজ্ঞ ও বায়োস্ট্যাটিস্টিশিয়ান</span><span class="mono">clinical-trials-biostatistician</span></li>
+        </ul>
+      </div>
+      <div class="team">
+        <h3>বিজ্ঞানী দল</h3>
+        <ul>
+          <li><span>ট্রান্সলেশনাল ক্যান্সার গবেষক</span><span class="mono">cancer-research-scientist</span></li>
+          <li><span>গবেষণা প্রধান</span><span class="mono">research-lead</span></li>
+          <li><span>বায়োইনফরমেটিশিয়ান</span><span class="mono">bioinformatician</span></li>
+          <li><span>স্ট্রাকচারাল বায়োলজিস্ট</span><span class="mono">structural-biologist</span></li>
+          <li><span>কম্পিউটেশনাল মেডিসিনাল কেমিস্ট (স্তর ৩)</span><span class="mono">computational-medicinal-chemist</span></li>
+        </ul>
+        <h3 style="margin-top:8px">পরিচালনা ও সুরক্ষা</h3>
+        <ul>
+          <li><span>প্রোগ্রাম লিড</span><span class="mono">project-orchestrator</span></li>
+          <li><span>রেগুলেটরি ও এথিকস অফিসার</span><span class="mono">regulatory-ethics-officer</span></li>
+          <li><span>ক্লিনিক্যাল সেফটি ও QA</span><span class="mono">clinical-safety-qa</span></li>
+        </ul>
+      </div>
+      <div class="team">
+        <h3>প্রযুক্তি দল</h3>
+        <ul>
+          <li><span>AI / LLM ইঞ্জিনিয়ার</span><span class="mono">ai-llm-engineer</span></li>
+          <li><span>ML ডেটা সায়েন্টিস্ট</span><span class="mono">ml-data-scientist</span></li>
+          <li><span>হেলথকেয়ার ডেটা অ্যানালিস্ট</span><span class="mono">healthcare-data-analyst</span></li>
+          <li><span>বায়ো-ভিজুয়ালাইজেশন (চার্ট, 3D)</span><span class="mono">bio-visualization-specialist</span></li>
+          <li><span>UI/UX ডিজাইনার</span><span class="mono">ui-ux-designer</span></li>
+          <li><span>ফ্রন্টএন্ড ডেভেলপার</span><span class="mono">frontend-developer</span></li>
+          <li><span>ব্যাকএন্ড ডেভেলপার</span><span class="mono">backend-developer</span></li>
+          <li><span>DevOps ও সিকিউরিটি</span><span class="mono">devops-security-engineer</span></li>
+        </ul>
+      </div>
+      <div class="team">
+        <h3>১৩টি প্রকল্প-স্কিল</h3>
+        <ul>
+          <li><span>মাস্টার স্কিল, নিয়ম ও টিম</span><span class="mono">precision-oncology-platform</span></li>
+          <li><span>ওষুধের তিন স্তর ও ডোজ</span><span class="mono">therapy-personalization-engine</span></li>
+          <li><span>প্রমাণের মান ও প্রস্তাব-কার্ড</span><span class="mono">clinical-evidence-standards</span></li>
+          <li><span>ডাক্তারের নিয়ন্ত্রণ ও অডিট</span><span class="mono">hitl-clinical-governance</span></li>
+          <li><span>FHIR, mCODE, DICOM, VCF</span><span class="mono">oncology-data-standards</span></li>
+          <li><span>জিনোমিক্স পাইপলাইন</span><span class="mono">bioinformatics-pipelines</span></li>
+          <li><span>প্রোটিন গঠন ও নিরাপত্তা সীমা</span><span class="mono">structural-biology-module</span></li>
+          <li><span>এজেন্ট, RAG, মূল্যায়ন</span><span class="mono">agentic-ai-engineering</span></li>
+          <li><span>পরিসংখ্যান ও মডেল যাচাই</span><span class="mono">clinical-data-science</span></li>
+          <li><span>চার্ট, 3D, জিনোম ভিউয়ার</span><span class="mono">oncology-visualization</span></li>
+          <li><span>ক্লিনিক্যাল UI/UX</span><span class="mono">medical-ui-ux</span></li>
+          <li><span>আইন, প্রাইভেসি, নৈতিকতা</span><span class="mono">regulatory-compliance</span></li>
+          <li><span>গবেষণা পদ্ধতি</span><span class="mono">research-methods</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="figcap">আগে থেকে ইনস্টল করা যেসব স্কিল টিম ব্যবহার করবে: ui-ux-pro-max, impeccable, frontend-design, dataviz, web3d-integration-patterns, data:* (বিশ্লেষণ, ড্যাশবোর্ড, পরিসংখ্যান), healthcare:* (FHIR, ICD-10, ক্লিনিক্যাল ট্রায়াল), PubMed ও ClinicalTrials.gov সংযোগ।</p>
+  </section>
+
+  <section class="section" id="roadmap">
+    <div class="section-head">
+      <p class="eyebrow">কাজের পরিকল্পনা</p>
+      <h2>চার ধাপের রোডম্যাপ</h2>
+    </div>
+    <div class="road">
+      <div class="phase">
+        <span class="pt">ধাপ ০ · মাস ০–২</span>
+        <h3>ভিত্তি</h3>
+        <ul><li>কোড রিপোজিটরি ও ডেভ স্ট্যাক</li><li>ডেটা স্কিমা, ডিজাইন সিস্টেম</li><li>TCGA/GENIE-ভিত্তিক কাল্পনিক NSCLC রোগী</li><li>মূল্যায়ন কাঠামো, ঝুঁকি তালিকা</li></ul>
+        <p class="exit">শেষ হলে: একজন কাল্পনিক NSCLC রোগী শুরু থেকে শেষ পর্যন্ত ডেমোতে চলে</p>
+      </div>
+      <div class="phase">
+        <span class="pt">ধাপ ১ · মাস ২–৮</span>
+        <h3>NSCLC MVP</h3>
+        <ul><li>রোগীর টাইমলাইন, Sentinel</li><li>Test-advisor, Genomic-interpreter</li><li>গাইডলাইন, ট্রায়াল, ওষুধ-নিরাপত্তা</li><li>স্তর ২ ডোজ ক্যালকুলেটর</li><li>প্রস্তাব-কার্ড, অনুমোদন, অডিট; 3D ভিউয়ার (EGFR, ALK, KRAS)</li></ul>
+        <p class="exit">শেষ হলে: NSCLC গোল্ড কেসে ≥৯০% মিল; ওষুধ-ঝুঁকি মিস ও ডোজ-হিসাবের ভুল শূন্য</p>
+      </div>
+      <div class="phase">
+        <span class="pt">ধাপ ২ · মাস ৮–১৪</span>
+        <h3>পাইলট + স্তন ক্যান্সার</h3>
+        <ul><li>এথিকস কমিটির অনুমোদন</li><li>হাসপাতালের সিস্টেমে সংযোগ</li><li>“নীরব মোডে” বাস্তব কেসে পরীক্ষা</li><li>ইমেজিং/প্যাথলজি মডেল, ctDNA</li><li>স্তন ক্যান্সারের নিয়ম যোগ</li></ul>
+        <p class="exit">শেষ হলে: নিরাপত্তা ও মিলের রিপোর্ট, লাইভ পাইলটের সিদ্ধান্ত</p>
+      </div>
+      <div class="phase">
+        <span class="pt">ধাপ ৩ · মাস ১৪–৩০</span>
+        <h3>বিস্তার ও গবেষণা</h3>
+        <ul><li>ডাক্তারের তদারকিতে লাইভ পাইলট</li><li>কোলোরেক্টাল ক্যান্সার যোগ</li><li>গবেষণা অংশ, টার্গেট ডসিয়ার</li><li>স্তর ৩ Analog Lab, অংশীদারসহ</li><li>প্রয়োজনীয় নিয়ন্ত্রক আবেদন</li></ul>
+        <p class="exit">শেষ হলে: প্রকাশিত ফলাফল, অংশীদারত্ব চুক্তি</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="bangladesh">
+    <div class="section-head">
+      <p class="eyebrow">প্রথম বাজার যদি বাংলাদেশ হয়</p>
+      <h2>কেন এখানে এই সহকারী সবচেয়ে দরকারি</h2>
+    </div>
+    <div class="stats three">
+      <div class="stat"><span class="n">২২</span><span class="d">মেডিকেল অনকোলজিস্ট (ফিন্যান্সিয়াল এক্সপ্রেস, ফেব্রুয়ারি ২০২৬); রেডিয়েশন অনকোলজিস্ট প্রায় ২৫০</span></div>
+      <div class="stat"><span class="n">১–২টি</span><span class="d">ক্যান্সারের জন্য নিবেদিত মলিকুলার ল্যাব; অনেক নমুনা যায় ভারতে</span></div>
+      <div class="stat"><span class="n">এপ্রিল ২০২৬</span><span class="d">icddr,b-তে NGS ক্যান্সার পরীক্ষা চালু: স্তন, ফুসফুস, কোলন, ডিম্বাশয়, রক্ত</span></div>
+    </div>
+    <div class="prose">
+      <p>প্রতি একজন মেডিকেল অনকোলজিস্টের ভাগে বছরে কয়েক হাজার নতুন রোগী। এমন জায়গায় একজন ক্লান্তিহীন সহকারী, যে কোনো বায়োমার্কার বা ঝুঁকি বাদ দেয় না, ডাক্তারের সময় সবচেয়ে বেশি বাঁচাবে।</p>
+      <p><b>আইনি শর্ত:</b> ব্যক্তিগত ডেটা সুরক্ষা অধ্যাদেশ ২০২৫ (নভেম্বর ২০২৫-এ গেজেট) স্বাস্থ্য ও জেনেটিক তথ্যকে সংবেদনশীল ধরে, আর গোপনীয় ও সীমাবদ্ধ ডেটা দেশের ভেতরে রাখতে বলে। তাই রোগীর ডেটা দেশে থাকবে; বাইরের AI মডেলে যাবে শুধু পরিচয়-মোছা প্রয়োজনীয় অংশ। চিকিৎসা-সফটওয়্যারের জন্য DGDA-র বর্তমান নিয়ম পাইলটের আগে নিশ্চিত করতে হবে।</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <p class="eyebrow">সততার নীতি</p>
+      <h2>যা আমরা কখনো দাবি করব না</h2>
+    </div>
+    <ul class="qs" style="list-style:disc">
+      <li>“AI ক্যান্সার সারিয়ে দেবে” বা “AI ডাক্তারের জায়গা নেবে”।</li>
+      <li>AI-এর প্রস্তাব ১০০% নির্ভুল।</li>
+      <li>নতুন বা পরিবর্তিত অণু ট্রায়াল ছাড়া রোগীকে দেওয়া যাবে।</li>
+      <li>যাচাই ছাড়া কোনো ওষুধের নাম, ডোজ, ট্রায়াল নম্বর বা গবেষণার উৎস।</li>
+      <li>কোম্পানির নিজের পারফরম্যান্স দাবিকে স্বাধীনভাবে যাচাই করা সত্য হিসেবে।</li>
+      <li>বিদেশি ডেটায় শেখা মডেল বাংলাদেশি রোগীদের ক্ষেত্রেও একই রকম কাজ করবে, স্থানীয় যাচাই ছাড়া।</li>
+    </ul>
+  </section>
+
+  <section class="section" id="decisions">
+    <div class="section-head">
+      <p class="eyebrow">ঠিক হয়েছে: শুধু ডাক্তারের জন্য · প্রথমে NSCLC · ওষুধের তিন স্তর</p>
+      <h2>বাকি চারটি সিদ্ধান্ত</h2>
+    </div>
+    <ol class="qs">
+      <li><b>প্রথম বাজার ও হাসপাতাল:</b> বাংলাদেশ (প্রস্তাবিত), ভারত, নাকি অন্য কোথাও? এতে আইন, হোস্টিং আর ভাষা বদলায়।</li>
+      <li><b>প্রথম লক্ষ্য:</b> বিনিয়োগকারী বা অংশীদারদের জন্য ডেমো, নাকি সরাসরি হাসপাতাল পাইলটের পণ্য?</li>
+      <li><b>বাজেট ও মানুষ:</b> পাইলটের আগে বাস্তব অনকোলজিস্ট, প্যাথলজিস্ট ও ফার্মাসিস্টকে দলে আনতে হবে।</li>
+      <li><b>স্তর ৩-এর অংশীদার:</b> ওষুধ কোম্পানির সাথে অংশীদারত্ব, নাকি বিশ্ববিদ্যালয়ের মেডিসিনাল কেমিস্ট্রি ল্যাবের সাথে সহযোগিতা?</li>
+    </ol>
+  </section>
+
+  <section class="section" id="sources">
+    <div class="section-head">
+      <p class="eyebrow">সূত্র (গবেষণার তারিখ ২০ নভেম্বর ২০২৬)</p>
+      <h2>সূত্র</h2>
+      <p class="figcap">পূর্ণ তালিকা ও ব্যাখ্যা: docs/RESEARCH.md। কিছু তথ্য সংবাদ, কোম্পানি বা আইন-ফার্মের বিশ্লেষণ থেকে; সিদ্ধান্তের আগে মূল উৎস দেখে নিতে হবে।</p>
+    </div>
+    <ul class="sources">
+      <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11574183">TrialGPT: ট্রায়াল-যাচাইয়ে ৪২.৬% সময় কম</a></li>
+      <li><a href="https://diagnostics.roche.com/global/en/healthcare-transformers/article/ai-in-oncology-tumor-boards.html">Roche: টিউমার বোর্ড সারাংশের পাইলট</a></li>
+      <li><a href="https://join.targetedonc.com/view/genomic-profiling-underused-in-advanced-cancer-no-added-cost-burden">Targeted Oncology: বায়োমার্কার পরীক্ষা ৪৫%</a></li>
+      <li><a href="https://ascopost.com/news/october-2025/state-of-the-hematology-and-medical-oncologist-workforce-in-the-united-states/">ASCO Post: যুক্তরাষ্ট্রের অনকোলজিস্ট সংখ্যা</a></li>
+      <li><a href="https://www.biopharminternational.com/view/clinical-development-success-rates-examined-new-bio-report">BIO: ধাপ পার হওয়ার হার (২০০৬–২০১৫)</a></li>
+      <li><a href="https://www.artificialintelligence-news.com/news/insilico-medicine-advances-ai-drug-for-ipf-to-phase-iii-trials/">Insilico: প্রার্থী পেতে ১২–১৮ মাস</a></li>
+      <li><a href="https://intuitionlabs.ai/articles/ai-discovered-drugs-clinical-trials-2026">IntuitionLabs: AI-জাত ওষুধের পাইপলাইন ২০২৬</a></li>
+      <li><a href="https://pubmed.ncbi.nlm.nih.gov/39536404/">GLOBOCAN ২০২২: ফুসফুস ক্যান্সার ও ২০৫০ প্রক্ষেপণ</a></li>
+      <li><a href="https://www.uicc.org/news/globocan-2022-latest-global-cancer-data-shows-rising-incidence-and-stark-inequities">UICC: GLOBOCAN ২০২২ সারাংশ</a></li>
+      <li><a href="https://cm.healio.com/news/hematology-oncology/20240404/new-cancer-diagnoses-projected-to-reach-35-million-worldwide-in-2050">Healio: ২০৫০ সালে ৩.৫ কোটি রোগী</a></li>
+      <li><a href="https://journal.waocp.org/article_92265.html">বাংলাদেশের ক্যান্সার বোঝা (WAOCP)</a></li>
+      <li><a href="https://annualreport2025.aacr.org/project_genie.php">AACR Project GENIE ২০২৫</a></li>
+      <li><a href="https://leadingdiscoveries.aacr.org/ten-years-of-aacr-project-genie/">AACR GENIE-র দশ বছর</a></li>
+      <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5346692/">EGFR প্রাদুর্ভাব মেটা-অ্যানালাইসিস</a></li>
+      <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11528205">NSCLC-এ টার্গেটযোগ্য পরিবর্তন</a></li>
+      <li><a href="https://pubmed.ncbi.nlm.nih.gov/32649874/">CPTAC LUAD প্রোটিওজিনোমিক্স</a></li>
+      <li><a href="https://wiki.cancerimagingarchive.net/x/awFp">TCIA: NLST ডেটাসেট</a></li>
+      <li><a href="https://institut-curie.org/publications/molecularly-targeted-therapy-based-tumour-molecular-profiling-versus-conventional-therapy-advanced">SHIVA ট্রায়াল</a></li>
+      <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7676884">NCI-MATCH পুনর্বিশ্লেষণ</a></li>
+      <li><a href="https://directorsblog.nih.gov/tag/i-predict/">I-PREDICT ট্রায়াল</a></li>
+      <li><a href="https://medicine.nus.edu.sg/news/right-patient-right-dose-right-time/">CURATE.AI (NUS)</a></li>
+      <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8852353">EXALT ফাংশনাল প্রিসিশন মেডিসিন</a></li>
+      <li><a href="https://www.onclive.com/view/hs-10504-shows-promising-activity-in-egfr-c797s-mutant-nsclc-after-tki-resistance">OncLive: C797S-এর জন্য HS-10504</a></li>
+      <li><a href="https://pharmacally.com/?p=23747">BH-30643: C797S-এ ৪৫% সাড়া</a></li>
+      <li><a href="https://www.targetedonc.com/view/daraxonrasib-nearly-doubles-os-versus-chemotherapy-in-metastatic-pdac">Daraxonrasib ফেজ ৩</a></li>
+      <li><a href="https://www.biospace.com/drug-development/takedas-4b-nimbus-bet-pays-off-with-best-in-class-phase-iii-plaque-psoriasis-data">Zasocitinib ফেজ ৩</a></li>
+      <li><a href="https://compgen.hms.harvard.edu/publications/patient-customized-oligonucleotide-therapy-rare-genetic-disease">Milasen (NEJM ২০১৯)</a></li>
+      <li><a href="https://www.genengnews.com/topics/genome-editing/asgct-2025-worlds-first-patient-treated-with-personalized-crispr-therapy/">Baby KJ: ব্যক্তিগত CRISPR</a></li>
+      <li><a href="https://www.aacr.org/about-the-aacr/newsroom/news-releases/immune-response-to-investigational-rna-vaccine-for-pancreatic-cancer-continues-to-correlate-with-clinical-benefit/">Autogene cevumeran (AACR)</a></li>
+      <li><a href="https://www.healio.com/news/hematology-oncology/20261023/personalized-mrna-vaccine-reduced-melanoma-recurrence-risk-42-after-surgery">Intismeran: ৪২% ঝুঁকি কম</a></li>
+      <li><a href="https://garymarklevin.substack.com/p/how-successful-are-ai-discovered">AI-আবিষ্কৃত অণুর সফলতার হার</a></li>
+      <li><a href="https://www.bio.org/press-release/bio-releases-largest-study-ever-clinical-development-success-rates">BIO: ক্লিনিক্যাল সফলতার হার</a></li>
+      <li><a href="https://www.biorxiv.org/content/10.1101/2025.05.27.656341.full.pdf">AlphaFold 3 ও বাঁধন-শক্তি</a></li>
+      <li><a href="https://www.isomorphiclabs.com/articles/the-isomorphic-labs-drug-design-engine-unlocks-a-new-frontier">Isomorphic Labs: IsoDDE</a></li>
+      <li><a href="https://www.ebi.ac.uk/training/online/courses/alphafold/alphafold-3-and-alphafold-server/introducing-alphafold-3/should-i-use-alphafold-2-or-alphafold-3">EMBL-EBI: AlphaFold 3 লাইসেন্স</a></li>
+      <li><a href="https://oncologynews.com.au/?p=60332">টিউমার-বোর্ড ধাঁচের AI সিস্টেম</a></li>
+      <li><a href="https://www.cov.com/en/news-and-insights/insights/2026/01/5-key-takeaways-from-fdas-revised-clinical-decision-support-cds-software-guidance">FDA CDS নির্দেশিকা ২০২৬</a></li>
+      <li><a href="https://today.thefinancialexpress.com.bd/print/future-of-cancer-care-in-bangladesh-1770225596">ফিন্যান্সিয়াল এক্সপ্রেস: বাংলাদেশের ক্যান্সার চিকিৎসা</a></li>
+      <li><a href="https://www.tbsnews.net/bangladesh/health/icddrb-launches-advanced-genome-sequencing-based-cancer-diagnostic-services">TBS: icddr,b NGS সেবা</a></li>
+      <li><a href="https://www.thedailystar.net/tech-startup/news/bangladeshs-personal-data-protection-ordinance-2025-key-takeaways-4015401">ডেইলি স্টার: ডেটা সুরক্ষা অধ্যাদেশ ২০২৫</a></li>
+    </ul>
+  </section>
+
+  <p class="foot">অনকোএজেন্ট প্রকল্প ব্রিফ, সংস্করণ ০.২। শুধু ডাক্তার ও ক্লিনিক্যাল টিমের ব্যবহারের জন্য। উদাহরণের রোগী ও সব কেস-ডেটা কাল্পনিক; এটি চিকিৎসা-পরামর্শ নয়।</p>
+</div>
+
+<script>
+(function () {
+  var pill = document.getElementById('status-pill');
+  var form = document.getElementById('reason-form');
+  var audit = document.getElementById('audit');
+  var btns = { approve: document.getElementById('btn-approve'), modify: document.getElementById('btn-modify'), reject: document.getElementById('btn-reject') };
+  var mode = null;
+  function bn(n) { return String(n).replace(/\d/g, function (d) { return '০১২৩৪৫৬৭৮৯'[d]; }); }
+  function stamp() { var d = new Date(); return bn(String(d.getHours()).padStart(2, '0')) + ':' + bn(String(d.getMinutes()).padStart(2, '0')); }
+  function log(text) { var li = document.createElement('li'); li.textContent = stamp() + ' · ' + text; audit.appendChild(li); }
+  function press(which) { Object.keys(btns).forEach(function (k) { btns[k].setAttribute('aria-pressed', k === which ? 'true' : 'false'); }); }
+  function setPill(text, cls) { pill.textContent = text; pill.className = 'tag ' + cls; }
+  btns.approve.addEventListener('click', function () {
+    mode = 'approve'; press('approve'); form.hidden = true;
+    setPill('অনুমোদিত · ডা. (উদাহরণ)', 'tag-dr');
+    log('ডাক্তার · অনুমোদন · অর্ডারের খসড়া সইয়ের জন্য তৈরি');
+  });
+  btns.modify.addEventListener('click', function () {
+    mode = 'modify'; press('modify'); form.hidden = false;
+    document.getElementById('reason-text').value = 'সাথে লিকুইড বায়োপসি যোগ করছি; রোগী দূর থেকে আসেন।';
+  });
+  btns.reject.addEventListener('click', function () {
+    mode = 'reject'; press('reject'); form.hidden = false;
+    document.getElementById('reason-text').value = '';
+  });
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var box = document.getElementById('reason-text');
+    var code = document.getElementById('reason-code').value;
+    var text = box.value.trim();
+    if (!text) { box.focus(); box.placeholder = 'ব্যাখ্যা লিখুন; কারণ ছাড়া সংরক্ষণ হবে না'; return; }
+    if (mode === 'modify') { setPill('পরিবর্তনসহ অনুমোদিত', 'tag-dr'); log('ডাক্তার · পরিবর্তন · কারণ: ' + code + ' · "' + text + '"'); }
+    if (mode === 'reject') { setPill('বাতিল', 'tag-crit'); log('ডাক্তার · বাতিল · কারণ: ' + code + ' · "' + text + '"'); }
+    log('মূল্যায়ন ডেটাসেটে সিদ্ধান্ত জমা হলো');
+    form.hidden = true;
+  });
+})();
+(function () {
+  var tip = document.createElement('div');
+  tip.className = 'tip';
+  tip.hidden = true;
+  tip.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(tip);
+  function place(x, y) {
+    var w = tip.offsetWidth, h = tip.offsetHeight;
+    var left = Math.min(Math.max(8, x + 14), window.innerWidth - w - 8);
+    var top = y - h - 12 < 8 ? y + 16 : y - h - 12;
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+  }
+  function show(el, x, y) {
+    tip.textContent = '';
+    var v = document.createElement('strong'); v.textContent = el.getAttribute('data-v');
+    var l = document.createElement('span'); l.textContent = el.getAttribute('data-l');
+    tip.appendChild(v); tip.appendChild(l);
+    tip.hidden = false;
+    place(x, y);
+  }
+  function hide() { tip.hidden = true; }
+  document.querySelectorAll('.bar-s[data-v]').forEach(function (el) {
+    el.tabIndex = 0;
+    el.setAttribute('role', 'img');
+    el.setAttribute('aria-label', el.getAttribute('data-l') + ': ' + el.getAttribute('data-v'));
+    el.addEventListener('pointerenter', function (e) { show(el, e.clientX, e.clientY); });
+    el.addEventListener('pointermove', function (e) { if (!tip.hidden) place(e.clientX, e.clientY); });
+    el.addEventListener('pointerleave', hide);
+    el.addEventListener('focus', function () { var r = el.getBoundingClientRect(); show(el, r.left + r.width / 2, r.top); });
+    el.addEventListener('blur', hide);
+  });
+  window.addEventListener('scroll', hide, { passive: true });
+})();
+</script>

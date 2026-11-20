@@ -1,0 +1,578 @@
+{
+ "patientId": "P-003",
+ "ranAt": "2026-11-20T01:56:51.903Z",
+ "mode": "claude",
+ "model": "claude-opus-5-5",
+ "steps": [
+  {
+   "agent": "Sentinel",
+   "status": "done",
+   "note": "Record the baseline (54 mm) and schedule the first response scan per protocol after treatment starts.",
+   "ms": 0
+  },
+  {
+   "agent": "Genomic-interpreter",
+   "status": "done",
+   "note": "1 variant(s) checked in CIViC (live)",
+   "ms": 891
+  },
+  {
+   "agent": "Test-advisor",
+   "status": "done",
+   "note": "Order: Neurology review of the antiseizure drug; Baseline lipids, liver tests and CK.",
+   "ms": 0
+  },
+  {
+   "agent": "Guideline",
+   "status": "done",
+   "note": "Discuss Alectinib as the leading option; Lorlatinib or Brigatinib as alternatives.",
+   "ms": 0
+  },
+  {
+   "agent": "Pharmacology-safety",
+   "status": "done",
+   "note": "Before choosing a drug, ask neurology to replace carbamazepine (strong CYP3A inducer) with a non-inducing alternative; lorlatinib is contraindicated while it continues.",
+   "ms": 0
+  },
+  {
+   "agent": "Trial-matcher",
+   "status": "done",
+   "note": "85 recruiting studies (live)",
+   "ms": 511
+  },
+  {
+   "agent": "Dose-optimizer",
+   "status": "done",
+   "note": "Dose card ready for Alectinib: Alectinib 600 mg orally twice daily with food. Pharmacist and oncologist to verify.",
+   "ms": 0
+  },
+  {
+   "agent": "Synthesis (Claude)",
+   "status": "done",
+   "note": "3 card(s) and a tumour-board summary from claude-opus-5-5",
+   "ms": 22126
+  },
+  {
+   "agent": "Safety-critic",
+   "status": "done",
+   "note": "10 cards checked, 1 flagged",
+   "ms": 0
+  }
+ ],
+ "evidence": [
+  {
+   "id": "pt:e1",
+   "kind": "patient",
+   "label": "2026-10-25 · Seizure",
+   "detail": "First generalised seizure; carbamazepine started in the emergency department. (Emergency department note)"
+  },
+  {
+   "id": "pt:e2",
+   "kind": "patient",
+   "label": "2026-10-27 · Brain MRI",
+   "detail": "Three metastases, largest 9 mm, mild oedema; no midline shift. (Radiology report)"
+  },
+  {
+   "id": "pt:e3",
+   "kind": "patient",
+   "label": "2026-10-30 · Contrast CT chest and abdomen",
+   "detail": "2.9 cm right middle lobe mass, small right pleural effusion. (Radiology report)"
+  },
+  {
+   "id": "pt:e4",
+   "kind": "patient",
+   "label": "2026-11-04 · Bronchoscopic biopsy",
+   "detail": "Adenocarcinoma, TTF-1 positive. PD-L1 TPS 5%. (Pathology report)"
+  },
+  {
+   "id": "pt:e5",
+   "kind": "patient",
+   "label": "2026-11-11 · DNA + RNA panel",
+   "detail": "EML4::ALK fusion. EGFR, ROS1, BRAF, KRAS, MET, RET, NTRK, ERBB2 negative. (Molecular report)"
+  },
+  {
+   "id": "calc:recist",
+   "kind": "calculator",
+   "label": "RECIST 1.1 calculation",
+   "detail": "2026-10-30: 54 mm, Baseline"
+  },
+  {
+   "id": "civic:EID1207",
+   "kind": "civic",
+   "label": "CIViC EID1207 · level C · predictive",
+   "detail": "sensitivityresponse · Lung Non-small Cell Carcinoma · Crizotinib · PMID 20979469",
+   "url": "https://civicdb.org/evidence/1207/summary"
+  },
+  {
+   "id": "civic:EID262",
+   "kind": "civic",
+   "label": "CIViC EID262 · level C · predictive",
+   "detail": "sensitivityresponse · Lung Adenocarcinoma · Crizotinib · PMID 20979473",
+   "url": "https://civicdb.org/evidence/262/summary"
+  },
+  {
+   "id": "civic:EID1121",
+   "kind": "civic",
+   "label": "CIViC EID1121 · level C · predictive",
+   "detail": "resistance · Lung Acinar Adenocarcinoma · Erlotinib · PMID 23181703",
+   "url": "https://civicdb.org/evidence/1121/summary"
+  },
+  {
+   "id": "civic:EID1188",
+   "kind": "civic",
+   "label": "CIViC EID1188 · level D · predictive",
+   "detail": "sensitivityresponse · Lung Non-small Cell Carcinoma · WHI-P154 · PMID 17625570",
+   "url": "https://civicdb.org/evidence/1188/summary"
+  },
+  {
+   "id": "kb:ALK_1L:test0",
+   "kind": "guideline",
+   "label": "Knowledge pack · Neurology review of the antiseizure drug",
+   "detail": "Carbamazepine is a strong CYP3A inducer; a non-inducing alternative avoids ALK-inhibitor interactions.",
+   "url": "https://www.fda.gov/drugs/resources-information-approved-drugs/oncology-cancer-hematologic-malignancies-approval-notifications"
+  },
+  {
+   "id": "kb:ALK_1L:test1",
+   "kind": "guideline",
+   "label": "Knowledge pack · Baseline lipids, liver tests and CK",
+   "detail": "Monitoring required by ALK-inhibitor labels.",
+   "url": "https://www.fda.gov/drugs/resources-information-approved-drugs/oncology-cancer-hematologic-malignancies-approval-notifications"
+  },
+  {
+   "id": "kb:alk1-alectinib",
+   "kind": "guideline",
+   "label": "Alectinib · preferred",
+   "detail": "Approved first line (ALEX); intracranial activity. Fixed oral dose per label; check liver tests and CK. (nsclc-pack 2026-11-20)",
+   "url": "https://www.fda.gov/drugs/resources-information-approved-drugs/oncology-cancer-hematologic-malignancies-approval-notifications"
+  },
+  {
+   "id": "kb:alk1-lorlatinib",
+   "kind": "guideline",
+   "label": "Lorlatinib · preferred",
+   "detail": "Approved first line (CROWN); strong intracranial activity. Contraindicated with strong CYP3A inducers. Monitor lipids and mood. (nsclc-pack 2026-11-20)",
+   "url": "https://www.fda.gov/drugs/resources-information-approved-drugs/oncology-cancer-hematologic-malignancies-approval-notifications"
+  },
+  {
+   "id": "kb:alk1-brigatinib",
+   "kind": "guideline",
+   "label": "Brigatinib · option",
+   "detail": "Approved first line (ALTA-1L); intracranial activity. Avoid strong CYP3A inducers. Step-up dosing per label. (nsclc-pack 2026-11-20)",
+   "url": "https://www.fda.gov/drugs/resources-information-approved-drugs/oncology-cancer-hematologic-malignancies-approval-notifications"
+  },
+  {
+   "id": "label:lorlatinib:strong-cyp3a-inducer:0",
+   "kind": "label",
+   "label": "Lorlatinib label, contraindications",
+   "detail": "Lorlatinib is contraindicated with strong CYP3A inducers (risk of serious liver toxicity).",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&query=lorlatinib"
+  },
+  {
+   "id": "label:brigatinib:strong-cyp3a-inducer:1",
+   "kind": "label",
+   "label": "Brigatinib label, drug interactions",
+   "detail": "Avoid strong CYP3A inducers with brigatinib (lower exposure).",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&query=brigatinib"
+  },
+  {
+   "id": "label:alectinib:strong-cyp3a-inducer:2",
+   "kind": "label",
+   "label": "Alectinib label, drug interactions",
+   "detail": "Check the alectinib label for CYP3A inducer guidance before co-prescribing; prefer a non-inducing antiseizure drug.",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&query=alectinib"
+  },
+  {
+   "id": "trial:NCT05979818",
+   "kind": "trial",
+   "label": "NCT05979818 · PHASE1/PHASE2 · recruiting",
+   "detail": "Propranolol Hydrochloride in Combination With Sintilimab and Platinum-based Chemotherapy for Treatment of Advanced Non-small Cell Lung Cancer. Sponsor Second Xiangya Hospital of Central South University. Countries: China.",
+   "url": "https://clinicaltrials.gov/study/NCT05979818"
+  },
+  {
+   "id": "trial:NCT07491497",
+   "kind": "trial",
+   "label": "NCT07491497 · PHASE1/PHASE2 · recruiting",
+   "detail": "A Phase 1/2 Study of TRI-611 in ALK-Positive NSCLC. Sponsor TRIANA Biomedicines, Inc.. Countries: United States, Australia, France, United Kingdom.",
+   "url": "https://clinicaltrials.gov/study/NCT07491497"
+  },
+  {
+   "id": "trial:NCT05522660",
+   "kind": "trial",
+   "label": "NCT05522660 · PHASE3 · recruiting",
+   "detail": "Immunotherapy or Targeted Therapy With or Without Stereotactic Radiosurgery for Patients With Brain Metastases From Melanoma or Non-small Cell Lung Cancer. Sponsor ETOP IBCSG Partners Foundation. Countries: Italy, Netherlands, Spain, Switzerland, United Kingdom.",
+   "url": "https://clinicaltrials.gov/study/NCT05522660"
+  },
+  {
+   "id": "trial:NCT06862869",
+   "kind": "trial",
+   "label": "NCT06862869 · phase n/a · recruiting",
+   "detail": "Real World Clinical Outcomes of Resected ALK-Positive Early Stage NSCLC Patients Treated With Alectinib as Adjuvant Therapy. Sponsor Hoffmann-La Roche. Countries: China.",
+   "url": "https://clinicaltrials.gov/study/NCT06862869"
+  },
+  {
+   "id": "calc:dose",
+   "kind": "calculator",
+   "label": "Dose calculator · Alectinib",
+   "detail": "BSA 1.59 m² (Mosteller); CrCl 92.9 mL/min (Cockcroft–Gault). Alectinib 600 mg orally twice daily with food."
+  },
+  {
+   "id": "label:dose:0:alectinib",
+   "kind": "label",
+   "label": "Alectinib label",
+   "detail": "Alectinib: Continuous",
+   "url": "https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&query=alectinib"
+  }
+ ],
+ "cards": [
+  {
+   "id": "P-003-claude-mwobw7r2-0",
+   "patientId": "P-003",
+   "agent": "Synthesis (Claude)",
+   "origin": "claude",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "kind": "treatment",
+   "proposal": "Consider alectinib as the leading first-line ALK inhibitor, ideally once carbamazepine is replaced by a non-inducing antiseizure drug; lorlatinib is contraindicated and brigatinib should be avoided while carbamazepine continues.",
+   "why": [
+    "EML4::ALK fusion, other drivers negative",
+    "Treatment-naive stage IVB",
+    "Three brain metastases, mild oedema",
+    "ECOG 1",
+    "On carbamazepine, a strong CYP3A inducer"
+   ],
+   "evidenceIds": [
+    "pt:e5",
+    "pt:e2",
+    "kb:alk1-alectinib",
+    "kb:alk1-lorlatinib",
+    "kb:alk1-brigatinib",
+    "label:lorlatinib:strong-cyp3a-inducer:0",
+    "label:brigatinib:strong-cyp3a-inducer:1",
+    "label:alectinib:strong-cyp3a-inducer:2"
+   ],
+   "confidence": "moderate",
+   "confidenceReason": "ALK-positive first-line options are guideline-supported. Choice and timing depend on the carbamazepine interaction, and alectinib inducer guidance is not fully detailed in the evidence.",
+   "uncertain": "The exact alectinib label guidance on strong CYP3A inducers is not verified here. How quickly carbamazepine can be safely switched is also unknown. Whether the brain metastases need local therapy has not been assessed in the evidence.",
+   "alternatives": [
+    "Lorlatinib (preferred, strong intracranial activity) only after carbamazepine is stopped and replaced with a non-inducer",
+    "Brigatinib (option) once strong inducer is removed",
+    "Screening for NCT05522660 (targeted therapy with or without stereotactic radiosurgery for brain metastases), if feasible"
+   ],
+   "changesIf": "If carbamazepine is successfully replaced, lorlatinib becomes a reasonable alternative given its intracranial activity. If the brain metastases become symptomatic or progress, discuss local therapy.",
+   "safety": [
+    "Lorlatinib contraindicated with strong CYP3A inducers (liver toxicity risk)",
+    "Dose only from the dose calculator, verified by pharmacist and oncologist",
+    "Dexamethasone is listed without interaction tags; its interaction status is not verified"
+   ]
+  },
+  {
+   "id": "P-003-claude-mwobw7r2-1",
+   "patientId": "P-003",
+   "agent": "Synthesis (Claude)",
+   "origin": "claude",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "kind": "safety",
+   "proposal": "Suggest an urgent neurology review to replace carbamazepine with a non-inducing antiseizure drug before starting an ALK inhibitor.",
+   "why": [
+    "First generalised seizure; carbamazepine started in emergency department",
+    "Carbamazepine is a strong CYP3A inducer",
+    "Interacts with all three first-line ALK inhibitors"
+   ],
+   "evidenceIds": [
+    "pt:e1",
+    "kb:ALK_1L:test0",
+    "label:lorlatinib:strong-cyp3a-inducer:0",
+    "label:brigatinib:strong-cyp3a-inducer:1",
+    "label:alectinib:strong-cyp3a-inducer:2"
+   ],
+   "confidence": "high",
+   "confidenceReason": "Label and knowledge-pack evidence consistently flags this interaction.",
+   "uncertain": "The choice of replacement agent and any washout period for the inducer effect are not covered in the evidence.",
+   "alternatives": [
+    "If the switch is not possible, consider alectinib with the label inducer guidance checked; avoid lorlatinib and brigatinib"
+   ],
+   "changesIf": "If neurology advises against switching, the treatment choice narrows and needs pharmacist input.",
+   "safety": [
+    "Seizure control must be maintained during the switch",
+    "Brain metastases with oedema raise seizure risk"
+   ]
+  },
+  {
+   "id": "P-003-claude-mwobw7r2-2",
+   "patientId": "P-003",
+   "agent": "Synthesis (Claude)",
+   "origin": "claude",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "kind": "test",
+   "proposal": "Consider ordering baseline lipids, liver tests and CK, and recording the 54 mm RECIST baseline with a first response scan planned per protocol.",
+   "why": [
+    "ALK-inhibitor labels require monitoring",
+    "RECIST baseline 54 mm on 2026-10-30"
+   ],
+   "evidenceIds": [
+    "kb:ALK_1L:test1",
+    "calc:recist",
+    "pt:e3"
+   ],
+   "confidence": "high",
+   "confidenceReason": "Monitoring is required by the labels.",
+   "uncertain": "The imaging interval and brain MRI follow-up schedule are not specified in the evidence.",
+   "alternatives": [],
+   "changesIf": "If baseline liver tests are abnormal, the drug choice and monitoring need review.",
+   "safety": [
+    "Lorlatinib requires lipid and mood monitoring; alectinib requires liver tests and CK"
+   ]
+  },
+  {
+   "id": "P-003-sentinel-mwobvplh8",
+   "patientId": "P-003",
+   "agent": "Sentinel",
+   "kind": "monitoring",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "Record the baseline (54 mm) and schedule the first response scan per protocol after treatment starts.",
+   "why": [
+    "Baseline sum of target lesions 54 mm on 2026-10-30.",
+    "No baseline ctDNA available.",
+    "ECOG 1."
+   ],
+   "evidenceIds": [
+    "calc:recist",
+    "pt:e3",
+    "pt:e5"
+   ],
+   "confidence": "high",
+   "confidenceReason": "Measurements come from the radiology report in the record.",
+   "uncertain": "Response interval depends on the regimen chosen (commonly every 6–9 weeks).",
+   "alternatives": [],
+   "changesIf": "New symptoms or a red-flag result arrive before the planned scan.",
+   "safety": []
+  },
+  {
+   "id": "P-003-genomic-interpreter-mwobvqa99",
+   "patientId": "P-003",
+   "agent": "Genomic-interpreter",
+   "kind": "summary",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "ALK EML4::ALK is the actionable driver: confirm and sign the molecular interpretation.",
+   "why": [
+    "ALK EML4::ALK, tissue, reported 2026-11-11.",
+    "CIViC EML4::ALK Fusion: 10 evidence items, 7 in lung cancer; strongest level C (live).",
+    "1 lung evidence item(s) report resistance."
+   ],
+   "evidenceIds": [
+    "civic:EID1207",
+    "civic:EID262",
+    "civic:EID1121",
+    "civic:EID1188",
+    "pt:e5"
+   ],
+   "confidence": "moderate",
+   "confidenceReason": "Strongest CIViC level C.",
+   "uncertain": "Interpretation must be signed by the molecular pathologist.",
+   "alternatives": [],
+   "changesIf": "A tissue re-biopsy shows a different dominant mechanism, such as small-cell transformation or MET amplification.",
+   "safety": []
+  },
+  {
+   "id": "P-003-test-advisor-mwobvqa9a",
+   "patientId": "P-003",
+   "agent": "Test-advisor",
+   "kind": "test",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "Order: Neurology review of the antiseizure drug; Baseline lipids, liver tests and CK.",
+   "why": [
+    "Biomarker panel complete for: EGFR, ALK, ROS1, BRAF, KRAS, MET, RET, NTRK, ERBB2, PD-L1.",
+    "All guideline biomarkers for NSCLC are present in the record.",
+    "Neurology review of the antiseizure drug: Carbamazepine is a strong CYP3A inducer; a non-inducing alternative avoids ALK-inhibitor interactions.",
+    "Baseline lipids, liver tests and CK: Monitoring required by ALK-inhibitor labels."
+   ],
+   "evidenceIds": [
+    "kb:ALK_1L:test0",
+    "kb:ALK_1L:test1"
+   ],
+   "confidence": "moderate",
+   "confidenceReason": "Tests follow the knowledge pack; local availability and turnaround are not known to the system.",
+   "uncertain": "Whether a re-biopsy is feasible and safe for this patient.",
+   "alternatives": [
+    "Repeat plasma NGS in 4 weeks if tissue cannot be obtained"
+   ],
+   "changesIf": "The patient declines biopsy or is clinically too unwell to wait for results.",
+   "safety": []
+  },
+  {
+   "id": "P-003-guideline-mwobvqa9b",
+   "patientId": "P-003",
+   "agent": "Guideline",
+   "kind": "treatment",
+   "origin": "rules",
+   "critic": {
+    "verdict": "flag",
+    "notes": [
+     "lorlatinib is contraindicated with a current medication and the card does not say so."
+    ]
+   },
+   "proposal": "Discuss Alectinib as the leading option; Lorlatinib or Brigatinib as alternatives.",
+   "why": [
+    "Oncogenic driver; ALK inhibitors with central nervous system activity are standard first line.",
+    "Setting: First line.",
+    "1. Alectinib: Approved first line (ALEX); intracranial activity.",
+    "2. Lorlatinib: Approved first line (CROWN); strong intracranial activity.",
+    "3. Brigatinib: Approved first line (ALTA-1L); intracranial activity."
+   ],
+   "evidenceIds": [
+    "kb:alk1-alectinib",
+    "kb:alk1-lorlatinib",
+    "kb:alk1-brigatinib"
+   ],
+   "confidence": "moderate",
+   "confidenceReason": "Options come from the curated knowledge pack; the current NCCN/ESMO version must be checked.",
+   "uncertain": "Drug availability, cost and the patient's preferences are not in the record.",
+   "alternatives": [
+    "Lorlatinib",
+    "Brigatinib"
+   ],
+   "changesIf": "Immunotherapy before an ALK inhibitor is not advised: Driver-positive NSCLC benefits little from first-line checkpoint inhibitors.",
+   "safety": []
+  },
+  {
+   "id": "P-003-pharmacology-safety-mwobvqa9c",
+   "patientId": "P-003",
+   "agent": "Pharmacology-safety",
+   "kind": "safety",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "Before choosing a drug, ask neurology to replace carbamazepine (strong CYP3A inducer) with a non-inducing alternative; lorlatinib is contraindicated while it continues.",
+   "why": [
+    "Carbamazepine 200 mg twice daily (Seizure after brain metastases (started in emergency department)): strong-cyp3a-inducer.",
+    "lorlatinib: contraindicated. Lorlatinib is contraindicated with strong CYP3A inducers (risk of serious liver toxicity).",
+    "brigatinib: avoid. Avoid strong CYP3A inducers with brigatinib (lower exposure).",
+    "alectinib: monitor. Check the alectinib label for CYP3A inducer guidance before co-prescribing; prefer a non-inducing antiseizure drug."
+   ],
+   "evidenceIds": [
+    "label:lorlatinib:strong-cyp3a-inducer:0",
+    "label:brigatinib:strong-cyp3a-inducer:1",
+    "label:alectinib:strong-cyp3a-inducer:2"
+   ],
+   "confidence": "high",
+   "confidenceReason": "Rules come from product labels in the interaction table.",
+   "uncertain": "The interaction table is a demonstration subset; a licensed interaction database is needed in production.",
+   "alternatives": [],
+   "changesIf": "The interacting medication is stopped or changed.",
+   "safety": [
+    "lorlatinib + strong cyp3a inducer: contraindicated",
+    "brigatinib + strong cyp3a inducer: avoid",
+    "alectinib + strong cyp3a inducer: monitor"
+   ]
+  },
+  {
+   "id": "P-003-trial-matcher-mwobvqogd",
+   "patientId": "P-003",
+   "agent": "Trial-matcher",
+   "kind": "trial",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "Screen for NCT05979818 or NCT07491497.",
+   "why": [
+    "ClinicalTrials.gov: 85 recruiting studies for \"ALK\" in non-small cell lung cancer (live, 2026-11-20).",
+    "NCT05979818: Propranolol Hydrochloride in Combination With Sintilimab and Platinum-based Chemotherapy for Treatment of Adva…",
+    "NCT07491497: A Phase 1/2 Study of TRI-611 in ALK-Positive NSCLC",
+    "NCT05522660: Immunotherapy or Targeted Therapy With or Without Stereotactic Radiosurgery for Patients With Brain Metastases…",
+    "NCT06862869: Real World Clinical Outcomes of Resected ALK-Positive Early Stage NSCLC Patients Treated With Alectinib as Adj…"
+   ],
+   "evidenceIds": [
+    "trial:NCT05979818",
+    "trial:NCT07491497",
+    "trial:NCT05522660",
+    "trial:NCT06862869"
+   ],
+   "confidence": "moderate",
+   "confidenceReason": "Matched by biomarker in title/keywords; full eligibility needs the investigator.",
+   "uncertain": "Distance to sites, prior-therapy limits and organ-function criteria are not checked automatically yet.",
+   "alternatives": [
+    "NCT05522660",
+    "NCT06862869"
+   ],
+   "changesIf": "The investigator finds an exclusion criterion.",
+   "safety": []
+  },
+  {
+   "id": "P-003-dose-optimizer-mwobvqoge",
+   "patientId": "P-003",
+   "agent": "Dose-optimizer",
+   "kind": "dose",
+   "origin": "rules",
+   "critic": {
+    "verdict": "pass",
+    "notes": []
+   },
+   "proposal": "Dose card ready for Alectinib: Alectinib 600 mg orally twice daily with food. Pharmacist and oncologist to verify.",
+   "why": [
+    "Weight and height from the record; creatinine 0.7 mg/dL on 2026-11-15",
+    "Alectinib: No calculation: fixed dose from the label"
+   ],
+   "evidenceIds": [
+    "calc:dose",
+    "label:dose:0:alectinib"
+   ],
+   "confidence": "high",
+   "confidenceReason": "Deterministic, unit-tested formulas with label parameters.",
+   "uncertain": "Regimen choice is still the doctor's; the card is recalculated if the choice changes.",
+   "alternatives": [],
+   "changesIf": "Weight, creatinine or the chosen regimen changes.",
+   "safety": []
+  }
+ ],
+ "boardSummary": "Woman in her 40s, never-smoker, with stage IVB right middle lobe lung adenocarcinoma involving brain (three metastases, largest 9 mm, mild oedema) and pleura. ECOG 1, PD-L1 TPS 5%, EML4::ALK fusion with other drivers negative. Treatment-naive; RECIST baseline 54 mm. Key issue: carbamazepine, a strong CYP3A inducer started after a first seizure. Lorlatinib is contraindicated while carbamazepine continues, and brigatinib should be avoided with it. Alectinib is a preferred first-line option with intracranial activity, but its label should be checked for inducer guidance. Suggest early neurology review to switch to a non-inducing antiseizure drug, then confirm the ALK inhibitor. Trials: NCT05522660 (targeted therapy with or without radiosurgery for brain metastases) may merit screening. Other listed trials appear poorly matched. Any dose comes from the dose calculator and needs pharmacist verification.",
+ "warnings": [],
+ "usage": {
+  "inputTokens": 4071,
+  "outputTokens": 2409
+ },
+ "dose": {
+  "regimenKey": "alectinib",
+  "regimenName": "Alectinib",
+  "bsa": 1.5853495934125486,
+  "crcl": 92.92658730158729,
+  "lines": [
+   {
+    "drug": "Alectinib",
+    "method": "Fixed dose",
+    "formula": "No calculation: fixed dose from the label",
+    "inputs": [],
+    "text": "600 mg orally twice daily with food",
+    "schedule": "Continuous",
+    "source": "Alectinib label",
+    "url": "https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&query=alectinib"
+   }
+  ],
+  "premedication": [],
+  "blocks": [],
+  "warnings": [],
+  "asOf": "Weight and height from the record; creatinine 0.7 mg/dL on 2026-11-15"
+ }
+}
