@@ -6,7 +6,7 @@ import { fmtDateTime } from "@/lib/format";
 import { IconHistory } from "./icons";
 
 
-/** Cards still waiting for a clinician across all patients, from this browser's log. */
+/** Recent agent runs and decisions from the audit log (server or this browser, depending on the deployment). */
 export function PendingStat({ stored }: { stored: Record<string, string[]> }) {
   const { decisions } = useAudit();
   const runs = useLiveRuns(Object.keys(stored));
@@ -33,7 +33,7 @@ export function RecentActivity({ names }: { names: Record<string, string> }) {
         <p className="empty">Loading…</p>
       ) : recent.length === 0 ? (
         <div className="empty-state">
-          <p><b>No decisions in this browser yet.</b></p>
+          <p><b>No decisions recorded yet.</b></p>
           <p className="sub">Open a case, run the agents and approve, modify or reject a card. Each action is signed into a hash-chained log and appears here.</p>
           <Link href="/patients/P-001" className="btn sm primary arrow" style={{ marginTop: 12 }}>Open Rahela Khatun</Link>
         </div>

@@ -8,6 +8,7 @@ import { IconGauge, IconGrid, IconInbox, IconLayers, IconPlug, IconShield, IconU
 import { useAudit, useLiveRuns } from "@/lib/hooks";
 import { useCases } from "@/lib/cases";
 import { Toaster } from "./DecisionDialog";
+import { dataMode, setDataMode, useSessionUser, type DataMode } from "@/lib/remote";
 
 export interface NavPatient {
   id: string;
@@ -23,8 +24,22 @@ const PLATFORM = [
   { href: "/architecture", label: "How it works", icon: IconLayers },
 ];
 
-export function Shell({ children, nav }: { children: ReactNode; nav: NavPatient[] }) {
+export function Shell({ children, nav, storeMode }: { children: ReactNode; nav: NavPatient[]; storeMode: DataMode }) {
+  // The storage mode is fixed per deployment; set it before any child hook reads it.
+  setDataMode(storeMode);
   const path = usePathname() || "/";
+  if (path === "/login") {
+    return (
+      <>
+        {children}
+        <Toaster />
+      </>
+    );
+  }
+  return <Workspace nav={nav} path={path}>{children}</Workspace>;
+}
+
+function Workspace({ children, nav, path }: { children: ReactNode; nav: NavPatient[]; path: string }) {
   const crumbs = crumbFor(path, nav);
   const { decisions } = useAudit();
   const cases = useCases();
@@ -119,15 +134,56 @@ export function Shell({ children, nav }: { children: ReactNode; nav: NavPatient[
           </nav>
           <div className="top-right">
             <HealthChip />
-            <div className="user" aria-label="Signed-in clinician (demo)">
-              <span className="who"><b>Dr. Demo</b><span>Medical oncology</span></span>
-              <span className="avatar" aria-hidden="true">DD</span>
-            </div>
+            <UserMenu />
           </div>
         </header>
         <main id="main" className="content">{children}</main>
       </div>
       <Toaster />
+    </div>
+  );
+}
+
+function UserMenu() {
+  const me = useSessionUser();
+  const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => ref.current && !ref.current.contains(e.target as Node) && setOpen(false);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+  const initials = (me?.name ?? "··").replace(/^Dr\.?\s*/i, "").split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+  async function signOut() {
+    setBusy(true);
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } finally {
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- full load drops all cached data
+      window.location.assign("/login");
+    }
+  }
+  return (
+    <div className="health" ref={ref}>
+      <button type="button" className="user" onClick={() => setOpen(!open)} aria-expanded={open} aria-haspopup="menu" aria-label={me ? `Signed in as ${me.name}` : "Account"}>
+        <span className="who"><b>{me?.name ?? "Signing in…"}</b><span>{me ? (me.role === "clinician" ? "Medical oncology" : me.role) : " "}</span></span>
+        <span className="avatar" aria-hidden="true">{initials || "··"}</span>
+      </button>
+      {open && (
+        <div className="popover" role="menu" aria-label="Account">
+          <p className="eyebrow">Signed in</p>
+          <div className="hrow"><span className="dot" /><span><b>{me?.name}</b><span>{me?.username} · {me?.role}</span></span></div>
+          <div className="hrow"><span className={`dot${dataMode() === "server" ? "" : " teal"}`} /><span><b>Data storage</b><span>{dataMode() === "server" ? "Server database (per account)" : "This browser only (no database connected)"}</span></span></div>
+          <button type="button" className="btn sm danger" role="menuitem" onClick={signOut} disabled={busy}>{busy ? "Signing out…" : "Sign out"}</button>
+        </div>
+      )}
     </div>
   );
 }
@@ -143,6 +199,9 @@ function NavItem({ href, label, icon, active, count }: { href: string; label: st
 }
 
 interface Health {
+  status?: "ok" | "degraded";
+  version?: string;
+  storage?: { mode: "server" | "browser"; ok: boolean; driver?: string; ms?: number };
   claude: { configured: boolean; model: string };
   civic: { live: boolean; ms: number };
   trials: { live: boolean; ms: number };
@@ -158,8 +217,9 @@ function HealthChip() {
   useEffect(() => {
     let alive = true;
     fetch("/api/health", { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((j: Health) => alive && setH(j))
+      // 503 still carries the status body (for example storage down), so read it either way.
+      .then((r) => r.json())
+      .then((j: Health) => alive && (j?.claude ? setH(j) : setFailed(true)))
       .catch(() => alive && setFailed(true));
     return () => {
       alive = false;
@@ -201,7 +261,8 @@ function HealthChip() {
           <Row ok={!!h?.civic.live} name="CIViC evidence" detail={h ? (h.civic.live ? `live · ${h.civic.ms} ms` : "down: stored snapshot used") : "checking"} />
           <Row ok={!!h?.trials.live} name="ClinicalTrials.gov" detail={h ? (h.trials.live ? `live · ${h.trials.ms} ms` : "down: stored snapshot used") : "checking"} />
           <Row ok name="Rules and calculators" detail="deterministic · always on" />
-          <p className="footer-note" style={{ marginTop: 8 }}>Checked when this page loaded. Agents fall back to dated snapshots, never to empty data.</p>
+          <Row ok={!h?.storage || h.storage.ok} name="Data storage" detail={!h?.storage ? "checking" : h.storage.mode === "browser" ? "this browser only · no database connected" : h.storage.ok ? `server database · ${h.storage.driver}${h.storage.ms !== undefined ? ` · ${h.storage.ms} ms` : ""}` : "database unreachable"} />
+          <p className="footer-note" style={{ marginTop: 8 }}>Checked when this page loaded{h?.version ? ` · v${h.version}` : ""}. Agents fall back to dated snapshots, never to empty data.</p>
         </div>
       )}
     </div>
@@ -235,5 +296,6 @@ function crumbFor(path: string, nav: NavPatient[]): { label: string; href?: stri
     return out;
   }
   const map: Record<string, string> = { "/queue": "Decision queue", "/mcp": "MCP server", "/evaluation": "Evaluation", "/architecture": "How it works" };
-  return [{ label: map[path] ?? path.slice(1) }];
+  // Unknown paths render the 404 page, whose HTML is prerendered once; a fixed label keeps hydration consistent.
+  return [{ label: map[path] ?? "Page not found" }];
 }

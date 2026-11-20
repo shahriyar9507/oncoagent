@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import type { DecisionAction, RecommendationCard } from "@/lib/types";
 import { useAudit, useLiveRuns } from "@/lib/hooks";
 import { useCases } from "@/lib/cases";
+import { dataMode } from "@/lib/remote";
 import { fmtDateTime } from "@/lib/format";
 import { DecisionDialog } from "./DecisionDialog";
 import { IconAlert, IconCheck, IconEdit, IconInbox, IconShield, IconX } from "./icons";
@@ -54,7 +55,7 @@ export function QueueView({ stored, names }: { stored: Record<string, Recommenda
       <div className="grid g4">
         <section className="panel stat accent"><span className="label">Pending</span><span className="big">{pending.length}</span><span className="foot">across {patientIds.length} patients and cases</span></section>
         <section className="panel stat"><span className="label">Flagged by the critic</span><span className="big" style={{ color: flaggedPending ? "#ffc65c" : undefined }}>{flaggedPending}</span><span className="foot">review these first</span></section>
-        <section className="panel stat"><span className="label">Decided in this browser</span><span className="big">{decided.length}</span><span className="foot">{count("approve")} approved · {count("modify")} modified · {count("reject")} rejected</span></section>
+        <section className="panel stat"><span className="label">{dataMode() === "server" ? "Decided by you" : "Decided in this browser"}</span><span className="big">{decided.length}</span><span className="foot">{count("approve")} approved · {count("modify")} modified · {count("reject")} rejected</span></section>
         <section className="panel stat"><span className="label">Live runs in use</span><span className="big">{Object.keys(runs).length}</span><span className="foot">others show the stored run</span></section>
       </div>
 

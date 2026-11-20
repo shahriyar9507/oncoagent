@@ -4,7 +4,8 @@ import { z } from "zod";
 import type { EvidenceItem, Patient, RecommendationCard } from "../types";
 import { assessRecist } from "../clinical/recist";
 
-export const MODEL = "claude-opus-5-5";
+// Override with ANTHROPIC_MODEL (for example a newer model ID) without a code change.
+export const MODEL = process.env.ANTHROPIC_MODEL || "claude-opus-5-5";
 
 const CardSchema = z.object({
   kind: z.enum(["treatment", "test", "monitoring", "safety"]),

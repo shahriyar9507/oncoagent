@@ -7,6 +7,7 @@ import type { PipelineResult, StepEvent } from "@/lib/agents/pipeline";
 import { appendAudit } from "@/lib/audit";
 import { clearRun, saveRun } from "@/lib/runs";
 import { useAudit, useStoredRun } from "@/lib/hooks";
+import { dataMode, invalidate, useSessionUser } from "@/lib/remote";
 import { fmtDateTime, fmtNum } from "@/lib/format";
 import { DecisionDialog, toast } from "./DecisionDialog";
 import type { CaseInput } from "@/lib/caseInput";
@@ -75,6 +76,7 @@ export function AgentWorkspace({ patientId, patientName, snapshot, caseInput, re
   const [drawer, setDrawer] = useState<{ title: string; ids: string[]; focus?: string } | null>(null);
   const [dialog, setDialog] = useState<{ card: RecommendationCard; action: DecisionAction } | null>(null);
   const { audit, decisions, chainOk } = useAudit();
+  const me = useSessionUser();
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => () => {
@@ -111,6 +113,7 @@ export function AgentWorkspace({ patientId, patientName, snapshot, caseInput, re
       const dec = new TextDecoder();
       let buf = "";
       let final: PipelineResult | null = null;
+      let persisted = false;
       for (;;) {
         const { value, done } = await reader.read();
         if (done) break;
@@ -120,9 +123,12 @@ export function AgentWorkspace({ patientId, patientName, snapshot, caseInput, re
           const line = buf.slice(0, nl).trim();
           buf = buf.slice(nl + 1);
           if (!line) continue;
-          const msg = JSON.parse(line) as { type: "step"; step: StepEvent } | { type: "result"; result: PipelineResult } | { type: "error"; message: string };
+          const msg = JSON.parse(line) as { type: "step"; step: StepEvent } | { type: "result"; result: PipelineResult; persisted?: boolean } | { type: "error"; message: string };
           if (msg.type === "step") setLive((s) => [...(s ?? []), msg.step]);
-          else if (msg.type === "result") final = msg.result;
+          else if (msg.type === "result") {
+            final = msg.result;
+            persisted = !!msg.persisted;
+          }
           else if (msg.type === "error") throw new Error(msg.message);
         }
       }
@@ -130,7 +136,13 @@ export function AgentWorkspace({ patientId, patientName, snapshot, caseInput, re
       saveRun(final);
       setSessionRun(final);
       setFilter("all");
-      await appendAudit({ actor: "Dr. Demo", action: "agent-run", patientId, reasonText: useClaude ? "Live run with Claude synthesis" : "Live rules-only run" });
+      if (dataMode() === "server") {
+        // The run API saved the run and its audit entry on the server.
+        invalidate("audit");
+        if (!persisted) toast("The run finished but could not be saved on the server; it is shown for this visit only.", "amber");
+      } else {
+        await appendAudit({ actor: me?.name ?? "Clinician", action: "agent-run", patientId, reasonText: useClaude ? "Live run with Claude synthesis" : "Live rules-only run" });
+      }
       const flagged = final.cards.filter((c) => c.critic.verdict === "flag").length;
       toast(`Run finished in ${((performance.now() - t0) / 1000).toFixed(1)} s · ${final.cards.length} cards${flagged ? ` · ${flagged} flagged` : ""}`, flagged ? "amber" : "mint");
     } catch (e) {
@@ -143,10 +155,14 @@ export function AgentWorkspace({ patientId, patientName, snapshot, caseInput, re
     }
   }
 
-  function restoreStored() {
-    clearRun(patientId);
-    setSessionRun(null);
-    toast("Showing the stored run again");
+  async function restoreStored() {
+    try {
+      await clearRun(patientId);
+      setSessionRun(null);
+      toast("Showing the stored run again");
+    } catch (e) {
+      toast((e as Error).message, "red");
+    }
   }
 
   const steps = live ?? result.steps;
@@ -182,7 +198,7 @@ export function AgentWorkspace({ patientId, patientName, snapshot, caseInput, re
               <input type="checkbox" checked={useClaude} onChange={(e) => setUseClaude(e.target.checked)} disabled={running} />
               Claude synthesis
             </label>
-            {isLive && !running && snapshot && <button type="button" className="btn sm" onClick={restoreStored} title="Discard the live run in this browser and show the stored run"><IconHistory /> Stored run</button>}
+            {isLive && !running && snapshot && <button type="button" className="btn sm" onClick={restoreStored} title="Discard the live run and show the stored run"><IconHistory /> Stored run</button>}
             <button type="button" className="btn primary" onClick={runLive} disabled={running} aria-describedby="run-hint">
               {running ? <IconRefresh className="spin" /> : <IconPlay />} {running ? "Running…" : "Run agents live"}
             </button>
@@ -241,7 +257,7 @@ export function AgentWorkspace({ patientId, patientName, snapshot, caseInput, re
         <section className="panel" id="cards">
           <div className="empty-state">
             <p><b>Recommendations appear here after the first run.</b></p>
-            <p className="sub">Each card will cite its evidence, show its confidence and wait for your approve, modify or reject. Nothing is stored on the server; the run is kept in this browser.</p>
+            <p className="sub">Each card will cite its evidence, show its confidence and wait for your approve, modify or reject. {dataMode() === "server" ? "The run is saved to your account." : "The run is kept in this browser."}</p>
           </div>
         </section>
       ) : (
@@ -424,7 +440,7 @@ function AuditPanel({ entries, chainOk }: { entries: AuditEntry[]; chainOk: bool
         </ol>
       )}
       {entries.length > 4 && <button type="button" className="link-btn" style={{ marginTop: 8 }} onClick={() => setAll(!all)}>{all ? "Show fewer" : `Show all ${entries.length}`}</button>}
-      <p className="footer-note" style={{ marginTop: 10 }}>Demo log lives in this browser. Production writes the same hash-chained rows to an append-only table.</p>
+      <p className="footer-note" style={{ marginTop: 10 }}>{dataMode() === "server" ? "Stored on the server in an append-only table; edits and deletions are refused by the database." : "Kept in this browser. With a database connected, the same hash-chained rows go to an append-only server table."}</p>
     </section>
   );
 }

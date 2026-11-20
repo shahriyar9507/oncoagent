@@ -10,7 +10,8 @@ import { bsaMosteller, crclCockcroftGault } from "@/lib/clinical/dose";
 import { MEDICATION_CATALOGUE, tagsFor } from "@/lib/data/medications";
 import { knowledge } from "@/lib/data/knowledge";
 import { NSCLC_PANEL } from "@/lib/data/patients";
-import { getCase, saveCase } from "@/lib/cases";
+import { saveCase, useCase } from "@/lib/cases";
+import { dataMode } from "@/lib/remote";
 import type { ReportExtraction, Variant } from "@/lib/types";
 import { toast } from "./DecisionDialog";
 import { IconAlert, IconCalc, IconCheck, IconDna, IconFile, IconPill, IconActivity, IconUsers, IconX, IconSpark } from "./icons";
@@ -90,15 +91,19 @@ function fromInput(i: CaseInput): FormState {
 
 const REGIMEN_SUGGESTIONS = Array.from(new Set(Object.values(knowledge).flatMap((k) => k.options.filter((o) => o.drugs.length).map((o) => o.regimen))));
 
+/** Loads the case to edit (from the server or this browser) before showing the form. */
 export function CaseForm({ editId }: { editId?: string }) {
+  const { stored, ready } = useCase(editId ?? "__none__");
+  if (!editId) return <CaseFormInner />;
+  if (!ready) return <p className="empty">Loading case {editId}…</p>;
+  if (!stored) return <p className="empty">Case {editId} was not found.</p>;
+  return <CaseFormInner editId={editId} initial={fromInput(stored.input)} />;
+}
+
+function CaseFormInner({ editId, initial }: { editId?: string; initial?: FormState }) {
   const router = useRouter();
-  const [f, setF] = useState<FormState>(() => {
-    if (editId && typeof window !== "undefined") {
-      const c = getCase(editId);
-      if (c) return fromInput(c.input);
-    }
-    return EMPTY();
-  });
+  const [f, setF] = useState<FormState>(() => initial ?? EMPTY());
+  const [saving, setSaving] = useState(false);
   const [extraction, setExtraction] = useState<ReportExtraction | null>(null);
   const [medQuery, setMedQuery] = useState("");
   const [tried, setTried] = useState(false);
@@ -145,7 +150,7 @@ export function CaseForm({ editId }: { editId?: string }) {
     setMedQuery("");
   }
 
-  function save(e: React.FormEvent) {
+  async function save(e: React.FormEvent) {
     e.preventDefault();
     setTried(true);
     if (!parsed.success) {
@@ -153,13 +158,15 @@ export function CaseForm({ editId }: { editId?: string }) {
       return;
     }
     const id = editId ?? newCaseId();
+    setSaving(true);
     try {
-      saveCase(id, parsed.data);
+      await saveCase(id, parsed.data);
     } catch (err) {
       toast((err as Error).message, "red");
+      setSaving(false);
       return;
     }
-    toast(editId ? "Case updated" : `Case ${id} saved in this browser`);
+    toast(editId ? "Case updated" : `Case ${id} saved ${dataMode() === "server" ? "to the server" : "in this browser"}`);
     router.push(`/cases/${id}`);
   }
 
@@ -170,7 +177,7 @@ export function CaseForm({ editId }: { editId?: string }) {
       <section className="panel hero">
         <p className="eyebrow">{editId ? `Edit case ${editId}` : "New case"}</p>
         <h1 style={{ marginTop: 8 }}>Enter a case. <b>The agents do the reading.</b></h1>
-        <p>For de-identified or fictional lung cancer cases only. Do not enter names, hospital numbers, phone numbers or dates of birth. The case is saved in this browser; the server rebuilds it for each run and stores nothing.</p>
+        <p>For de-identified or fictional lung cancer cases only. Do not enter names, hospital numbers, phone numbers or dates of birth. {dataMode() === "server" ? "The case is saved to your account on the server." : "The case is saved in this browser."} The server validates and rebuilds it for every run.</p>
         {!editId && (
           <div className="examples">
             <span className="eyebrow">Start from an example</span>
@@ -348,7 +355,7 @@ export function CaseForm({ editId }: { editId?: string }) {
             </section>
           )}
           <div className="row">
-            <button type="submit" className="btn primary"><IconCheck /> {editId ? "Save changes" : "Save case and open"}</button>
+            <button type="submit" className="btn primary" disabled={saving}><IconCheck /> {saving ? "Saving…" : editId ? "Save changes" : "Save case and open"}</button>
             <Link href={editId ? `/cases/${editId}` : "/patients"} className="btn">Cancel</Link>
           </div>
         </aside>

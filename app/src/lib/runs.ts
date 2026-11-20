@@ -1,6 +1,7 @@
 "use client";
 
 import type { PipelineResult } from "./agents/pipeline";
+import { dataMode, invalidate, send } from "./remote";
 
 // The latest live agent run per patient, kept in this browser so decisions on live cards survive a reload.
 // Production keeps runs server-side with the audit log.
@@ -39,7 +40,13 @@ export function subscribeRuns(onChange: () => void): () => void {
   };
 }
 
+/** Keep a finished run. In server mode the run API has already saved it; this refreshes the cached copy. */
 export function saveRun(r: PipelineResult) {
+  if (dataMode() === "server") {
+    invalidate("runs:");
+    window.dispatchEvent(new Event(RUN_EVENT));
+    return;
+  }
   try {
     localStorage.setItem(PREFIX + r.patientId, JSON.stringify(r));
   } catch {
@@ -48,7 +55,13 @@ export function saveRun(r: PipelineResult) {
   window.dispatchEvent(new Event(RUN_EVENT));
 }
 
-export function clearRun(patientId: string) {
+export async function clearRun(patientId: string) {
+  if (dataMode() === "server") {
+    await send("DELETE", `/api/runs/${encodeURIComponent(patientId)}`);
+    invalidate("runs:");
+    window.dispatchEvent(new Event(RUN_EVENT));
+    return;
+  }
   try {
     localStorage.removeItem(PREFIX + patientId);
   } catch {

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { DecisionAction, RecommendationCard } from "@/lib/types";
 import { appendAudit } from "@/lib/audit";
+import { useSessionUser } from "@/lib/remote";
 import { IconCheck, IconEdit, IconX } from "./icons";
 
 export const REASONS = ["Patient preference or circumstances", "Clinical judgement", "Information missing or wrong", "Evidence outdated", "Drug not available or not affordable", "Other"];
@@ -17,6 +18,7 @@ export function DecisionDialog({ card, action, patientId, patientName, onClose }
   const [text, setText] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const me = useSessionUser();
   const overridesFlag = action === "approve" && card.critic.verdict === "flag";
   const [ack, setAck] = useState(false);
   const needsReason = action !== "approve" || overridesFlag;
@@ -47,11 +49,16 @@ export function DecisionDialog({ card, action, patientId, patientName, onClose }
       return;
     }
     setSaving(true);
-    const log = await appendAudit({ actor: "Dr. Demo", action, patientId, cardId: card.id, reasonCode: overridesFlag ? "Approved despite safety-critic flag" : action !== "approve" ? reasonCode : undefined, reasonText: text.trim() || undefined });
-    setSaving(false);
-    const verb = action === "approve" ? "Approved" : action === "modify" ? "Modified" : "Rejected";
-    toast(`${verb} and signed · audit entry #${log[log.length - 1].seq}`, action === "reject" ? "red" : "mint");
-    onClose();
+    try {
+      const entry = await appendAudit({ actor: me?.name ?? "Clinician", action, patientId, cardId: card.id, reasonCode: overridesFlag ? "Approved despite safety-critic flag" : action !== "approve" ? reasonCode : undefined, reasonText: text.trim() || undefined });
+      const verb = action === "approve" ? "Approved" : action === "modify" ? "Modified" : "Rejected";
+      toast(`${verb} and signed · audit entry #${entry.seq}`, action === "reject" ? "red" : "mint");
+      onClose();
+    } catch (err) {
+      setErr((err as Error).message);
+    } finally {
+      setSaving(false);
+    }
   }
 
   const title = action === "approve" ? "Approve this card" : action === "modify" ? "Modify this card" : "Reject this card";
@@ -92,7 +99,7 @@ export function DecisionDialog({ card, action, patientId, patientName, onClose }
           />
           {err && <span id="dlg-err" className="err" role="alert">{err}</span>}
         </label>
-        <p className="footer-note">Signed as Dr. Demo (demo session). The entry is SHA-256 hash-chained to the previous one and cannot be edited afterwards.</p>
+        <p className="footer-note">Signed as {me?.name ?? "the signed-in clinician"}. The entry is SHA-256 hash-chained to the previous one and cannot be edited afterwards.</p>
         <div className="row" style={{ justifyContent: "flex-end" }}>
           <button type="button" className="btn" onClick={onClose}>Cancel</button>
           <button type="submit" className={`btn ${action === "reject" ? "danger" : "primary"}`} disabled={saving}>{saving ? "Signing…" : action === "approve" ? "Approve and sign" : action === "modify" ? "Save and sign" : "Reject and sign"}</button>

@@ -31,7 +31,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className={inter.variable}>
       <body>
-        <Shell nav={nav}>{children}</Shell>
+        <Shell nav={nav} storeMode={process.env.DATABASE_URL ? "server" : "browser"}>{children}</Shell>
       </body>
     </html>
   );

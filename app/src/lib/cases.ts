@@ -3,9 +3,12 @@
 import { useMemo, useSyncExternalStore } from "react";
 import { CaseInputSchema, type CaseInput } from "./caseInput";
 import { clearRun } from "./runs";
+import { dataMode, invalidate, send, useRemote } from "./remote";
 
-// Clinician-entered cases live in this browser only (localStorage). The server rebuilds the record from the
-// validated input on each run and stores nothing. Production would keep cases in the hospital's own database.
+// Clinician-entered cases.
+// Server mode: stored in PostgreSQL per signed-in user through /api/cases.
+// Browser mode: kept in this browser's localStorage. In both modes the run API validates the case and rebuilds the
+// record on the server for every run.
 const KEY = "oncoagent.cases.v1";
 const EVENT = "oncoagent-cases";
 
@@ -56,11 +59,13 @@ export function readCases(): StoredCase[] {
   return parse(readRaw());
 }
 
-export function getCase(id: string): StoredCase | undefined {
-  return readCases().find((c) => c.id === id);
-}
-
-export function saveCase(id: string, input: CaseInput): StoredCase {
+/** Save (create or update) a case. */
+export async function saveCase(id: string, input: CaseInput): Promise<StoredCase> {
+  if (dataMode() === "server") {
+    const { case: row } = await send<{ case: StoredCase }>("PUT", `/api/cases/${encodeURIComponent(id)}`, { input });
+    invalidate("case");
+    return row;
+  }
   const list = readCases();
   const now = new Date().toISOString();
   const existing = list.find((c) => c.id === id);
@@ -69,19 +74,35 @@ export function saveCase(id: string, input: CaseInput): StoredCase {
   return next;
 }
 
-export function deleteCase(id: string) {
+export async function deleteCase(id: string): Promise<void> {
+  if (dataMode() === "server") {
+    await send("DELETE", `/api/cases/${encodeURIComponent(id)}`);
+    invalidate("case");
+    invalidate("runs:");
+    return;
+  }
   write(readCases().filter((c) => c.id !== id));
-  clearRun(id);
+  await clearRun(id);
 }
 
-/** All saved cases, newest first. Empty on the server and on first paint. */
+const NO_CASES: StoredCase[] = [];
+
+/** All saved cases, newest first. Empty on the server render and on first paint. */
 export function useCases(): StoredCase[] {
-  const raw = useSyncExternalStore(subscribe, readRaw, () => null);
-  return useMemo(() => parse(raw), [raw]);
+  const server = dataMode() === "server";
+  const remote = useRemote<{ cases: StoredCase[] }>("cases", "/api/cases", server);
+  const raw = useSyncExternalStore(subscribe, () => (server ? null : readRaw()), () => null);
+  const local = useMemo(() => parse(raw), [raw]);
+  return server ? remote.data?.cases ?? NO_CASES : local;
 }
 
-/** One saved case, or undefined; `ready` is false until the browser store has been read. */
+/** One saved case, or undefined; `ready` is false until the store has answered. */
 export function useCase(id: string): { stored: StoredCase | undefined; ready: boolean } {
-  const raw = useSyncExternalStore(subscribe, readRaw, () => "__server__");
-  return useMemo(() => (raw === "__server__" ? { stored: undefined, ready: false } : { stored: parse(raw).find((c) => c.id === id), ready: true }), [raw, id]);
+  const server = dataMode() === "server";
+  const remote = useRemote<{ case: StoredCase }>(`case:${id}`, `/api/cases/${encodeURIComponent(id)}`, server);
+  const raw = useSyncExternalStore(subscribe, () => (server ? "__remote__" : readRaw()), () => "__server__");
+  return useMemo(() => {
+    if (server) return { stored: remote.data?.case, ready: remote.ready };
+    return raw === "__server__" ? { stored: undefined, ready: false } : { stored: parse(raw).find((c) => c.id === id), ready: true };
+  }, [server, remote.data, remote.ready, raw, id]);
 }

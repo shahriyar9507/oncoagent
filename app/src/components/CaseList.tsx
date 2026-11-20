@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useCases } from "@/lib/cases";
+import { dataMode } from "@/lib/remote";
 import { useLiveRuns } from "@/lib/hooks";
 import { fmtDateTime } from "@/lib/format";
 import { IconChevronRight, IconEdit } from "./icons";
 
-/** Cases entered by the clinician in this browser. */
+/** Cases entered by the signed-in clinician (server account or this browser). */
 export function CaseList() {
   const cases = useCases();
   const runs = useLiveRuns(cases.map((c) => c.id));
@@ -19,7 +20,7 @@ export function CaseList() {
       {cases.length === 0 ? (
         <div className="empty-state">
           <p><b>No cases entered yet.</b></p>
-          <p className="sub">Enter a de-identified NSCLC case, paste its molecular report and run the same nine agents on it. Cases stay in this browser.</p>
+          <p className="sub">Enter a de-identified NSCLC case, paste its molecular report and run the same nine agents on it. {dataMode() === "server" ? "Cases are saved to your account." : "Cases stay in this browser."}</p>
         </div>
       ) : (
         <div className="plist">

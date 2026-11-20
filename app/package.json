@@ -1,6 +1,6 @@
 {
   "name": "oncoagent",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "OncoAgent: agentic decision support for oncologists (Next.js workspace, nine agents, MCP server). Fictional patients only.",
   "private": true,
   "license": "MIT",
@@ -24,19 +24,26 @@
     "snapshot": "tsx scripts/snapshot.ts",
     "mcp:stdio": "tsx mcp/stdio.ts",
     "mcp:smoke": "tsx scripts/mcp-smoke.ts",
+    "hash-password": "tsx scripts/hash-password.ts",
+    "db:migrate": "tsx scripts/db-migrate.ts",
+    "smoke": "tsx scripts/smoke.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.11.0",
     "@modelcontextprotocol/client": "^2.4.0",
     "@modelcontextprotocol/server": "^2.4.0",
+    "jose": "^6.2.18",
     "mcp-handler": "^2.4.0",
     "next": "16.4.6",
+    "postgres": "^4.1.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.17",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

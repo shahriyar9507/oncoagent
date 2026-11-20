@@ -18,8 +18,8 @@ function NotFound({ id }: { id: string }) {
   return (
     <section className="panel">
       <div className="empty-state">
-        <p><b>Case {id} is not in this browser.</b></p>
-        <p className="sub">Clinician-entered cases are kept only in the browser where they were created. Open it there, or enter the case again.</p>
+        <p><b>Case {id} was not found.</b></p>
+        <p className="sub">The case may have been deleted, or (without server storage) it was entered in another browser. Enter it again, or open it where it was created.</p>
         <Link href="/cases/new" className="btn sm primary arrow" style={{ marginTop: 12 }}>New case</Link>
       </div>
     </section>
@@ -37,11 +37,15 @@ export function CaseView({ id }: { id: string }) {
   const structure = structureForVariants(p.variants);
   const trials = run?.evidence.filter((e) => e.kind === "trial") ?? [];
 
-  function remove() {
-    if (!window.confirm(`Delete case ${id} and its agent run from this browser? Signed audit entries are kept.`)) return;
-    deleteCase(id);
-    toast(`Case ${id} deleted`);
-    router.push("/patients");
+  async function remove() {
+    if (!window.confirm(`Delete case ${id} and its latest agent run? Signed audit entries are kept.`)) return;
+    try {
+      await deleteCase(id);
+      toast(`Case ${id} deleted`);
+      router.push("/patients");
+    } catch (e) {
+      toast((e as Error).message, "red");
+    }
   }
 
   return (

@@ -32,9 +32,20 @@ jobs:
         run: npx tsc --noEmit
       - name: Lint
         run: npm run lint
-      - name: Unit tests (dose and RECIST)
+      - name: Unit tests (clinical rules, auth, storage on embedded PostgreSQL)
         run: npm test
       - name: Evaluation (stored runs, no API key needed)
         run: npm run eval
       - name: Production build
         run: npm run build
+      - name: Smoke test (sign-in gate, login, agent run, sign-out)
+        env:
+          AUTH_SECRET: ci-only-secret-never-used-outside-this-job-0123456789
+          AUTH_USERNAME: ci
+          OA_USER: ci
+          OA_PASS: ci-only-password
+        run: |
+          export AUTH_PASSWORD_HASH="$(OA_PASSWORD="$OA_PASS" npx tsx scripts/hash-password.ts | sed 's/^AUTH_PASSWORD_HASH=//')"
+          npx next start -p 3100 > /tmp/next.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://localhost:3100/api/health && break; sleep 1; done
+          npm run smoke -- http://localhost:3100 || (cat /tmp/next.log; exit 1)

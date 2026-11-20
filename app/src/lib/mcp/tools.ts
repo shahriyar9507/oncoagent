@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { APP_VERSION } from "../version";
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { getPatient, patients } from "../data/patients";
@@ -14,7 +15,7 @@ import { extractReport } from "../clinical/extract";
 import type { Patient } from "../types";
 
 // oncoagent-mcp: the platform's tools, served over stdio and Streamable HTTP from one definition.
-export const SERVER_INFO = { name: "oncoagent-mcp", version: "0.2.0" };
+export const SERVER_INFO = { name: "oncoagent-mcp", version: APP_VERSION };
 
 function text(data: unknown) {
   return { content: [{ type: "text" as const, text: typeof data === "string" ? data : JSON.stringify(data, null, 2) }] };
