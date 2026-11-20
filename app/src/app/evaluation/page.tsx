@@ -39,7 +39,7 @@ export default function EvaluationPage() {
         ))}
       </div>
 
-      <div className="split">
+      <div className="split split-wide">
         <section className="panel">
           <div className="panel-head"><h2 className="panel-title"><IconGauge /> Per case</h2><span className="chip ghost">{results.model}</span></div>
           <div className="table-wrap">

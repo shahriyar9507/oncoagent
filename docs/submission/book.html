@@ -242,6 +242,8 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
   <div class="grid g2">
     <div class="ans"><div class="hd"><span><span class="ftag">Form</span><span class="t">Project name</span></span><button class="copy" type="button" data-copy="a-name">Copy</button></div><p class="txt" id="a-name">OncoAgent</p></div>
     <div class="ans"><div class="hd"><span><span class="ftag">Form</span><span class="t">Domain · challenge</span></span><button class="copy" type="button" data-copy="a-dom">Copy</button></div><p class="txt" id="a-dom">Idea to Unicorn · HealthSphere AI · PredictRx</p></div>
+    <div class="ans"><div class="hd"><span><span class="ftag">Form</span><span class="t">Live demo URL</span></span><button class="copy" type="button" data-copy="a-live">Copy</button></div><p class="txt" id="a-live">https://oncoagent.vercel.app</p></div>
+    <div class="ans"><div class="hd"><span><span class="ftag">Form</span><span class="t">GitHub repository</span></span><button class="copy" type="button" data-copy="a-gh">Copy</button></div><p class="txt" id="a-gh">https://github.com/shahriyar9507/oncoagent</p></div>
   </div>
   <div class="ans"><div class="hd"><span><span class="ftag">Form</span><span class="t">Tagline / elevator pitch</span><span class="meta" data-count="a-tag"></span></span><button class="copy" type="button" data-copy="a-tag">Copy</button></div>
     <p class="txt" id="a-tag">An AI assistant team for oncologists: it reads every cancer report, proposes the next test or treatment with its evidence, and the doctor makes every decision.</p></div>
@@ -333,7 +335,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
     <div class="card k"><h3>Never acts alone</h3><p>Approve, modify or reject; reasons are recorded. The AI never orders, prescribes or contacts a patient.</p></div>
   </div>
   <div class="ans"><div class="hd"><span><span class="ftag">Form</span><span class="t">Solution description</span><span class="meta" data-count="a-sol"></span></span><button class="copy" type="button" data-copy="a-sol">Copy</button></div>
-    <p class="txt" id="a-sol">OncoAgent is a clinician-only web workspace backed by an orchestrator and a team of specialist AI agents. When a new report arrives, the Sentinel agent places it on the patient's timeline and flags red signs. The Test-advisor proposes missing guideline biomarkers. The Genomic-interpreter reads structured VCF or PDF molecular reports, names the driver alteration and grades it with public knowledge bases. The Guideline and Trial-matcher agents rank treatment options and recruiting trials from versioned guidelines and the ClinicalTrials.gov registry. The Pharmacology-safety and Dose-optimizer agents check interactions and calculate doses with deterministic, label-sourced formulas. The Structure-insight agent shows the mutation on the protein's 3D structure to explain why a drug works or stops working. A Safety-critic re-checks every claim against its source before the doctor sees it. Each output is a recommendation card: proposal, patient facts used, evidence, confidence, uncertainty, alternatives and what would change the advice. The oncologist approves, modifies or rejects with a reason, and every action is written to a hash-chained audit log. All tools are also exposed through our own MCP server, so any MCP client can use them. A separate, de-identified research track turns repeated resistance patterns into target dossiers for licensed drug-discovery partners.</p></div>
+    <p class="txt" id="a-sol">OncoAgent is a clinician-only web workspace backed by an orchestrator and a team of specialist AI agents. When a new report arrives, the Sentinel agent places it on the patient's timeline, calculates RECIST 1.1 response and flags red signs. The Test-advisor proposes missing guideline biomarkers. The Genomic-interpreter reads the molecular report, names the driver and resistance alterations and grades them with live CIViC evidence. The Guideline and Trial-matcher agents rank treatment options and recruiting trials from versioned guidelines and the ClinicalTrials.gov registry. The Pharmacology-safety and Dose-optimizer agents check interactions and calculate doses with deterministic, label-sourced formulas. The Structure-insight agent shows the mutation on the protein's 3D structure to explain why a drug works or stops working. A Safety-critic re-checks every claim against its source before the doctor sees it. Each output is a recommendation card: proposal, patient facts used, evidence, confidence, uncertainty, alternatives and what would change the advice. The oncologist approves, modifies or rejects with a reason, and every action is written to a hash-chained audit log. All tools are also exposed through our own MCP server, so any MCP client can use them. A separate, de-identified research track turns repeated resistance patterns into target dossiers for licensed drug-discovery partners.</p></div>
   <div class="foot"><span class="l"><span class="star">✱</span><span class="word" style="font-size:13px">Datour<span class="x">X</span></span><span>OncoAgent · Submission book · 20 Nov 2026 · Public</span></span><span class="pg">P.08</span></div>
 </section>
 
@@ -459,17 +461,17 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
   <div class="tbl"><table>
     <thead><tr><th>MCP tool (oncoagent-mcp)</th><th>What it returns</th><th>Data behind it</th><th>Status</th></tr></thead>
     <tbody>
-      <tr><td>get_case_timeline</td><td>Patient timeline: diagnoses, tests, therapies, response</td><td>Synthetic FHIR / mCODE bundle</td><td><span class="st mvp">MVP · Today</span></td></tr>
-      <tr><td>interpret_variant</td><td>Driver call, evidence level, approved drugs, resistance</td><td>CIViC (CC0, public API)</td><td><span class="st mvp">MVP · Today</span></td></tr>
-      <tr><td>search_trials</td><td>Recruiting trials with NCT ID, phase, sites, criteria</td><td>ClinicalTrials.gov API v2</td><td><span class="st mvp">MVP · Today</span></td></tr>
-      <tr><td>calculate_dose</td><td>BSA and Calvert results with every input and its date</td><td>Deterministic code, label formulas</td><td><span class="st mvp">MVP · Today</span></td></tr>
-      <tr><td>draft_recommendation</td><td>A card in the fixed schema, checked by the critic</td><td>Claude + the tools above</td><td><span class="st mvp">MVP · Today</span></td></tr>
-      <tr><td>record_decision</td><td>Approve / modify / reject into the audit log</td><td>Needs a human session token</td><td><span class="st mvp">MVP · Today</span></td></tr>
-      <tr><td>structure_view</td><td>Protein, residue, domain and confidence for the 3D viewer</td><td>RCSB PDB, AlphaFold DB</td><td><span class="st design">Designed</span></td></tr>
+      <tr><td>list_patients</td><td>Fictional patients and their current clinical question</td><td>Fictional case records</td><td><span class="st built">Built</span></td></tr>
+      <tr><td>get_case_timeline</td><td>Timeline, therapy lines, RECIST 1.1 assessments, ctDNA</td><td>Fictional case records</td><td><span class="st built">Built</span></td></tr>
+      <tr><td>interpret_variant</td><td>Lung evidence: level, significance, therapies, PubMed IDs</td><td>CIViC (CC0, live API)</td><td><span class="st built">Built</span></td></tr>
+      <tr><td>search_trials</td><td>Recruiting trials with NCT ID, phase, sponsor, countries</td><td>ClinicalTrials.gov API v2 (live)</td><td><span class="st built">Built</span></td></tr>
+      <tr><td>calculate_dose</td><td>BSA, CrCl and Calvert results with formulas and blocks</td><td>Deterministic code, label parameters</td><td><span class="st built">Built</span></td></tr>
+      <tr><td>draft_recommendations</td><td>Agent cards with evidence IDs and critic verdicts</td><td>Agents + optional Claude synthesis</td><td><span class="st built">Built</span></td></tr>
+      <tr><td>record_decision</td><td>Approve / modify / reject into a hash-chained log</td><td>Refuses without a clinician token</td><td><span class="st built">Built</span></td></tr>
     </tbody>
   </table></div>
   <div class="grid g3">
-    <div class="card"><h3>Transports</h3><p>stdio for local clients (Claude Desktop, Claude Code, our orchestrator). Streamable HTTP for remote clients, behind a bearer token.</p></div>
+    <div class="card"><h3>Transports</h3><p>stdio for local clients (<code>npx tsx mcp/stdio.ts</code>). Streamable HTTP at https://oncoagent.vercel.app/api/mcp, optional bearer token. Both tested with an MCP client.</p></div>
     <div class="card"><h3>We also consume MCP</h3><p>PubMed, ClinicalTrials.gov and ICD-10 MCP servers for literature, trials and coding during research and evaluation.</p></div>
     <div class="card k"><h3>Side effects need a human</h3><p>Only <code>record_decision</code> writes, and only with a token the model cannot mint.</p></div>
   </div>
@@ -511,9 +513,9 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
   </table></div>
   <div class="grid g2">
     <div class="ans"><div class="hd"><span><span class="ftag">Form</span><span class="t">Data quality measures</span><span class="meta" data-count="a-dq"></span></span><button class="copy" type="button" data-copy="a-dq">Copy</button></div>
-      <p class="txt" id="a-dq">Every input is validated before an agent sees it: FHIR R4 and mCODE profile checks, Pydantic/Zod schemas for every tool response, HGVS normalisation on GRCh38 with MANE transcripts, unit and range checks for labs, and date freshness rules (a creatinine older than 7 days blocks a dose card). Molecular reports pass NGS QC gates (depth, purity, contamination, sample swap) or are refused. PDF extraction returns field-level confidence; low-confidence fields go to a human. Duplicate events are merged within 72 hours.</p></div>
+      <p class="txt" id="a-dq">In the MVP: typed case records, a Zod schema that the model output must match, trial IDs accepted only if the registry returned them, a creatinine older than 7 days or a clearance below the label limit blocks the dose card, and live sources fall back to dated snapshots so a run never silently uses empty data. For hospital data we add FHIR R4 / mCODE validation, HGVS on GRCh38, lab unit checks and NGS QC gates (depth, purity, sample swap) before any agent sees a report.</p></div>
     <div class="ans"><div class="hd"><span><span class="ftag">Form</span><span class="t">Lineage and observability</span><span class="meta" data-count="a-lin"></span></span><button class="copy" type="button" data-copy="a-lin">Copy</button></div>
-      <p class="txt" id="a-lin">Each recommendation card stores the hash of its input snapshot, the model ID, the prompt template version, the IDs and versions of every retrieved guideline section, database record and trial, the critic verdict and the clinician's decision. Rows are append-only and hash-chained, so any tampering is visible. Agent runs are traced with OpenTelemetry spans (latency, tokens, cost, tool calls) without patient identifiers, and dashboards track acceptance and override rates, unsupported-claim rate and drift.</p></div>
+      <p class="txt" id="a-lin">Every run records each agent's status, time in milliseconds and note, the model ID, token usage, and an evidence registry whose IDs every card must cite (CIViC EID, NCT, label, calculator, patient event). Live versus snapshot source is shown per tool. Clinician decisions are written to a SHA-256 hash chain that the screen re-verifies; in the demo it lives in the browser, in production in an append-only table. OpenTelemetry tracing is planned.</p></div>
   </div>
   <div class="foot"><span class="l"><span class="star">✱</span><span class="word" style="font-size:13px">Datour<span class="x">X</span></span><span>OncoAgent · Submission book · 20 Nov 2026 · Public</span></span><span class="pg">P.15</span></div>
 </section>
@@ -526,9 +528,9 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
     <p class="txt" id="a-ps">Tiered prompts. Tier 1, a fixed system prompt per agent: role, scope, the non-negotiable safety rules and the recommendation-card JSON schema. Tier 2, task prompts filled from the case: only the de-identified facts needed, each with its source ID. Tier 3, retrieved evidence blocks (guideline sections, CIViC records, trial records) quoted with IDs, never paraphrased from memory. Reasoning runs in the model's private extended thinking; the visible output is the structured card only. Few-shot examples come from our gold cases. A separate critic prompt checks every claim against its cited source and fails closed.</p></div>
   <div class="grid g2">
     <div class="ans"><div class="hd"><span><span class="ftag">Form</span><span class="t">Token optimisation</span><span class="meta" data-count="a-tok"></span></span><button class="copy" type="button" data-copy="a-tok">Copy</button></div>
-      <p class="txt" id="a-tok">Prompt caching for the long, stable parts (system prompt, schemas, guideline chapters). Model routing: Haiku 5.5 for extraction and classification, Sonnet 5.5 for agent steps, Opus 5.5 only for full-case synthesis. Retrieval top-k limits, compact JSON outputs, timeline summaries instead of raw records, and batch processing for overnight re-checks.</p></div>
+      <p class="txt" id="a-tok">Seven of the nine agents are deterministic code and use no tokens; only the synthesis step calls Claude, once per case, with a compact de-identified case summary and an evidence list of short IDs (about 4–6k input and 2–3k output tokens, about $0.065 per case on Claude Opus 5.5). The stable system prompt is prompt-cached, outputs are a strict JSON schema, and stored runs are reused until a doctor asks for a live re-run. Planned: Haiku for high-volume report extraction.</p></div>
     <div class="ans"><div class="hd"><span><span class="ftag">Form</span><span class="t">Agent / orchestration</span><span class="meta" data-count="a-orc"></span></span><button class="copy" type="button" data-copy="a-orc">Copy</button></div>
-      <p class="txt" id="a-orc">An orchestrator runs each event as a durable workflow (Temporal-style: retries, state, audit). It calls narrow specialist agents with typed tools served by our MCP server, then a Safety-critic on a different prompt. Autonomy levels are assigned per action; prescribing and patient contact are forbidden. Cards the critic rejects reach the doctor marked "AI disagreement".</p></div>
+      <p class="txt" id="a-orc">An orchestrator runs nine agents in order for each case: Sentinel, Genomic-interpreter, Test-advisor, Guideline, Pharmacology-safety, Trial-matcher, Dose-optimizer, Synthesis (Claude) and Safety-critic. Each step streams its status to the doctor's screen. The same tools are served by our MCP server. Prescribing, signing and patient contact are not available to any agent; cards the critic flags reach the doctor marked as flagged.</p></div>
   </div>
   <div class="ans"><div class="hd"><span><span class="ftag">Form</span><span class="t">AI-DLC process notes</span><span class="meta" data-count="a-dlc"></span></span><button class="copy" type="button" data-copy="a-dlc">Copy</button></div>
     <p class="txt" id="a-dlc">We follow an AI-driven development lifecycle. Inception: research and requirements were produced with Claude Code and a project team of 25 specialist sub-agents (medical oncologist, molecular pathologist, bioinformatician, AI engineer, regulatory officer and others) guided by 13 project skills that hold our safety rules, evidence standards and data standards. Construction: the same agents write specifications, code and tests in short loops, each change reviewed by a clinical-safety agent and a human. Operations: every prompt, model or tool change re-runs the gold-case evaluation suite in CI and is blocked on regression; production metrics feed back into the next cycle.</p></div>
@@ -536,7 +538,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
     <div class="ans"><div class="hd"><span><span class="ftag">Form</span><span class="t">Fine-tuning / adaptation</span><span class="meta" data-count="a-ft"></span></span><button class="copy" type="button" data-copy="a-ft">Copy</button></div>
       <p class="txt" id="a-ft">No LLM fine-tuning in the MVP: we adapt through retrieval over versioned guidelines, tool use, skills and few-shot gold cases, which keeps sources citable. Later, under ethics approval and with de-identified data, we plan small domain-adapted models for report extraction and frozen pathology/imaging foundation models with lightweight task heads, each with a model card.</p></div>
     <div class="ans"><div class="hd"><span><span class="ftag">Form</span><span class="t">Evaluation and quality</span><span class="meta" data-count="a-ev"></span></span><button class="copy" type="button" data-copy="a-ev">Copy</button></div>
-      <p class="txt" id="a-ev">Gold cases with tumour-board-approved answers, plus a red-team set (missing data, conflicting reports, outdated guidelines, prompt injection inside PDFs). Metrics: concordance with the tumour board, citation precision, unsupported-claim rate, contraindication misses (must be 0), dose-calculation errors (must be 0), time saved and override reasons. Runs in CI on every change.</p></div>
+      <p class="txt" id="a-ev">A script scores every stored run against gold answers for each case and attacks the safety-critic with unsafe drafts. Today: driver found 3/3, leading option matches 3/3, citations resolving to evidence 100%, trial IDs from the registry 100%, doses exact 3/3 with 9 unit tests, 0 doses outside the calculator, 0 unsafe leading recommendations, 6/6 adversarial drafts caught. Three fictional cases are too few for clinical claims; a pilot needs hundreds.</p></div>
   </div>
   <div class="foot"><span class="l"><span class="star">✱</span><span class="word" style="font-size:13px">Datour<span class="x">X</span></span><span>OncoAgent · Submission book · 20 Nov 2026 · Public</span></span><span class="pg">P.16</span></div>
 </section>
@@ -551,13 +553,13 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
     <div class="ans"><div class="hd"><span><span class="ftag">Form</span><span class="t">Privacy and compliance</span><span class="meta" data-count="a-pc"></span></span><button class="copy" type="button" data-copy="a-pc">Copy</button></div>
       <p class="txt" id="a-pc">The MVP uses only synthetic and public data. The product is designed for the Bangladesh Personal Data Protection Ordinance 2025 (health and genetic data are sensitive; confidential data stays in-country), HIPAA-style safeguards and the FDA clinical decision support guidance of January 2026 (clinician-facing, reviewable basis). Consent is checked at query time; any pilot needs ethics (BMRC) approval and DGDA confirmation.</p></div>
     <div class="ans"><div class="hd"><span><span class="ftag">Form</span><span class="t">Tunnelling usage</span><span class="meta" data-count="a-tun"></span></span><button class="copy" type="button" data-copy="a-tun">Copy</button></div>
-      <p class="txt" id="a-tun">During development the local MCP server and API run on a laptop and are exposed through a Cloudflare Tunnel (ngrok as fallback) so remote MCP clients, teammates and the live demo can reach them over HTTPS without opening ports. Access needs a bearer token, only synthetic data passes through the tunnel, and the tunnel is closed when the cloud deployment is live.</p></div>
+      <p class="txt" id="a-tun">The MVP did not need a tunnel: the MCP server runs over stdio locally and over Streamable HTTP on Vercel. For on-premise hospital pilots, where patient data must stay inside the hospital, we plan an outbound-only tunnel (Cloudflare Tunnel) from the hospital server, with bearer-token access and only de-identified data crossing it.</p></div>
   </div>
   <div class="grid g2">
     <div class="ans"><div class="hd"><span><span class="ftag">Form</span><span class="t">Data and AI provenance</span><span class="meta" data-count="a-prov"></span></span><button class="copy" type="button" data-copy="a-prov">Copy</button></div>
-      <p class="txt" id="a-prov">Data: synthetic patients (Synthea-style, our own fictional NSCLC cases); public genomics context from TCGA/GDC open access, cBioPortal and AACR GENIE (under their terms); variant evidence from CIViC (CC0); trials from ClinicalTrials.gov API v2; literature from PubMed; structures from RCSB PDB and AlphaFold DB (CC-BY 4.0). Models: Anthropic Claude Opus 5.5, Sonnet 5.5 and Haiku 5.5 via API with pinned model IDs. No real patient data is used; no AlphaFold 3 weights in any commercial path.</p></div>
+      <p class="txt" id="a-prov">Patients: three fictional NSCLC cases written by the team. Variant evidence: CIViC (CC0), fetched live with a stored snapshot as fallback. Trials: ClinicalTrials.gov API v2, live with snapshot fallback. Therapy knowledge: a small curated pack of public approvals and pivotal trials, versioned 2026-11-20. Dose parameters: product labels (DailyMed). Structures: RCSB PDB 1M17, 6OIM, 2XP2. Model: Anthropic Claude Opus 5.5 (pinned ID) with structured output; it receives a pseudonymous ID and age band only. No real patient data is used.</p></div>
     <div class="ans"><div class="hd"><span><span class="ftag">Form</span><span class="t">Tooling and IDE</span><span class="meta" data-count="a-tool"></span></span><button class="copy" type="button" data-copy="a-tool">Copy</button></div>
-      <p class="txt" id="a-tool">Claude Code in VS Code with 25 project agents and 13 project skills; MCP (Python and TypeScript SDKs); Next.js, TypeScript and Tailwind for the clinician app; FastAPI and Pydantic for services; PostgreSQL with pgvector; Mol* for 3D proteins; GitHub for code and CI; Vercel for the live demo; Cloudflare Tunnel for development access.</p></div>
+      <p class="txt" id="a-tool">Claude Code in VS Code with 25 project agents and 13 project skills; Next.js 16 with TypeScript and a plain-CSS design system; Anthropic TypeScript SDK with structured outputs; MCP SDK v2 and mcp-handler; Mol* for 3D proteins; hand-built SVG charts; Vitest for unit tests; tsx scripts for evaluation; GitHub for code; Vercel for the live demo.</p></div>
   </div>
   <div class="foot"><span class="l"><span class="star">✱</span><span class="word" style="font-size:13px">Datour<span class="x">X</span></span><span>OncoAgent · Submission book · 20 Nov 2026 · Public</span></span><span class="pg">P.17</span></div>
 </section>
@@ -649,19 +651,26 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
     <thead><tr><th>Capability</th><th>Status</th></tr></thead>
     <tbody>
       <tr><td>Research base, architecture, safety rules, 25-agent build team, 13 skills</td><td><span class="st built">Built</span></td></tr>
-      <tr><td>Clinician workspace: patient timeline and recommendation cards, approve / modify / reject</td><td><span class="st mvp">MVP · Today</span></td></tr>
-      <tr><td>Genomic-interpreter with CIViC evidence; Trial-matcher with ClinicalTrials.gov</td><td><span class="st mvp">MVP · Today</span></td></tr>
-      <tr><td>oncoagent-mcp server (stdio + Streamable HTTP); deterministic dose calculators</td><td><span class="st mvp">MVP · Today</span></td></tr>
-      <tr><td>Safety-critic, audit log, gold-case evaluation script</td><td><span class="st mvp">MVP · Today</span></td></tr>
-      <tr><td>3D structure insight (Mol*), PDF report extraction, guideline RAG</td><td><span class="st design">Designed</span></td></tr>
+      <tr><td>Clinician workspace: timeline, RECIST and ctDNA charts, recommendation cards, approve / modify / reject</td><td><span class="st built">Built</span></td></tr>
+      <tr><td>Nine agents incl. CIViC evidence, ClinicalTrials.gov matching, interaction rules, Claude synthesis</td><td><span class="st built">Built</span></td></tr>
+      <tr><td>oncoagent-mcp: 7 tools over stdio and Streamable HTTP; unit-tested dose calculators</td><td><span class="st built">Built</span></td></tr>
+      <tr><td>Safety-critic, hash-chained audit log, gold-case and adversarial evaluation</td><td><span class="st built">Built</span></td></tr>
+      <tr><td>3D structure view with Mol* (RCSB PDB)</td><td><span class="st built">Built</span></td></tr>
+      <tr><td>PDF report extraction, guideline RAG, server-side decision storage</td><td><span class="st design">Designed</span></td></tr>
       <tr><td>Hospital integration (FHIR, PACS), imaging and pathology triage models, ctDNA trends</td><td><span class="st plan">Planned</span></td></tr>
       <tr><td>Breast and colorectal modules; silent-mode hospital pilot</td><td><span class="st plan">Planned</span></td></tr>
       <tr><td>Research track: target dossiers and Analog Lab with a licensed discovery partner</td><td><span class="st vision">Vision</span></td></tr>
     </tbody>
   </table></div>
+  <div class="grid g4">
+    <div class="card k"><span class="n">3/3</span><p>drivers found and leading options matched</p></div>
+    <div class="card"><span class="n">100%</span><p>citations and trial IDs resolve to real sources</p></div>
+    <div class="card"><span class="n">6/6</span><p>unsafe drafts caught by the safety-critic</p></div>
+    <div class="card m"><span class="n">23 s</span><p>full run per case, about $0.065 with Claude</p></div>
+  </div>
   <div class="card k">
-    <h3>What the first build proves</h3>
-    <p>One fictional lung cancer patient flows end to end: a gene report arrives, OncoAgent names the driver, grades the evidence, finds recruiting trials, calculates a dose, the safety-critic checks every claim, and a doctor approves or rejects with a reason. The same tools answer any MCP client.</p>
+    <h3>Live now</h3>
+    <p>https://oncoagent.vercel.app · code at https://github.com/shahriyar9507/oncoagent · MCP at https://oncoagent.vercel.app/api/mcp. Three fictional lung cancer patients flow end to end: a report arrives, the agents name the driver, grade the evidence, check interactions, find recruiting trials and calculate a dose, the safety-critic checks every claim, and a doctor approves, modifies or rejects with a reason.</p>
   </div>
   <div class="foot"><span class="l"><span class="star">✱</span><span class="word" style="font-size:13px">Datour<span class="x">X</span></span><span>OncoAgent · Submission book · 20 Nov 2026 · Public</span></span><span class="pg">P.22</span></div>
 </section>
@@ -669,16 +678,16 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
 <!-- ============ P.23 TODAY'S MVP ============ -->
 <section class="sheet" aria-label="Today's MVP">
   <div class="toprow"><span class="arrow"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 2 L10 10 M10 4 V10 H4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span><span class="pill">Today's MVP</span><span class="pill tier">Public</span></div>
-  <h1 class="h1">Six steps, <span class="g">one working demo.</span></h1>
+  <h1 class="h1">Six steps, <span class="g">built in one day.</span></h1>
   <div class="tbl"><table>
-    <thead><tr><th>Step</th><th>What we build</th><th>Done when</th></tr></thead>
+    <thead><tr><th>Step</th><th>What we built</th><th>Status</th></tr></thead>
     <tbody>
-      <tr><td>1 · Set up</td><td>GitHub repository, Next.js app, FastAPI service, synthetic NSCLC cases, environment keys</td><td>App runs locally; repo public</td></tr>
-      <tr><td>2 · Workspace</td><td>Patient timeline, recommendation-card view, approve / modify / reject with reason, audit log</td><td>A doctor can sign a card</td></tr>
-      <tr><td>3 · Agents</td><td>Genomic-interpreter (CIViC), Trial-matcher (ClinicalTrials.gov), Dose-optimizer, Safety-critic, on Claude</td><td>The case produces sourced cards</td></tr>
-      <tr><td>4 · MCP</td><td>oncoagent-mcp with six tools over stdio and Streamable HTTP; tested from Claude Desktop</td><td>An MCP client lists and calls the tools</td></tr>
-      <tr><td>5 · Prove</td><td>Gold-case evaluation script; README with setup, architecture and API reference; deploy to Vercel</td><td>Live demo URL works</td></tr>
-      <tr><td>6 · Submit</td><td>2–3 minute demo video on YouTube; portal form filled from this book</td><td>Submitted before the deadline</td></tr>
+      <tr><td>1 · Set up</td><td>Public GitHub repository, Next.js 16 app, three fictional NSCLC cases, curated knowledge pack</td><td><span class="st built">Built</span></td></tr>
+      <tr><td>2 · Workspace</td><td>Timeline, RECIST and ctDNA charts, recommendation cards, approve / modify / reject with reason, hash-chained audit log</td><td><span class="st built">Built</span></td></tr>
+      <tr><td>3 · Agents</td><td>Nine agents: CIViC evidence, ClinicalTrials.gov, interactions, dose calculators, Claude Opus 5.5 synthesis, safety-critic</td><td><span class="st built">Built</span></td></tr>
+      <tr><td>4 · MCP</td><td>oncoagent-mcp with seven tools over stdio and Streamable HTTP, tested with an MCP client</td><td><span class="st built">Built</span></td></tr>
+      <tr><td>5 · Prove</td><td>9 unit tests, gold-case and adversarial evaluation, README, deployed to Vercel</td><td><span class="st built">Built</span></td></tr>
+      <tr><td>6 · Submit</td><td>2–3 minute demo video on YouTube; portal form filled from this book</td><td><span class="st plan">To do</span></td></tr>
     </tbody>
   </table></div>
   <div class="grid g2">
@@ -730,8 +739,8 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
     <thead><tr><th>Portal item</th><th>Points*</th><th>Where it comes from</th><th>Status</th></tr></thead>
     <tbody>
       <tr><td>YouTube video, 2–3 min</td><td class="num">10</td><td>Demo of the working workspace and MCP tools</td><td><span class="st plan">To record</span></td></tr>
-      <tr><td>GitHub repository</td><td class="num">2</td><td>Source, README, setup and configuration</td><td><span class="st mvp">Today</span></td></tr>
-      <tr><td>Live demo URL</td><td class="num">1</td><td>Vercel deployment</td><td><span class="st mvp">Today</span></td></tr>
+      <tr><td>GitHub repository</td><td class="num">2</td><td>https://github.com/shahriyar9507/oncoagent</td><td><span class="st built">Ready</span></td></tr>
+      <tr><td>Live demo URL</td><td class="num">1</td><td>https://oncoagent.vercel.app</td><td><span class="st built">Ready</span></td></tr>
       <tr><td>Design / architecture link</td><td class="num">1</td><td>This book, pages 13–15</td><td><span class="st built">Ready</span></td></tr>
       <tr><td>Other links (up to 3)</td><td class="num">3</td><td>Research brief, presentation, MCP server</td><td><span class="st built">Ready</span></td></tr>
       <tr><td>Team members (1 point each, up to 5)</td><td class="num">5</td><td>Registered members above</td><td><span class="st plan">To add</span></td></tr>

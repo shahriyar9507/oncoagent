@@ -99,7 +99,7 @@ export function RecistChart({ points }: { points: RecistAssessment[] }) {
                 <circle cx={x(p.months)} cy={y(p.sumMm)} r="14" fill="transparent" />
                 <circle cx={x(p.months)} cy={y(p.sumMm)} r={hover === i ? 6 : 4.5} fill={color} stroke="#050807" strokeWidth="2" />
                 {isLast && (
-                  <text x={x(p.months) - 8} y={y(p.sumMm) - 12} textAnchor="end" fontSize="12" fontWeight="600" fill="#e9f2ed">
+                  <text x={points.length === 1 ? x(p.months) + 10 : x(p.months) - 8} y={y(p.sumMm) - 12} textAnchor={points.length === 1 ? "start" : "end"} fontSize="12" fontWeight="600" fill="#e9f2ed">
                     {p.sumMm} mm · {p.category}
                   </text>
                 )}
@@ -108,6 +108,7 @@ export function RecistChart({ points }: { points: RecistAssessment[] }) {
           })}
         </svg>
       )}
+      {points.length === 1 && <p className="footer-note" style={{ marginTop: 6 }}>Baseline only. Response is calculated from the first restaging scan.</p>}
       {!table && hover !== null && (
         <div className="tooltip" style={{ left: `${(x(points[hover].months) / W) * 100}%`, top: 0, transform: "translate(-50%, -8px)" }}>
           <b>{points[hover].sumMm} mm</b>
