@@ -676,6 +676,8 @@ button.gene { cursor: pointer; background: transparent; font-family: var(--mono)
 
 @media print {
   @page { size: A4; margin: 14mm; }
+  :root { color-scheme: light; }
+  html, body, .shell, .main, .content, .report-wrap { background: #fff !important; }
   body { background: #fff !important; }
   body::before { display: none; }
   .sidebar, .topbar, .no-print, .toasts, .skip { display: none !important; }

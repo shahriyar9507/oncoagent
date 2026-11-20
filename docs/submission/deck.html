@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>OncoAgent Pitch Deck</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,6 +14,7 @@
   --sans: "Inter", "Segoe UI", system-ui, sans-serif;
   --brand: "Poppins", "Inter", "Segoe UI", sans-serif;
   --bn: "Hind Siliguri", "Nirmala UI", sans-serif;
+  --mono: ui-monospace, "Cascadia Mono", "Consolas", monospace;
   color-scheme: light;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,6 +30,7 @@ body { background: var(--letterbox); color: var(--ink); font-family: var(--sans)
 @keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .anim .slide.on .rv { animation: none; } }
 .slide.ink { background: var(--ink); color: var(--white); }
+.slide.ink { background-image: radial-gradient(1100px 680px at 92% -12%, rgba(23,255,136,.16), transparent 60%), radial-gradient(800px 560px at -8% 112%, rgba(23,255,136,.08), transparent 60%); }
 
 #progress { position: fixed; left: 0; bottom: 0; height: 4px; background: var(--deep); width: 0; transition: width .3s ease; z-index: 9; }
 #nav { position: fixed; right: max(10px, env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; align-items: center; z-index: 10; font: 600 16px/1 var(--sans); }
@@ -64,7 +67,7 @@ h2 .g { color: #8b95a6; }
 .mt { margin-top: 44px; }
 
 /* cover / close */
-.cover-in { position: absolute; left: 0; right: 0; top: 150px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.cover-in { position: absolute; left: 0; right: 0; top: 196px; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .cover-in .logo { font-size: 56px; }
 .vs { margin-top: 72px; display: flex; align-items: center; gap: 30px; }
 .vs .box { font: 700 92px/1 var(--brand); letter-spacing: -.035em; padding: 10px 40px 22px; white-space: nowrap; }
@@ -169,6 +172,266 @@ h2 .g { color: #8b95a6; }
 .rows { display: flex; flex-direction: column; }
 .rows div { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 15px 0; border-bottom: 1.5px solid var(--line); font: 500 25px/1.25 var(--sans); }
 .rows div:first-child { border-top: 3px solid var(--ink); }
+
+/* ===== story deck additions ===== */
+.body.cols { flex-direction: row; gap: 64px; }
+.col { display: flex; flex-direction: column; min-width: 0; }
+.col.grow { flex: 1; }
+.col.mid { justify-content: center; }
+h2.m { font-size: 62px; }
+.src { font: 500 18px/1.4 var(--sans); color: var(--grey-2); }
+.ink .src { color: rgba(255,255,255,.6); }
+
+/* framed product screenshots */
+.shot { position: relative; overflow: hidden; border-radius: 18px; background: #0c1116; border: 1.5px solid rgba(21,25,35,.24);
+  box-shadow: 0 34px 70px -30px rgba(8,70,38,.48), 0 10px 26px -12px rgba(21,25,35,.28); }
+.shot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top left; }
+.shot.crop img { position: absolute; width: auto; height: auto; max-width: none; }
+.shot.phone { position: absolute; border-radius: 34px; border: 8px solid var(--ink); }
+.shot-cap { margin-top: 18px; display: flex; align-items: center; gap: 10px; font: 500 18px/1.3 var(--sans); color: var(--grey-2); }
+.shot-cap::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--mint); box-shadow: inset 0 0 0 2px var(--deep); flex: none; }
+.stack { position: relative; }
+
+/* 2 · one patient */
+.who { display: flex; align-items: center; gap: 16px; margin-bottom: 30px; font: 600 20px/1.2 var(--sans); color: rgba(255,255,255,.8); }
+.who .av { width: 58px; height: 58px; border-radius: 50%; background: var(--mint); color: var(--ink); display: grid; place-items: center; font: 700 22px/1 var(--brand); }
+.who .tag { padding: 8px 14px; border-radius: 999px; border: 1.5px solid #e9c46a; color: #f3d48a; font: 700 15px/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; }
+.punch { font: 800 62px/1.08 var(--sans); margin-bottom: 14px; letter-spacing: -.03em; color: var(--white); }
+.punch mark { background: var(--mint); color: var(--ink); padding: 0 .14em .04em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.scan { border: 1.5px solid rgba(255,255,255,.16); background: rgba(255,255,255,.035); padding: 34px 38px 34px; }
+.scan-h { font: 700 17px/1 var(--sans); letter-spacing: .18em; text-transform: uppercase; color: var(--mint); }
+.scan-sub { margin-top: 10px; font: 500 19px/1.3 var(--sans); color: rgba(255,255,255,.6); }
+.tumour { display: flex; align-items: center; gap: 48px; margin-top: 30px; }
+.rings { position: relative; width: 330px; height: 330px; flex: none; }
+.rings span { position: absolute; left: 50%; top: 50%; border-radius: 50%; transform: translate(-50%, -50%); }
+.rings .now { width: 315px; height: 315px; background: radial-gradient(circle at 40% 38%, rgba(255,255,255,.22), rgba(255,255,255,.08) 70%); box-shadow: inset 0 0 0 3px rgba(255,255,255,.9); }
+.rings .low { width: 224px; height: 224px; border: 3px dashed var(--mint); }
+.leg { list-style: none; display: flex; flex-direction: column; gap: 26px; }
+.leg li { display: grid; grid-template-columns: 44px 1fr; gap: 16px; align-items: center; color: rgba(255,255,255,.72); font: 500 21px/1.25 var(--sans); }
+.leg li b { display: block; font: 600 46px/1 var(--brand); color: var(--white); letter-spacing: -.02em; margin-bottom: 4px; }
+.leg .ic { width: 40px; height: 40px; border-radius: 50%; }
+.leg .ic.now { box-shadow: inset 0 0 0 3px #fff; background: rgba(255,255,255,.14); }
+.leg .ic.low { border: 3px dashed var(--mint); }
+.leg .ic.liv { width: 22px; height: 22px; margin-left: 9px; background: #fff; }
+.dna { margin-top: 32px; padding-top: 26px; border-top: 1.5px solid rgba(255,255,255,.16); display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; font: 500 21px/1.3 var(--sans); color: rgba(255,255,255,.72); }
+.dna b { font: 600 42px/1 var(--brand); color: var(--mint); letter-spacing: -.01em; }
+
+/* 3 · tonight's question */
+.tasks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.task { background: var(--white); border: 2px solid var(--ink); padding: 24px 28px 24px; display: flex; flex-direction: column; gap: 12px; min-height: 238px; }
+.task i { font: 600 22px/1 var(--brand); font-style: normal; color: var(--deep); }
+.task b { font: 700 28px/1.22 var(--sans); color: var(--ink); }
+.task .where { margin-top: auto; align-self: flex-start; font: 700 15px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--grey); padding: 9px 13px; background: var(--mint-4); border: 1.5px solid var(--line); }
+.task.m { background: var(--mint); border-color: var(--mint); }
+.task.m i { color: var(--ink); }
+.task.m .where { background: rgba(255,255,255,.55); border-color: rgba(10,122,66,.35); color: var(--ink); }
+
+/* 4 · scale bars */
+.res.big { gap: 22px; }
+.res.big .r { grid-template-columns: 360px 1fr 260px; font-size: 32px; }
+.res.big .r .tr { height: 78px; }
+.res.big .r .v { font-size: 58px; color: var(--ink); }
+.res.big .r small { font-size: 19px; }
+.res.big .r.hl .v { color: var(--ink); }
+.res.big .r.hl > span:first-child { color: var(--ink); }
+.grp.sm { padding: 22px 26px; }
+.grp.sm em { font-size: 54px; }
+.grp.sm b { font-size: 24px; margin-top: 12px; }
+.grp.sm span { font-size: 19px; margin-top: 6px; }
+
+/* 5 · cost of the gap */
+.waffle { display: grid; grid-template-columns: repeat(10, 40px); grid-auto-rows: 40px; gap: 8px; flex: none; }
+.waffle i { background: var(--white); box-shadow: inset 0 0 0 2px #c9d3df; }
+.waffle i.on { background: var(--mint); box-shadow: inset 0 0 0 2px var(--deep); }
+.gapx { display: flex; flex-direction: column; }
+.gapx .big { font: 600 120px/.9 var(--brand); letter-spacing: -.04em; color: var(--ink); }
+.gapx .say { margin-top: 18px; font: 600 34px/1.25 var(--sans); letter-spacing: -.01em; color: var(--ink); max-width: 900px; text-wrap: pretty; }
+.gapx .say .g { color: var(--grey-2); }
+.legend { margin-top: 28px; display: flex; gap: 34px; font: 500 21px/1.2 var(--sans); color: var(--grey); }
+.legend span { display: flex; align-items: center; gap: 12px; }
+.legend i { width: 22px; height: 22px; background: var(--white); box-shadow: inset 0 0 0 2px #c9d3df; }
+.legend i.on { background: var(--mint); box-shadow: inset 0 0 0 2px var(--deep); }
+.so { margin-top: 34px; padding: 22px 26px; background: var(--ink); color: var(--white); font: 600 27px/1.3 var(--sans); max-width: 860px; }
+.so span { color: var(--mint); }
+
+/* 6 · reveal */
+.pillars { display: flex; flex-direction: column; margin-top: 40px; }
+.pillars > div { display: grid; grid-template-columns: 64px 1fr; gap: 18px; padding: 22px 0; border-bottom: 1.5px solid var(--line); }
+.pillars > div:first-child { border-top: 3px solid var(--ink); }
+.pillars i { font: 600 30px/1.1 var(--brand); font-style: normal; color: var(--deep); }
+.pillars b { display: block; font: 700 32px/1.1 var(--sans); color: var(--ink); letter-spacing: -.01em; }
+.pillars span { display: block; margin-top: 8px; font: 400 22px/1.38 var(--sans); color: var(--grey); }
+.pillars > div.m { background: linear-gradient(90deg, var(--mint) 0, var(--mint) 8px, transparent 8px); padding-left: 0; }
+
+/* 7 · pipeline */
+.pipe { display: grid; grid-template-columns: 400px 36px minmax(0,1fr) 36px minmax(0,1fr) 36px minmax(0,1.3fr) 36px minmax(0,1fr) 36px minmax(0,1fr); align-items: stretch; }
+.pipe .n { background: var(--white); border: 2px solid var(--ink); padding: 22px 22px; display: flex; flex-direction: column; gap: 10px; }
+.pipe .n i { font: 700 15px/1 var(--sans); font-style: normal; letter-spacing: .14em; text-transform: uppercase; color: var(--deep); }
+.pipe .n b { font: 700 25px/1.14 var(--sans); color: var(--ink); }
+.pipe .n span { font: 400 19px/1.36 var(--sans); color: var(--grey); }
+.pipe .n.m3 { background: var(--mint-3); border-color: var(--mint-3); }
+.pipe .n.m { background: var(--mint); border-color: var(--mint); }
+.pipe .n.m span, .pipe .n.m3 span { color: #24432f; }
+.pipe .n.m i, .pipe .n.m3 i { color: var(--ink); }
+.pipe .n.k { background: var(--ink); border-color: var(--ink); }
+.pipe .n.k b { color: var(--white); }
+.pipe .n.k i { color: var(--mint); }
+.pipe .n.k span { color: rgba(255,255,255,.75); }
+.pipe .ar { display: flex; align-items: center; justify-content: center; }
+.pipe .ar::before { content: ""; width: 22px; height: 22px; border-top: 4px solid var(--deep); border-right: 4px solid var(--deep); transform: translateX(-3px) rotate(45deg); }
+.mini { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.nw { white-space: nowrap; }
+.pipe .n .nw { font: inherit; color: inherit; }
+.mini em { font: 600 17px/1 var(--sans); font-style: normal; padding: 11px 12px; background: var(--mist); border: 1.5px solid var(--line); color: var(--ink); white-space: nowrap; }
+.rule3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.rule3 > div { border-top: 3px solid var(--ink); padding-top: 16px; }
+.rule3 b { display: block; font: 700 26px/1.15 var(--sans); color: var(--ink); }
+.rule3 span { display: block; margin-top: 6px; font: 400 21px/1.35 var(--sans); color: var(--grey); }
+
+/* 8 · Rahela in OncoAgent */
+.outs { display: flex; flex-direction: column; }
+.outs > div { display: grid; grid-template-columns: 170px 1fr; gap: 22px; padding: 20px 0; border-bottom: 1.5px solid var(--line); align-items: baseline; }
+.outs > div:first-child { border-top: 3px solid var(--ink); }
+.outs .tg { font: 700 15px/1.25 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--deep); }
+.outs p { font: 600 25px/1.32 var(--sans); color: var(--ink); }
+.outs code { grid-column: 2; display: block; margin-top: -10px; font: 500 19px/1.45 var(--mono); color: var(--grey); }
+.outs > div.lead-opt { background: var(--mint-4); box-shadow: -14px 0 0 var(--mint-4), 14px 0 0 var(--mint-4); }
+
+/* 9 · case intake */
+.intake { display: grid; grid-template-columns: 600px 44px 600px minmax(0,1fr); column-gap: 22px; align-items: start; }
+.intake .sh { min-height: 66px; margin-bottom: 12px; }
+.intake .sh b { display: block; font: 700 24px/1.2 var(--sans); color: var(--ink); }
+.intake .sh b i { font-style: normal; display: inline-grid; place-items: center; width: 30px; height: 30px; margin-right: 10px; background: var(--ink); color: var(--white); font: 700 16px/1 var(--brand); vertical-align: 2px; }
+.intake .sh span { display: block; margin-top: 6px; font: 400 19px/1.35 var(--sans); color: var(--grey); }
+.intake .arw { height: 600px; margin-top: 78px; display: flex; align-items: center; justify-content: center; }
+.intake .arw::before { content: ""; width: 22px; height: 22px; border-top: 4px solid var(--deep); border-right: 4px solid var(--deep); transform: translateX(-3px) rotate(45deg); }
+.pack h3 { font: 700 17px/1 var(--sans); letter-spacing: .18em; text-transform: uppercase; color: var(--ink); padding-bottom: 14px; border-bottom: 3px solid var(--ink); }
+.pack .nums { display: grid; grid-template-columns: 1fr 1fr; column-gap: 20px; }
+.pack .nums div { padding: 16px 0 14px; border-bottom: 1.5px solid var(--line); }
+.pack .nums em { display: block; font: 600 50px/1 var(--brand); font-style: normal; letter-spacing: -.02em; color: var(--ink); }
+.pack .nums span { display: block; margin-top: 6px; font: 500 18px/1.3 var(--sans); color: var(--grey); }
+.pack .honest { margin-top: 20px; background: var(--ink); color: var(--white); padding: 18px 22px; font: 600 21px/1.36 var(--sans); }
+.pack .honest span { color: var(--mint); }
+.pack .priv { margin-top: 16px; font: 500 17px/1.42 var(--sans); color: var(--grey-2); }
+
+/* 9 · trust: catches mistakes */
+.story { font: 500 26px/1.42 var(--sans); color: var(--grey); max-width: 940px; }
+.story b { color: var(--ink); font-weight: 700; }
+.inkbox { background: var(--ink); color: var(--white); padding: 34px 38px; display: flex; flex-direction: column; }
+.inkbox .num { font: 600 110px/.9 var(--brand); letter-spacing: -.04em; color: var(--mint); }
+.inkbox .lbl { margin-top: 12px; font: 600 25px/1.3 var(--sans); color: var(--white); }
+.checks { list-style: none; margin-top: 26px; display: flex; flex-direction: column; }
+.checks li { display: flex; align-items: center; gap: 16px; padding: 21px 0; border-top: 1px solid rgba(255,255,255,.14); font: 500 25px/1.25 var(--sans); color: rgba(255,255,255,.9); }
+.checks li::before { content: ""; flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--mint) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12.5l4.2 4.2L19 7' fill='none' stroke='%23151923' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 18px no-repeat; }
+
+/* 10 · measured */
+.met { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.met > div { background: var(--white); border: 2px solid var(--ink); padding: 22px 26px 22px; }
+.met em { display: block; font: 600 58px/1 var(--brand); font-style: normal; letter-spacing: -.02em; color: var(--ink); }
+.met span { display: block; margin-top: 12px; font: 500 21px/1.3 var(--sans); color: var(--grey); }
+.met > div.m { background: var(--mint); border-color: var(--mint); }
+.met > div.m span { color: #24432f; }
+.limit { display: grid; grid-template-columns: 210px 1fr; gap: 28px; align-items: center; background: var(--ink); padding: 26px 32px; }
+.limit i { font: 700 17px/1.2 var(--sans); font-style: normal; letter-spacing: .18em; text-transform: uppercase; color: var(--mint); }
+.limit p { font: 500 25px/1.38 var(--sans); color: var(--white); }
+
+/* 11 · control */
+.ctl { display: flex; flex-direction: column; margin-top: 38px; }
+.ctl > div { padding: 18px 0; border-bottom: 1.5px solid var(--line); }
+.ctl > div:first-child { border-top: 3px solid var(--ink); }
+.ctl b { display: block; font: 700 28px/1.15 var(--sans); color: var(--ink); }
+.ctl span { display: block; margin-top: 6px; font: 400 22px/1.38 var(--sans); color: var(--grey); }
+.ctl .acts { display: flex; gap: 10px; }
+.ctl .acts em { font: 700 20px/1 var(--sans); font-style: normal; padding: 11px 18px; border-radius: 999px; border: 2px solid var(--ink); color: var(--ink); }
+.ctl .acts em.a { background: var(--mint); border-color: var(--mint); }
+
+/* 12 · levels */
+.lvs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.lv { padding: 30px 32px 30px; display: flex; flex-direction: column; min-height: 540px; }
+.lv.s3 { box-shadow: none; outline: 2.5px dashed var(--deep); outline-offset: -2.5px; }
+.lv .lh { display: flex; justify-content: space-between; align-items: center; }
+.lv .lh i { font: 700 17px/1 var(--sans); font-style: normal; letter-spacing: .16em; text-transform: uppercase; color: var(--ink); }
+.lv > b { margin-top: 26px; font: 700 54px/1 var(--brand); letter-spacing: -.025em; color: var(--ink); }
+.lv > span { margin-top: 16px; font: 500 24px/1.38 var(--sans); color: var(--ink); }
+.lv .ex { margin-top: auto; padding-top: 18px; border-top: 2px solid rgba(21,25,35,.18); font: 500 21px/1.38 var(--sans); color: #24432f; }
+.lv .ex em { display: block; margin-bottom: 6px; font: 700 15px/1 var(--sans); font-style: normal; letter-spacing: .14em; text-transform: uppercase; color: var(--deep); }
+.lv.s3 .ex { color: var(--grey); border-top-color: var(--line); }
+.lv.s1 .st.built { border-color: var(--ink); }
+
+/* 13 · MCP */
+.tools { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 34px; }
+.tools i { font: 500 21px/1 var(--mono); font-style: normal; padding: 13px 16px; background: var(--white); border: 2px solid var(--line); color: var(--ink); }
+.tools i.k { background: var(--ink); color: var(--mint); border-color: var(--ink); }
+.tools i.m { background: var(--mint); border-color: var(--mint); }
+.facts { margin-top: 30px; display: flex; flex-direction: column; }
+.facts > div { display: grid; grid-template-columns: 190px 1fr; gap: 18px; padding: 15px 0; border-bottom: 1.5px solid var(--line); font: 500 22px/1.35 var(--sans); color: var(--grey); align-items: baseline; }
+.facts > div:first-child { border-top: 3px solid var(--ink); }
+.facts > div > b { font: 700 15px/1.3 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--deep); }
+.facts code { font: 500 21px/1.35 var(--mono); color: var(--ink); }
+
+/* 14 · why lung, why now */
+.why { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; }
+.why h3 { font: 700 19px/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--ink); padding-bottom: 16px; border-bottom: 3px solid var(--ink); }
+.kv > div { display: grid; grid-template-columns: 200px 1fr; gap: 22px; align-items: center; padding: 20px 0; border-bottom: 1.5px solid var(--line); }
+.kv em { font: 600 46px/1 var(--brand); font-style: normal; letter-spacing: -.02em; color: var(--ink); }
+.kv span { font: 500 22px/1.35 var(--sans); color: var(--grey); }
+.kv b { display: block; font: 700 24px/1.2 var(--sans); color: var(--ink); margin-bottom: 4px; }
+.kv .ix { width: 46px; height: 46px; display: grid; place-items: center; background: var(--mint); font: 700 20px/1 var(--brand); color: var(--ink); }
+.kv.now > div { grid-template-columns: 64px 1fr; }
+
+.order { margin-top: 44px; display: flex; align-items: center; gap: 12px; }
+.order .o { display: inline-flex; align-items: center; gap: 12px; padding: 12px 20px 12px 12px; border: 2px solid var(--ink); background: var(--white); font: 700 22px/1 var(--sans); color: var(--ink); }
+.order .o.m { background: var(--mint); border-color: var(--mint); }
+.order .o i { width: 30px; height: 30px; display: grid; place-items: center; background: var(--ink); color: var(--white); font: 700 16px/1 var(--brand); font-style: normal; }
+.order .ot { margin-left: 16px; font: 500 21px/1.35 var(--sans); color: var(--grey); }
+
+/* 15 · plan */
+.road { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; }
+.road > div { padding: 26px 28px 24px 0; border-top: 6px solid var(--ink); position: relative; }
+.road > div + div { padding-left: 28px; border-left: 1.5px solid var(--line); }
+.road > div.m { border-top-color: var(--mint); }
+.road em { display: block; font: 600 50px/1 var(--brand); font-style: normal; letter-spacing: -.02em; color: var(--ink); }
+.road em small { font: 600 20px/1 var(--sans); color: var(--grey-2); letter-spacing: 0; margin-left: 6px; }
+.road b { display: block; margin-top: 12px; font: 700 26px/1.15 var(--sans); color: var(--ink); }
+.road span { display: block; margin-top: 8px; font: 400 20px/1.38 var(--sans); color: var(--grey); }
+.pay { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.pay > div { background: var(--white); border: 2px solid var(--ink); padding: 22px 26px; }
+.pay > div.m { background: var(--mint); border-color: var(--mint); }
+.pay i { font: 700 15px/1 var(--sans); font-style: normal; letter-spacing: .14em; text-transform: uppercase; color: var(--deep); }
+.pay > div.m i { color: var(--ink); }
+.pay b { display: block; margin-top: 12px; font: 700 28px/1.15 var(--sans); color: var(--ink); }
+.pay span { display: block; margin-top: 6px; font: 400 21px/1.36 var(--sans); color: var(--grey); }
+.pay > div.m span { color: #24432f; }
+.headrow { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.headrow h3 { font: 700 19px/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--ink); }
+
+/* 16 · close and ask */
+.ask-in { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding-bottom: 20px; }
+.ask-in .logo { font-size: 46px; }
+.ask-in .t0 { margin-top: 56px; font: 700 19px/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--deep); }
+.ask-in .ask { margin-top: 24px; font: 800 66px/1.08 var(--sans); letter-spacing: -.03em; color: var(--ink); max-width: 1500px; text-wrap: balance; }
+.ask-in .ask mark { background: var(--mint); color: var(--ink); padding: 0 .12em .04em; }
+.ask-in .why-sm { margin-top: 22px; font: 500 26px/1.4 var(--sans); color: var(--grey); max-width: 1260px; }
+.links { margin-top: 38px; display: flex; gap: 16px; align-items: center; }
+.links span { padding: 16px 28px; border-radius: 999px; font: 600 25px/1 var(--sans); }
+.links .p1 { background: var(--ink); color: var(--mint); }
+.links .p1 small { color: rgba(255,255,255,.7); font: 600 18px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; margin-right: 14px; }
+.links .p2 { border: 2px solid var(--ink); color: var(--ink); background: rgba(255,255,255,.6); }
+.endline { margin-top: 64px; padding-top: 44px; border-top: 3px solid var(--ink); display: flex; flex-direction: column; align-items: center; min-width: 1100px; }
+.endline .l1 { font: 700 70px/1 var(--brand); letter-spacing: -.035em; color: var(--ink); }
+.endline .l1 span { background: var(--mint); padding: 0 .14em .06em; }
+.endline .l2 { margin-top: 24px; font-size: 42px; line-height: 1.2; color: var(--grey); }
+
+/* speaker notes: hidden in slides, shown in an overlay with N */
+.notes { display: none; }
+#notes-panel { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); width: min(1000px, calc(100vw - 110px)); max-height: 46vh; overflow: auto;
+  background: rgba(21,25,35,.96); color: #fff; border: 1.5px solid rgba(23,255,136,.45); border-radius: 14px; padding: 18px 26px 20px;
+  box-shadow: 0 24px 60px -18px rgba(0,0,0,.55); z-index: 20; display: none; font: 400 18px/1.55 var(--sans); }
+body.show-notes #notes-panel { display: block; }
+#notes-panel .nh { display: flex; justify-content: space-between; gap: 20px; margin-bottom: 10px; font: 700 13px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--mint); }
+#notes-panel .nh span:last-child { color: rgba(255,255,255,.55); }
+#notes-panel p + p { margin-top: 8px; }
+#notes-panel b { color: var(--mint-2); font-weight: 700; }
 </style>
 
 <div id="deck">
@@ -177,299 +440,520 @@ h2 .g { color: #8b95a6; }
 <section class="slide on" data-title="Cover">
   <div class="cover-in">
     <span class="logo rv" style="--d:0"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="5" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span>
-    <div class="vs rv" style="--d:1"><span class="box m">AI proposes</span><span class="x">·</span><span class="box k">Doctor decides</span></div>
-    <p class="cover-sub rv" style="--d:2">OncoAgent: an AI assistant team for oncologists</p>
-    <p class="cover-kw rv" style="--d:3">Lung cancer first <span class="sq"></span> Every claim sourced <span class="sq"></span> Every step recorded</p>
-    <p class="rv bn" style="--d:4;margin-top:26px;font-size:32px;color:var(--grey)">AI প্রস্তাব দেয়, ডাক্তার সিদ্ধান্ত নেন।</p>
+    <div class="vs rv" style="--d:1;margin-top:84px"><span class="box m" style="font-size:80px">AI proposes.</span><span class="box k" style="font-size:80px">The doctor decides.</span></div>
+    <p class="cover-sub rv" style="--d:2;margin-top:66px">OncoAgent: an assistant team for oncologists</p>
+    <p class="cover-kw rv" style="--d:3">Lung cancer first <span class="sq"></span> Every claim sourced <span class="sq"></span> Every decision signed</p>
+    <p class="rv" style="--d:4;margin-top:58px"><span class="st built" style="font-size:20px;padding:13px 22px;letter-spacing:.06em;text-transform:none;color:var(--mint)">Live now · oncoagent.vercel.app</span></p>
   </div>
-  <div class="cover-foot"><span><b>OncoAgent</b>Team DatourX</span><span>November 2026</span><span>Idea to Unicorn · HealthSphere AI · PredictRx</span></div>
+  <div class="cover-foot"><span><b>OncoAgent</b>Team DatourX</span><span>Idea to Unicorn 2026</span><span>HealthSphere AI · PredictRx</span></div>
+  <aside class="notes">
+    <p><b>Say:</b> "We are Team DatourX. OncoAgent is an assistant team for oncologists, built on one rule: AI proposes, the doctor decides." Go straight to the next slide; do not explain the technology here.</p>
+    <p><b>Why:</b> The first frame sets safety and control as the lens for everything that follows.</p>
+  </aside>
 </section>
 
-<!-- 2 PROBLEM -->
-<section class="slide" data-title="The problem">
-  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">The problem</span></div>
-  <div class="body">
-    <p class="kicker rv">The problem</p>
-    <h2 class="rv" style="--d:1">20 million new cases a year.<br>Lung cancer leads them all.</h2>
-    <div class="groups c4 mt rv" style="--d:2">
-      <div class="grp"><em>20M</em><b>New cases</b><span>worldwide, 2022</span></div>
-      <div class="grp"><em>9.7M</em><b>Deaths</b><span>worldwide, 2022</span></div>
-      <div class="grp m"><em>1.82M</em><b>Lung cancer deaths</b><span>18.7% of all, the most of any cancer</span></div>
-      <div class="grp k"><em>35.3M</em><b>New cases in 2050</b><span>if today's rates hold</span></div>
+<!-- 2 HOOK: ONE PATIENT -->
+<section class="slide ink" data-title="One patient">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#8a8a86" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">One patient</span></div>
+  <div class="body cols">
+    <div class="col" style="flex:0 0 880px">
+      <p class="kicker rv">One patient</p>
+      <div class="who rv" style="--d:1"><span class="av">RK</span><span class="tag">Fictional patient</span></div>
+      <h2 class="rv" style="--d:2;font-size:88px">Rahela, 55.<br>Never smoked.</h2>
+      <p class="lead rv" style="--d:3;font-size:29px;max-width:800px;text-wrap:pretty">Lung adenocarcinoma with an EGFR L858R mutation. A targeted pill, osimertinib, held the cancer back for 14 months.</p>
+      <p class="fill"></p>
+      <p class="punch rv" style="--d:6">Her cancer learned<br>to <mark>escape her drug.</mark></p>
     </div>
-    <div class="res mt rv" style="--d:3">
-      <div class="r hl"><span>Lung</span><span class="tr"><span class="bar m" style="width:100%"></span></span><span class="v">2.48M</span></div>
-      <div class="r"><span>Breast</span><span class="tr"><span class="bar" style="width:93.1%"></span></span><span class="v">2.31M</span></div>
-      <div class="r"><span>Colorectal</span><span class="tr"><span class="bar" style="width:77.8%"></span></span><span class="v">1.93M</span></div>
+    <div class="col grow mid">
+      <div class="scan rv" style="--d:4">
+        <p class="scan-h">Month 14 on osimertinib</p>
+        <p class="scan-sub">Tumour size, sum of target lesions · circles drawn to scale</p>
+        <div class="tumour">
+          <div class="rings" aria-hidden="true"><span class="now"></span><span class="low"></span></div>
+          <ul class="leg">
+            <li><span class="ic now"></span><span><b>45 mm</b>now</span></li>
+            <li><span class="ic low"></span><span><b>32 mm</b>at its smallest</span></li>
+            <li><span class="ic liv"></span><span><b>New</b>lesion in the liver</span></li>
+          </ul>
+        </div>
+        <p class="dna"><span>Plasma DNA test</span><b>EGFR C797S</b><span>a known resistance mutation</span></p>
+      </div>
+    </div>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX · all patient data fictional</span><span class="pg">02 / 17</span></div>
+  <aside class="notes">
+    <p><b>Say:</b> "Meet Rahela. She is 55 and never smoked. She is fictional; we built her case to test the product. A targeted pill held her lung cancer back for 14 months. Now the tumour has grown from 32 to 45 millimetres, there is a new spot in her liver, and her blood shows a mutation called C797S." Pause. "Her cancer learned to escape her drug."</p>
+    <p><b>Why:</b> One identifiable person before any statistic. The judges should care about her before they hear about the market.</p>
+  </aside>
+</section>
+
+<!-- 3 TONIGHT'S QUESTION -->
+<section class="slide" data-title="Tonight's question">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">The question</span></div>
+  <div class="body">
+    <p class="kicker rv">Tonight, for her oncologist</p>
+    <h2 class="rv" style="--d:1">What should Rahela get next?<br><span class="g">Six checks in six different places.</span></h2>
+    <div class="tasks mt rv" style="--d:2">
+      <div class="task"><i>01</i><b>Reread every scan, biopsy, gene panel and plasma test since diagnosis</b><span class="where">Chart</span></div>
+      <div class="task"><i>02</i><b>Which next-line options does the guideline support after osimertinib?</b><span class="where">Guidelines</span></div>
+      <div class="task"><i>03</i><b>Will the next drug add QT risk on top of her citalopram?</b><span class="where">Drug labels</span></div>
+      <div class="task"><i>04</i><b>Which trials are recruiting for EGFR C797S right now?</b><span class="where">Trial registry</span></div>
+      <div class="task"><i>05</i><b>Carboplatin dose from her kidney function, pemetrexed from her body size</b><span class="where">Dose formulas</span></div>
+      <div class="task m"><i>06</i><b>What is still missing? The new liver lesion has not been biopsied.</b><span class="where">Pathology</span></div>
     </div>
     <p class="fill"></p>
-    <p class="cap">New cancer cases in 2022, top three. GLOBOCAN 2022, International Agency for Research on Cancer.</p>
+    <p class="cap">All by hand, from memory and open tabs. Then the next patient's file opens.</p>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">02 / 15</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">03 / 17</span></div>
+  <aside class="notes">
+    <p><b>Say:</b> "Tonight her oncologist has to answer six questions, and each answer lives somewhere else: the chart, the guideline, the drug label, the trial registry, a dose formula, the pathology lab. Miss one, and the plan can be wrong."</p>
+    <p><b>Why:</b> Make the cognitive load visible. The problem is a real person's workload, not an abstract market.</p>
+  </aside>
 </section>
 
-<!-- 3 BANGLADESH -->
-<section class="slide" data-title="Bangladesh">
+<!-- 4 SCALE -->
+<section class="slide" data-title="Scale">
   <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Bangladesh</span></div>
   <div class="body">
-    <p class="kicker rv">Bangladesh</p>
-    <h2 class="rv" style="--d:1">One specialist for thousands of patients.</h2>
-    <p class="lead rv" style="--d:2">167,256 new cancer patients in 2022. 22 medical oncologists. One or two dedicated molecular labs.</p>
-    <div class="res mt rv" style="--d:3">
-      <div class="r hl"><span>Bangladesh<small>medical oncologists (22)</small></span><span class="tr"><span class="bar k" style="width:95%"></span></span><span class="v">≈ 7,600</span></div>
-      <div class="r"><span>Bangladesh<small>medical + radiation (≈ 272)</small></span><span class="tr"><span class="bar" style="width:7.7%"></span></span><span class="v">≈ 615</span></div>
-      <div class="r"><span>United States<small>haem / medical oncologists (14,547)</small></span><span class="tr"><span class="bar m" style="width:1.7%;min-width:8px"></span></span><span class="v">≈ 137</span></div>
+    <p class="kicker rv">Now multiply her</p>
+    <h2 class="rv" style="--d:1">One medical oncologist.<br><span class="g">About 7,603 new patients a year.</span></h2>
+    <div class="res big mt rv" style="--d:2">
+      <div class="r hl"><span>Bangladesh<small>new cases per medical oncologist</small></span><span class="tr"><span class="bar k" style="width:100%"></span></span><span class="v">≈ 7,603</span></div>
+      <div class="r"><span>United States<small>per haematology / medical oncologist</small></span><span class="tr"><span class="bar m" style="width:1.8%;min-width:12px"></span></span><span class="v">≈ 137</span></div>
+    </div>
+    <div class="groups c4 rv" style="--d:3;margin-top:48px;gap:22px">
+      <div class="grp sm"><em>167,256</em><b>New cancer cases</b><span>Bangladesh, 2022</span></div>
+      <div class="grp sm m"><em>22</em><b>Medical oncologists</b><span>for the whole of Bangladesh</span></div>
+      <div class="grp sm"><em>20 M</em><b>New cases worldwide</b><span>2022</span></div>
+      <div class="grp sm k"><em>1.82 M</em><b>Lung cancer deaths</b><span>18.7% of all cancer deaths, the most of any cancer</span></div>
     </div>
     <p class="fill"></p>
-    <p class="cap">New patients per specialist per year: our calculation from GLOBOCAN 2022, Financial Express (Feb 2026), ASCO workforce 2025 and ACS 2026. Definitions differ; a rough comparison.</p>
+    <p class="src">Our calculation. Bangladesh: 167,256 new cases (GLOBOCAN 2022) ÷ 22 medical oncologists (Financial Express, Feb 2026). US: &gt; 2 M new cases (ACS 2026) ÷ 14,547 haematology/medical oncologists (ASCO, JCO OP 2025). Definitions differ, so this is a rough comparison. Global figures: GLOBOCAN 2022, IARC.</p>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">03 / 15</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">04 / 17</span></div>
+  <aside class="notes">
+    <p><b>Say:</b> "Now multiply Rahela. Bangladesh had 167,256 new cancer cases in 2022 and about 22 medical oncologists. That is roughly 7,600 new patients for each one. In the US the figure is about 137. The definitions differ, so treat it as a rough comparison."</p>
+    <p><b>Why:</b> Anchoring. The US number makes the Bangladesh number feel as heavy as it is. Leave the bars on screen for a beat.</p>
+  </aside>
 </section>
 
-<!-- 4 THE GAP -->
-<section class="slide" data-title="The gap">
-  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Without AI</span></div>
+<!-- 5 COST OF THE GAP -->
+<section class="slide" data-title="The cost of the gap">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">The gap</span></div>
   <div class="body">
-    <p class="kicker rv">Without AI, today</p>
+    <p class="kicker rv">What the gap costs</p>
     <h2 class="rv" style="--d:1">Precision drugs exist.<br><span class="g">Too few patients reach them in time.</span></h2>
-    <div class="groups c4 mt rv" style="--d:2">
-      <div class="grp k"><em>≈ 45%</em><b>Tested in time</b><span>of US lung cancer patients show biomarker testing before first treatment (2025)</span></div>
-      <div class="grp"><em>20–30</em><b>Minutes per case</b><span>to hand-write a tumour-board summary</span></div>
-      <div class="grp"><em>By hand</em><b>Trial screening</b><span>eligibility checked criterion by criterion, trial by trial</span></div>
-      <div class="grp m"><em>0</em><b>Sources</b><span>in a generic chatbot answer: invented drugs and trial numbers, no audit trail</span></div>
+    <div class="rv" style="--d:2;margin-top:48px;display:flex;gap:80px;align-items:center">
+      <div class="waffle" role="img" aria-label="About 45 of 100 patients show biomarker testing before first-line therapy">
+        <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i>
+        <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i>
+        <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i>
+        <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i>
+        <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i>
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+      <div class="gapx">
+        <p class="big">≈ 45%</p>
+        <p class="say">of US lung cancer (NSCLC) patients show evidence of biomarker testing before first-line therapy. <span class="g">More than half do not.</span></p>
+        <div class="legend"><span><i class="on"></i>Tested before first-line therapy</span><span><i></i>No evidence of testing</span></div>
+        <p class="so">Without a biomarker result, a matched drug cannot be chosen. <span>Rahela was tested. Many patients are not.</span></p>
+      </div>
     </div>
     <p class="fill"></p>
-    <p class="cap">JAMA Network Open 2025 via Targeted Oncology; Northside Hospital pilot (Roche, 2025).</p>
+    <p class="src">Source: JAMA Network Open 2025;8(7):e2519963, US patients with NSCLC, via Targeted Oncology. Each square is one patient in 100.</p>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">04 / 15</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">05 / 17</span></div>
+  <aside class="notes">
+    <p><b>Say:</b> "Here is what the gap costs. Even in the United States, only about 45 in 100 lung cancer patients show a biomarker test before their first treatment. Without that result, a matched drug cannot be chosen. The drugs exist. Patients lose them at the steps in between."</p>
+    <p><b>Why:</b> Loss framing. The loss is a missed step, and a missed step is something an assistant can check.</p>
+  </aside>
 </section>
 
-<!-- 5 OUR ANSWER -->
-<section class="slide" data-title="Our answer">
+<!-- 6 REVEAL -->
+<section class="slide" data-title="Meet OncoAgent">
   <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">OncoAgent</span></div>
-  <div class="body">
-    <p class="kicker rv">Our answer</p>
-    <h2 class="rv" style="--d:1">It reads everything.<br><span class="g">The doctor decides everything.</span></h2>
-    <div class="groups c4 mt rv" style="--d:2">
-      <div class="grp"><em>01</em><b>Watches</b><span>every new lab, scan, pathology and gene report on the patient's timeline</span></div>
-      <div class="grp"><em>02</em><b>Finds the cause</b><span>names the responsible gene and protein, graded with OncoKB / CIViC levels</span></div>
-      <div class="grp m"><em>03</em><b>Proposes, with evidence</b><span>next test, treatment, dose and trials, each with its guideline or trial ID</span></div>
-      <div class="grp k"><em>04</em><b>Never acts alone</b><span>approve, modify or reject with a reason; every step is recorded</span></div>
+  <div class="body cols">
+    <div class="col" style="flex:0 0 700px">
+      <p class="kicker rv">Meet OncoAgent</p>
+      <h2 class="rv m" style="--d:1">An assistant team for the oncologist.</h2>
+      <div class="pillars rv" style="--d:2">
+        <div><i>01</i><span style="margin:0"><b>Reads everything</b><span>Scans, pathology, gene and plasma reports on one timeline, with live CIViC and ClinicalTrials.gov.</span></span></div>
+        <div><i>02</i><span style="margin:0"><b>Proposes with evidence</b><span>Next test, treatment, dose and trial. Every claim links to its source.</span></span></div>
+        <div><i>03</i><span style="margin:0"><b>The doctor decides</b><span>Approve, modify or reject. Every decision is signed and logged.</span></span></div>
+      </div>
+      <p class="fill"></p>
+      <p class="cap">Built for oncologists and clinical staff. There is no patient app.</p>
     </div>
-    <p class="fill"></p>
-    <p class="cap">For doctors and clinical staff only. No patient app. No autonomous orders, prescriptions or patient messages.</p>
+    <div class="col grow mid">
+      <div class="stack rv" style="--d:3">
+        <div class="shot" style="width:948px;height:592px"><img src="../assets/screenshots/01-overview.webp" alt="OncoAgent overview screen: AI proposes, the doctor decides, with the nine-agent wheel and key numbers"></div>
+        <div class="shot phone" style="width:206px;height:430px;left:-34px;bottom:-56px"><img src="../assets/screenshots/15-mobile.webp" alt="Rahela's record on a phone, labelled fictional patient"></div>
+      </div>
+      <p class="shot-cap" style="margin-left:200px;margin-top:22px">Live product, oncoagent.vercel.app · desktop and phone · fictional patients</p>
+    </div>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">05 / 15</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">06 / 17</span></div>
+  <aside class="notes">
+    <p><b>Say:</b> "This is OncoAgent: an assistant team that works for the oncologist. It reads the whole record, proposes the next step with the source attached, and then waits for the doctor." Point at the screen: "This is the live product, running now."</p>
+    <p><b>Why:</b> The reveal comes after the tension, so the solution lands as relief. Three pillars are easy to remember.</p>
+  </aside>
 </section>
 
-<!-- 6 HOW IT WORKS -->
+<!-- 7 HOW IT WORKS -->
 <section class="slide" data-title="How it works">
   <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">How it works</span></div>
   <div class="body">
     <p class="kicker rv">How it works</p>
-    <h2 class="rv" style="--d:1">From report to a signed decision.</h2>
-    <div class="flow mt rv" style="--d:2">
-      <div><i>1</i><b>Arrives</b><span>Lab, scan, pathology or gene report, PDF or structured.</span></div>
-      <div><i>2</i><b>Read</b><span>Extracted, de-identified, placed on the timeline.</span></div>
-      <div class="k"><i>3</i><b>Interpreted</b><span>Driver gene, evidence tier, red flags.</span></div>
-      <div><i>4</i><b>Proposed</b><span>Test, treatment, dose, trial: one card each.</span></div>
-      <div><i>5</i><b>Checked</b><span>A safety-critic verifies every claim against its source.</span></div>
-      <div class="m"><i>6</i><b>Doctor decides</b><span>Approve, modify or reject, with a reason.</span></div>
+    <h2 class="rv" style="--d:1">Nine agents.<br><span class="g">The model writes language, never numbers.</span></h2>
+    <div class="pipe rv" style="--d:2;margin-top:40px">
+      <div class="n"><i>Agents 1–7 · code</i><b>Seven specialist agents</b>
+        <div class="mini"><em>Sentinel</em><em>Genomic-interpreter</em><em>Test-advisor</em><em>Guideline</em><em>Pharmacology-safety</em><em>Trial-matcher</em><em>Dose-optimizer</em></div>
+        <span style="margin-top:4px">Plain, testable code</span></div>
+      <div class="ar"></div>
+      <div class="n m3"><i>Agent 8</i><b>Claude synthesis</b><span>Writes the <span class="nw">pre-read</span> and cards from a <span class="nw">de-identified</span> summary</span></div>
+      <div class="ar"></div>
+      <div class="n k"><i>Agent 9 · code</i><b><span class="nw">Safety-critic</span></b><span>Deterministic checks on every claim</span></div>
+      <div class="ar"></div>
+      <div class="n"><i>Output</i><b>Recommendation card</b><span>Proposal, evidence IDs, confidence, what is uncertain, alternatives</span></div>
+      <div class="ar"></div>
+      <div class="n m"><i>Human</i><b>Clinician decides</b><span>Approve, modify or reject, with a reason</span></div>
+      <div class="ar"></div>
+      <div class="n"><i>Record</i><b><span class="nw">Hash-chained</span> log</b><span>Every decision chained with SHA-256</span></div>
+    </div>
+    <div class="rule3 rv" style="--d:3;margin-top:40px">
+      <div><b>Doses</b><span>come only from unit-tested calculators</span></div>
+      <div><b>Trial IDs</b><span>come only from the ClinicalTrials.gov registry</span></div>
+      <div><b>Evidence</b><span>comes from CIViC and a versioned knowledge pack</span></div>
     </div>
     <p class="fill"></p>
-    <p class="cap">Every card: proposal · patient facts used · evidence (guideline, OncoKB/CIViC level, PMID, NCT) · confidence · what is uncertain · alternatives · safety checks · status.</p>
+    <p class="cap">Eight of the nine agents are plain, testable code; only the synthesis step uses a model (Claude Opus 5.5, structured output). It sees a pseudonymous ID and an age band, never a name or address.</p>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">06 / 15</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">07 / 17</span></div>
+  <aside class="notes">
+    <p><b>Say:</b> "Nine agents work on each case. Seven specialists are ordinary code you can unit-test, and so is the safety-critic: eight of nine agents are plain code. Claude only writes the language, and the critic checks every claim before a doctor sees it. Doses come from calculators and trial numbers from the registry, never from the model."</p>
+    <p><b>Why:</b> Answer the hallucination objection with architecture before a judge raises it.</p>
+  </aside>
 </section>
 
-<!-- 7 ONE CASE -->
-<section class="slide" data-title="One case">
-  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">One case</span></div>
+<!-- 8 RAHELA'S CASE IN ONCOAGENT -->
+<section class="slide" data-title="Rahela's case in OncoAgent">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Rahela's case</span></div>
+  <div class="body cols">
+    <div class="col" style="flex:0 0 820px">
+      <p class="kicker rv">Rahela's case · fictional patient</p>
+      <h2 class="rv m" style="--d:1">About 23 seconds later: a draft plan with sources.</h2>
+      <div class="outs rv" style="--d:2;margin-top:36px">
+        <div><span class="tg">Test first</span><p>Re-biopsy the new liver lesion before choosing a regimen.</p></div>
+        <div><span class="tg">Safety</span><p>QT warning: citalopram prolongs QT. Repeat the ECG before the next line.</p></div>
+        <div class="lead-opt"><span class="tg">Leading option</span><p>Amivantamab + carboplatin + pemetrexed, with C797S trials screened in parallel.</p></div>
+        <div><span class="tg">Dose</span><p>Carboplatin 460 mg · pemetrexed 750 mg</p><code>AUC 5 × (CrCl 67.7 + 25) = 463.7 → 460 mg<br>500 mg/m² × BSA 1.51 m² = 755 → 750 mg</code></div>
+      </div>
+      <p class="fill"></p>
+      <p class="src">Mean full run with Claude: 23.4 s (stored evaluation runs). A pharmacist verifies doses before prescribing.</p>
+    </div>
+    <div class="col grow mid">
+      <div class="shot rv" style="--d:3;width:100%;height:770px"><img src="../assets/screenshots/04-recommendations.webp" alt="Rahela's recommendation cards: leading option approved by the doctor, re-biopsy, ECG safety card, and the dose card with formulas"></div>
+    </div>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">08 / 17</span></div>
+  <aside class="notes">
+    <p><b>Say:</b> "Back to Rahela. In about 23 seconds the agents return a draft: re-biopsy the liver lesion first, watch the QT interaction with her citalopram, and the leading option, amivantamab with carboplatin and pemetrexed, with C797S trials screened in parallel. The doses come from the formulas on the right, not from the model."</p>
+    <p><b>Why:</b> Show, don't tell. The judges see the exact output for the patient they already care about.</p>
+  </aside>
+</section>
+
+<!-- 9 CLINICIAN CASE INTAKE -->
+<section class="slide" data-title="Enter your own case">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Case intake</span></div>
   <div class="body">
-    <p class="kicker rv">One case · fictional patient</p>
-    <h2 class="rv md" style="--d:1;font-size:60px">Rahela, 54, never smoked.</h2>
-    <table class="tbl mt rv" style="--d:2;margin-top:30px">
-      <thead><tr><th>When</th><th>OncoAgent proposed</th><th>The doctor</th></tr></thead>
-      <tbody>
-        <tr><td>Day 0</td><td>CT of chest and abdomen after a referral: 6-week cough, weight loss</td><td class="dr">Approved</td></tr>
-        <tr><td>Day 4</td><td>Biopsy, PD-L1, full NGS panel and brain MRI</td><td class="dr">Added liquid biopsy: she travels far</td></tr>
-        <tr><td>Day 18</td><td>EGFR L858R is the driver: OncoKB level 1, AMP tier IA</td><td class="dr">Pathologist signed</td></tr>
-        <tr><td>Day 20</td><td>Three guideline options; QT interaction with her antidepressant → ECG first</td><td class="dr">Chose osimertinib with her</td></tr>
-        <tr><td>Month 12</td><td>ctDNA returns before the scan grows: "watch"</td><td class="dr">Kept monitoring</td></tr>
-        <tr><td>Month 14</td><td>EGFR C797S explains resistance in 3D; recruiting 4th-generation EGFR trials</td><td class="dr">Trial screening</td></tr>
-        <tr><td>Month 14</td><td>Dose card: carboplatin by Calvert formula, pemetrexed by body surface</td><td class="dr">Pharmacist and oncologist signed</td></tr>
-      </tbody>
-    </table>
-    <p class="fill"></p>
-    <p class="cap">All case data fictional. Not medical advice.</p>
+    <p class="kicker rv">Clinician case intake</p>
+    <h2 class="rv" style="--d:1">Beyond the demo: enter your own case.</h2>
+    <div class="intake rv" style="--d:2;margin-top:28px">
+      <div>
+        <div class="sh"><b><i>1</i>Paste the report text</b><span>A deterministic reader, with no AI, finds each alteration and shows the text it came from.</span></div>
+        <div class="shot crop" style="width:600px;height:600px"><img src="../assets/screenshots/16-case-intake.webp" alt="Case intake: pasted NGS report text and the reader's result, KRAS G12C and STK11 Q37* with the matched text, and the genes reported negative" style="width:1144px;left:-27px;top:-21px"></div>
+      </div>
+      <div class="arw"></div>
+      <div>
+        <div class="sh"><b><i>2</i>The same nine agents run</b><span>Cards with evidence, interactions, trials, a dose card and the safety-critic.</span></div>
+        <div class="shot crop" style="width:600px;height:600px"><img src="../assets/screenshots/18-case-cards.webp" alt="Recommendation cards for the entered case: progression by RECIST 1.1 and KRAS G12C as the actionable driver" style="width:1080px;left:0;top:0"></div>
+      </div>
+      <div class="pack">
+        <h3>Knowledge pack, NSCLC</h3>
+        <div class="nums">
+          <div><em>17</em><span>generic treatment settings</span></div>
+          <div><em>42</em><span>cancer drugs</span></div>
+          <div><em>34</em><span>regimens</span></div>
+          <div><em>54</em><span>interaction rules</span></div>
+        </div>
+        <p class="honest">No setting fits the case? <span>It says so, and the agents propose no treatment.</span></p>
+        <p class="priv">EGFR, ALK, ROS1, BRAF V600E, MET exon 14, RET, NTRK, KRAS G12C, HER2, no driver by PD-L1 and histology, second line. No names, record numbers or dates of birth are collected. Shown: an example case, KRAS G12C after chemo-immunotherapy.</p>
+      </div>
+    </div>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">07 / 15</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX · example case, de-identified and fictional</span><span class="pg">09 / 17</span></div>
+  <aside class="notes">
+    <p><b>Say:</b> "Any oncologist can test this with their own case. Enter a de-identified lung cancer case and paste the molecular report. A deterministic reader, with no AI, pulls out each alteration and shows the exact text it came from. Then the same nine agents run. The pack covers 17 common NSCLC settings, and when a case falls outside them, it says so."</p>
+    <p><b>Why:</b> Answers the "is it only a scripted demo?" objection, and invites judges to try a case themselves.</p>
+  </aside>
 </section>
 
-<!-- 8 THERAPY LEVELS -->
+<!-- 10 TRUST 1: CATCHES MISTAKES -->
+<section class="slide" data-title="It catches mistakes">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Safety</span></div>
+  <div class="body cols">
+    <div class="col" style="flex:0 0 960px">
+      <p class="kicker rv">Trust, part 1 · it catches mistakes</p>
+      <h2 class="rv m" style="--d:1">It caught a real error.<br><span class="g">Nobody scripted it.</span></h2>
+      <p class="story rv" style="--d:2;margin-top:30px">Nasrin <span style="color:var(--grey-2)">(P-003, fictional)</span> takes <b>carbamazepine</b>. Our rules-only Guideline card listed <b>lorlatinib</b> without saying it is contraindicated with that drug. The safety-critic flagged the card.</p>
+      <div class="shot rv" style="--d:3;margin-top:30px;width:745px;height:386px"><img src="../assets/screenshots/14-critic-flag.webp" alt="Guideline card with a critic flag: lorlatinib is contraindicated with a current medication and the card does not say so"></div>
+      <p class="fill"></p>
+      <p class="cap">The Claude card for the same patient had noted the interaction. Flagged cards go to the top of the decision queue.</p>
+    </div>
+    <div class="col grow">
+      <div class="inkbox rv" style="--d:4;height:100%">
+        <p class="num">6 / 6</p>
+        <p class="lbl">deliberately unsafe drafts caught by the critic</p>
+        <ul class="checks">
+          <li>Invented trial number</li>
+          <li>Dose written by the model</li>
+          <li>Unknown evidence ID</li>
+          <li>Later-line drug offered first</li>
+          <li>Contraindicated drug, no warning</li>
+          <li>Drug outside the knowledge pack</li>
+        </ul>
+        <p class="fill"></p>
+        <p class="src" style="color:rgba(255,255,255,.6)">Red-team set in scripts/eval.ts, 20 Nov 2026</p>
+      </div>
+    </div>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">10 / 17</span></div>
+  <aside class="notes">
+    <p><b>Say:</b> "Here is a mistake we did not plan. Our third fictional patient takes carbamazepine, and our own rules engine listed lorlatinib, which is contraindicated with it. The safety-critic flagged the card by itself. We also attack the critic with six deliberately unsafe drafts. It caught all six."</p>
+    <p><b>Why:</b> Showing a caught error is more believable than claiming there are none.</p>
+  </aside>
+</section>
+
+<!-- 11 TRUST 2: MEASURED AND HONEST -->
+<section class="slide" data-title="Measured, and honest">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Evaluation</span></div>
+  <div class="body">
+    <p class="kicker rv">Trust, part 2 · measured, and honest</p>
+    <h2 class="rv" style="--d:1">Measured before it is trusted.<br><span class="g">And clear about what three cases can show.</span></h2>
+    <div class="met rv" style="--d:2;margin-top:40px">
+      <div><em>3 / 3</em><span>driver alterations identified</span></div>
+      <div><em>3 / 3</em><span>leading options match the gold answer</span></div>
+      <div><em>100%</em><span>citations resolve to evidence in the run</span></div>
+      <div><em>100%</em><span>trial IDs returned by the registry</span></div>
+      <div class="m"><em>0</em><span>doses written outside the calculator</span></div>
+      <div class="m"><em>6 / 6</em><span>adversarial unsafe drafts caught</span></div>
+      <div><em>23.4 s</em><span>mean full run with Claude</span></div>
+      <div><em>≈ $0.065</em><span>per case</span></div>
+    </div>
+    <div class="limit rv" style="--d:3;margin-top:26px">
+      <i>The limit</i>
+      <p>Three fictional gold cases cannot support clinical accuracy claims. A pilot needs hundreds of de-identified cases with tumour-board answers, reviewed under ethics approval.</p>
+    </div>
+    <p class="fill"></p>
+    <p class="src">scripts/eval.ts on stored runs, 20 Nov 2026. 156 unit tests cover dose and RECIST, knowledge-pack selection and dosing, and the report reader. Fictional patients only.</p>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">11 / 17</span></div>
+  <aside class="notes">
+    <p><b>Say:</b> "We measure every run. On our three fictional gold cases: the right driver, the right leading option, every citation real, every trial ID from the registry, no dose outside the calculator, 23 seconds and about six and a half cents per case, with 156 unit tests underneath. And the limit: three cases show the pipeline works. They do not prove clinical accuracy. That needs hundreds of real cases under ethics approval."</p>
+    <p><b>Why:</b> Candour. Stating the limit ourselves makes every number above it believable.</p>
+  </aside>
+</section>
+
+<!-- 12 DOCTOR IN CONTROL -->
+<section class="slide" data-title="The doctor stays in control">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Doctor control</span></div>
+  <div class="body cols">
+    <div class="col" style="flex:0 0 760px">
+      <p class="kicker rv">The doctor stays in control</p>
+      <h2 class="rv m" style="--d:1">Every proposal waits for a clinician's signature.</h2>
+      <div class="ctl rv" style="--d:2">
+        <div><div class="acts"><em class="a">Approve</em><em>Modify</em><em>Reject</em></div><span style="margin-top:12px">A reason is required to modify or reject. Approving a card the critic flagged needs an explicit acknowledgement and a reason.</span></div>
+        <div><b>Signed and chained</b><span>Each decision is SHA-256 hash-chained to the one before. It cannot be edited afterwards.</span></div>
+        <div><b>Decision queue</b><span>Flagged cards come first, then safety, treatment and tests.</span></div>
+        <div><b>Tumour-board report</b><span>A printable pre-read with every card and its status.</span></div>
+      </div>
+      <p class="fill"></p>
+      <p class="src">The decision tool refuses to sign without a clinician token. In the demo the log is stored in the browser; production stores it server-side.</p>
+    </div>
+    <div class="col grow mid">
+      <div class="shot crop rv" style="--d:3;width:100%;height:640px"><img src="../assets/screenshots/06-sign-off-dialog.webp" alt="Approve this card dialog: the doctor adds a note and signs; the entry is SHA-256 hash-chained" style="width:1440px;left:-326px;top:-130px"></div>
+      <p class="shot-cap">Sign-off for Rahela's leading option, with the doctor's note</p>
+    </div>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">12 / 17</span></div>
+  <aside class="notes">
+    <p><b>Say:</b> "Doctors ask us one question first: will this replace me? It cannot act alone. Every card waits for a clinician to approve, modify or reject it, and changing or rejecting needs a reason. Each signature is hash-chained, so the record shows who decided, and why."</p>
+    <p><b>Why:</b> Remove the fear of being replaced and the fear of losing accountability, the two biggest blocks to adoption.</p>
+  </aside>
+</section>
+
+<!-- 13 THREE THERAPY LEVELS -->
 <section class="slide" data-title="Three therapy levels">
   <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Therapy</span></div>
   <div class="body">
     <p class="kicker rv">Three therapy levels</p>
-    <h2 class="rv" style="--d:1">Select. Personalise.<br><span class="g">Then research a new molecule.</span></h2>
-    <div class="scale mt rv" style="--d:2">
-      <div class="s1"><i>Level 1 · clinical · today</i><b>Select</b><span>The approved drug, regimen or recruiting trial that matches the responsible protein. In-indication matching works; off-label guessing failed in the SHIVA trial.</span></div>
-      <div class="s2"><i>Level 2 · clinical · today</i><b>Personalise</b><span>Dose by kidneys, liver, body size and genes with label formulas. AI dosing (CURATE.AI): 26 of 27 suggestions accepted, doses 20% lower; still research.</span></div>
-      <div class="s3"><i>Level 3 · research · years</i><b>New molecule</b><span>Resistance patterns become target dossiers for licensed partners. New molecules need years of trials: 0 AI-discovered drugs approved so far.</span></div>
+    <h2 class="rv" style="--d:1">Select. Personalise. <span class="g">Then research.</span></h2>
+    <div class="lvs mt rv" style="--d:2">
+      <div class="lv s1"><div class="lh"><i>Level 1 · clinical</i><span class="st built">Built</span></div><b>Select</b><span>An approved drug, regimen or recruiting trial that matches the responsible gene.</span><p class="ex"><em>For Rahela</em>Amivantamab + carboplatin + pemetrexed, or a C797S trial</p></div>
+      <div class="lv s2"><div class="lh"><i>Level 2 · clinical</i><span class="st built">Built</span></div><b>Personalise</b><span>The regimen and dose for this patient: kidney function, body size, interactions.</span><p class="ex"><em>For Rahela</em>Carboplatin 460 mg, pemetrexed 750 mg, ECG before starting</p></div>
+      <div class="lv s3"><div class="lh"><i>Level 3 · research</i><span class="st vision">Vision</span></div><b>Research</b><span>When resistance leaves no option, study a modified or new molecule with licensed partners.</span><p class="ex"><em>Boundary</em>Stays in a research zone. Never given to a patient outside a regulated trial.</p></div>
     </div>
     <p class="fill"></p>
-    <p class="cap">Is it 100% accurate? No medical system is. AI-discovered molecules pass phase I 80–90% of the time but phase II only ≈ 40%, the industry norm.</p>
+    <p class="cap">Levels 1 and 2 run today, on the demo patients and on clinician-entered cases. Level 3 outputs never enter a patient's chart and are limited to human cancer targets.</p>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">08 / 15</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">13 / 17</span></div>
+  <aside class="notes">
+    <p><b>Say:</b> "OncoAgent works at three levels. Level one selects an approved drug or trial. Level two personalises the dose. Both run today. Level three, researching a modified or new molecule with licensed partners, is our vision, and it stays in a research zone, never in a patient's chart."</p>
+    <p><b>Why:</b> Show the ambition while keeping what is built and what is vision clearly apart.</p>
+  </aside>
 </section>
 
-<!-- 9 AI VS NO AI -->
-<section class="slide" data-title="With AI and without">
-  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Evidence</span></div>
+<!-- 14 OPEN BY DESIGN: MCP -->
+<section class="slide" data-title="Open by design: MCP">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Open by design</span></div>
+  <div class="body cols">
+    <div class="col" style="flex:0 0 780px">
+      <p class="kicker rv">Open by design · MCP</p>
+      <h2 class="rv m" style="--d:1">Any MCP client can call OncoAgent's tools.</h2>
+      <div class="tools rv" style="--d:2">
+        <i>list_patients</i><i>get_case_timeline</i><i>interpret_variant</i><i>search_trials</i><i>calculate_dose</i><i>draft_recommendations</i><i class="m">extract_report</i><i class="m">analyze_case</i><i class="k">record_decision</i>
+      </div>
+      <div class="facts rv" style="--d:3">
+        <div><b>Server</b><span>oncoagent-mcp v0.2.0: nine tools, one definition</span></div>
+        <div><b>New</b><span><code>extract_report</code> reads report text with no AI; <code>analyze_case</code> runs all nine agents on a de-identified case</span></div>
+        <div><b>Transports</b><span>stdio and Streamable HTTP, both tested with an MCP client</span></div>
+        <div><b>Safety</b><span><code>record_decision</code> refuses without a clinician token</span></div>
+      </div>
+      <p class="fill"></p>
+      <p class="src">Endpoint: <b style="color:var(--ink);font-weight:600">oncoagent.vercel.app/api/mcp</b> (Streamable HTTP) · stdio: npx tsx mcp/stdio.ts. Every client gets the same nine tools and the same clinician-token rule.</p>
+    </div>
+    <div class="col grow mid">
+      <div class="shot rv" style="--d:3;width:100%;height:700px"><img src="../assets/screenshots/11-mcp-playground.webp" alt="MCP tool tester calling interpret_variant for EGFR C797S and returning live CIViC evidence"></div>
+      <p class="shot-cap">In-browser tool tester: interpret_variant for EGFR C797S returns live CIViC evidence</p>
+    </div>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">14 / 17</span></div>
+  <aside class="notes">
+    <p><b>Say:</b> "OncoAgent is also a set of open tools. Through the Model Context Protocol, any MCP client can use nine tools: list patients, read a report, interpret a variant, search trials, calculate a dose, or run all nine agents on a de-identified case. The decision tool refuses to sign without a clinician token."</p>
+    <p><b>Why:</b> Show it fits into hospital systems instead of becoming one more silo, and that the safety rules travel with the tools.</p>
+  </aside>
+</section>
+
+<!-- 15 WHY LUNG FIRST, WHY NOW -->
+<section class="slide" data-title="Why lung first, why now">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Focus and timing</span></div>
   <div class="body">
-    <p class="kicker rv">With AI and without</p>
-    <h2 class="rv" style="--d:1">AI already gives doctors time back.</h2>
-    <div class="res mt rv" style="--d:2">
-      <div class="r"><span>Trial screening<small>without AI = 100</small></span><span class="tr"><span class="bar k" style="width:100%"></span></span><span class="v">100</span></div>
-      <div class="r hl"><span>Trial screening<small>with TrialGPT (NCI pilot)</small></span><span class="tr"><span class="bar m" style="width:57.4%"></span></span><span class="v">57.4</span></div>
-      <div class="r"><span>Tumour-board summary<small>20–30 min per case</small></span><span class="tr"><span class="bar k" style="width:100%"></span></span><span class="v">100</span></div>
-      <div class="r hl"><span>Tumour-board summary<small>with AI: 10–15 min</small></span><span class="tr"><span class="bar m" style="width:55%"></span></span><span class="v">≈ 55</span></div>
-      <div class="r"><span>Drug candidate<small>conventional: 2.5–4 years</small></span><span class="tr"><span class="bar k" style="width:100%"></span></span><span class="v">100</span></div>
-      <div class="r hl"><span>Drug candidate<small>AI (Insilico): 12–18 months</small></span><span class="tr"><span class="bar m" style="width:38.5%"></span></span><span class="v">≈ 38</span></div>
+    <p class="kicker rv">Why lung first, why now</p>
+    <h2 class="rv" style="--d:1">Start where the data and the drugs are.</h2>
+    <div class="why mt rv" style="--d:2">
+      <div>
+        <h3>Why lung cancer first</h3>
+        <div class="kv">
+          <div><em>1.82 M</em><span>lung cancer deaths in 2022, the most of any cancer</span></div>
+          <div><em>38,000+</em><span>NSCLC samples in AACR GENIE, more than breast or colorectal</span></div>
+          <div><em>40–60%</em><span>of lung adenocarcinomas carry an actionable or oncogenic driver: EGFR, ALK, ROS1, BRAF, KRAS G12C, MET, RET, NTRK, HER2</span></div>
+        </div>
+      </div>
+      <div>
+        <h3>Why now</h3>
+        <div class="kv now">
+          <div><span class="ix">1</span><span><b>Live public evidence</b>CIViC and ClinicalTrials.gov API v2, queried per case</span></div>
+          <div><span class="ix">2</span><span><b>Models that follow rules</b>Structured output; the critic flags any ID outside the evidence registry</span></div>
+          <div><span class="ix">3</span><span><b>MCP as a standard</b>One way to connect tools to any AI client</span></div>
+          <div><span class="ix">4</span><span><b>Clear rules for clinical AI</b>FDA CDS guidance (2026); Bangladesh PDPO 2025 for health data</span></div>
+        </div>
+      </div>
     </div>
+    <div class="order rv" style="--d:3"><span class="o m"><i>1</i>Lung (NSCLC) · now</span><span class="o"><i>2</i>Breast · next</span><span class="o"><i>3</i>Colorectal · then</span><span class="ot">Every module is cancer-agnostic: a new cancer adds rules and data, not a rewrite.</span></div>
     <p class="fill"></p>
-    <p class="cap">Time index, without AI = 100. TrialGPT, Nature Communications 2024; Northside Hospital pilot 2025; Insilico 2021–24 average against the low end of 2.5–4 years. Small pilots, not yet routine care.</p>
+    <p class="src">GLOBOCAN 2022 (IARC); AACR Project GENIE annual report 2025; NSCLC actionable-alteration review (PMC11528205).</p>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">09 / 15</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">15 / 17</span></div>
+  <aside class="notes">
+    <p><b>Say:</b> "Why lung first? It kills the most people, it has the most public genomic data, and 40 to 60% of adenocarcinomas carry a known driver. Why now? Evidence databases answer live, models can follow strict evidence rules, MCP gives a standard way to connect, and the rules for clinical AI are clear. Breast and colorectal follow on the same modules."</p>
+    <p><b>Why:</b> Timing. Show why this can be built now, and why the first market is the right one.</p>
+  </aside>
 </section>
 
-<!-- 10 WHY LUNG -->
-<section class="slide" data-title="Why lung cancer first">
-  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Focus</span></div>
+<!-- 16 BUSINESS AND ROADMAP -->
+<section class="slide" data-title="Business and roadmap">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Plan</span></div>
   <div class="body">
-    <p class="kicker rv">Why lung cancer first</p>
-    <h2 class="rv" style="--d:1">Start where the data is.</h2>
-    <table class="heat mt rv" style="--d:2">
-      <thead><tr><th></th><th class="lead-col">Lung (NSCLC)</th><th>Breast</th><th>Colorectal</th></tr></thead>
-      <tbody>
-        <tr><td class="rl">Genomic samples in AACR GENIE</td><td class="h1c">38,000+</td><td class="h3c">21,000+</td><td class="h2c">23,000+</td></tr>
-        <tr><td class="rl">New cases worldwide, 2022</td><td class="h1c">2.48M</td><td class="h2c">2.31M</td><td class="h3c">1.93M</td></tr>
-        <tr><td class="rl">Actionable drivers</td><td class="h1c">40–60% of adenocarcinomas</td><td class="h2c">HR, HER2, PIK3CA, BRCA</td><td class="h3c">KRAS, BRAF, MSI</td></tr>
-        <tr><td class="rl">Targeted approvals</td><td class="h1c">≈ 30 since 2011</td><td class="h2c">Many, HR / HER2</td><td class="h3c">Fewer</td></tr>
-        <tr><td class="rl">Open protein and imaging data</td><td class="h1c">CPTAC, NLST 26,254</td><td class="h2c">TCGA, METABRIC</td><td class="h3c">TCGA</td></tr>
-        <tr><td class="rl">Bangladesh</td><td class="h2c">Top-3 male cancer</td><td class="h1c">#1 female cancer</td><td class="h3c">In icddr,b NGS</td></tr>
-      </tbody>
-    </table>
-    <p class="fill"></p>
-    <p class="cap">Darker cell = stronger on that row. Lung first, breast second, colorectal third; every module is cancer-agnostic.</p>
-  </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">10 / 15</span></div>
-</section>
-
-<!-- 11 ARCHITECTURE -->
-<section class="slide" data-title="Architecture">
-  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Architecture</span></div>
-  <div class="body">
-    <p class="kicker rv">How it is built</p>
-    <h2 class="rv" style="--d:1">Seven layers. One open tool layer.</h2>
-    <div class="layers mt rv" style="--d:2;margin-top:34px">
-      <div class="lay"><span>Apps</span><div class="chips"><i>Clinician workspace</i><i>Tumour-board mode</i><i>Research workbench</i><i>Audit</i></div></div>
-      <div class="lay"><span>Doctor control</span><div class="chips"><i class="k">Recommendation cards</i><i class="k">Approve · modify · reject</i><i class="k">E-signature</i><i class="k">Hash-chained audit log</i></div></div>
-      <div class="lay"><span>Agents</span><div class="chips"><i class="m">Orchestrator</i><i>Sentinel</i><i>Genomic</i><i>Guideline</i><i>Trials</i><i>Dose</i><i>Structure</i><i class="k">Safety-critic</i></div></div>
-      <div class="lay"><span>MCP</span><div class="chips"><i class="m">oncoagent-mcp · stdio + Streamable HTTP</i><i>PubMed</i><i>ClinicalTrials.gov</i><i>ICD-10</i></div></div>
-      <div class="lay"><span>Engines</span><div class="chips"><i>Guideline RAG</i><i>CIViC · OncoKB</i><i>NGS pipelines</i><i>Dose calculators</i><i>PDB · AlphaFold DB · Mol*</i></div></div>
-      <div class="lay"><span>Data</span><div class="chips"><i>FHIR + mCODE</i><i>Postgres + pgvector</i><i>Object store</i><i>Knowledge graph</i><i>De-identified research mart</i></div></div>
-      <div class="lay"><span>Sources</span><div class="chips"><i>EHR</i><i>Lab</i><i>PACS</i><i>NGS labs</i><i>Clinician notes</i></div></div>
+    <p class="kicker rv">Business and roadmap</p>
+    <div class="rv" style="--d:1;display:flex;align-items:center;gap:28px"><h2>Who pays, and the next 30 months.</h2><span class="st plan" style="font-size:18px;padding:11px 18px">Plan · no traction claimed</span></div>
+    <div class="rv" style="--d:2;margin-top:40px">
+      <div class="headrow"><h3>Who pays</h3></div>
+      <div class="pay">
+        <div class="m"><i>Cancer hospitals</i><b>Per-oncologist subscription</b><span>The clinician workspace, agents and decision log</span></div>
+        <div><i>Molecular labs</i><b>Interpretation module</b><span>Variant interpretation and reporting</span></div>
+        <div><i>Research partners</i><b>Cohort insight</b><span>De-identified, under consent and ethics approval</span></div>
+      </div>
+    </div>
+    <div class="rv" style="--d:3;margin-top:44px">
+      <div class="headrow"><h3>Roadmap · months from today</h3></div>
+      <div class="road">
+        <div><em>0–2<small>months</small></em><b>Foundation</b><span>Harden the MVP, evaluation harness, hazard log, regulatory classification</span></div>
+        <div class="m"><em>2–8</em><b>NSCLC product</b><span>Full agent set, PDF report extraction, guideline RAG, ≥ 90% gold-case concordance as the target</span></div>
+        <div><em>8–14</em><b>Pilot + breast</b><span>Ethics approval, hospital integration, silent-mode study on real cases</span></div>
+        <div><em>14–30</em><b>Scale + research</b><span>Live pilot, colorectal, research zone with a licensed discovery partner</span></div>
+      </div>
     </div>
     <p class="fill"></p>
-    <p class="cap">Running today: seven of nine agents are plain code; Claude Opus 5.5 writes the synthesis from a de-identified summary, in a fixed schema, about $0.065 per case.</p>
+    <p class="src">Regulatory frame: clinician-facing decision support (FDA CDS criteria); Bangladesh PDPO 2025, health and genetic data stored in-country; DGDA rules to be confirmed before a pilot.</p>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">11 / 15</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">16 / 17</span></div>
+  <aside class="notes">
+    <p><b>Say:</b> "Hospitals pay per oncologist. Molecular labs pay for an interpretation module. Research partners pay for de-identified insight under ethics approval. Over 30 months we go from a hardened MVP to a silent-mode pilot, then breast and colorectal. This is a plan; we are not claiming traction."</p>
+    <p><b>Why:</b> A credible path to a business, stated without inflation, keeps the trust built on the last four slides.</p>
+  </aside>
 </section>
 
-<!-- 12 SAFETY -->
-<section class="slide ink" data-title="Safety and trust">
-  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#8a8a86" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Safety</span></div>
-  <div class="body">
-    <p class="kicker rv">Safety and trust</p>
-    <h2 class="rv" style="--d:1">Safe by construction.<br>Private by default.</h2>
-    <div class="groups c3 mt rv" style="--d:2">
-      <div class="grp m"><em>Human</em><b>signs every action</b><span>Only a clinician's session token can approve; the AI can never mint one.</span></div>
-      <div class="grp"><em>Sourced</em><b>or "unverified"</b><span>No drug, dose, trial ID or citation from model memory; a critic checks every claim.</span></div>
-      <div class="grp"><em>Private</em><b>data stays in-country</b><span>De-identified before any model call; designed for Bangladesh PDPO 2025 and FDA CDS 2026.</span></div>
+<!-- 17 CLOSE + ASK -->
+<section class="slide" data-title="Close and ask">
+  <div class="ask-in">
+    <span class="logo rv" style="--d:0"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="5" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span>
+    <p class="t0 rv" style="--d:1">Our ask</p>
+    <p class="ask rv" style="--d:2">We are looking for <mark>one cancer centre</mark><br>for a silent-mode pilot.</p>
+    <p class="why-sm rv" style="--d:3">Under ethics approval, OncoAgent drafts beside your tumour board and its drafts are compared with your decisions. It is never used for care during the study.</p>
+    <div class="links rv" style="--d:4"><span class="p1"><small>Try it now</small>oncoagent.vercel.app</span><span class="p2">github.com/shahriyar9507/oncoagent</span></div>
+    <div class="endline rv" style="--d:6">
+      <p class="l1">AI proposes. <span>The doctor decides.</span></p>
+      <p class="l2 bn">AI প্রস্তাব দেয়, ডাক্তার সিদ্ধান্ত নেন।</p>
     </div>
-    <p class="fill"></p>
-    <p class="cap">PDFs and tool outputs are data, never instructions. The research track is limited to human cancer targets and never reaches a patient outside a regulated trial.</p>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">12 / 15</span></div>
-</section>
-
-<!-- 13 STATUS -->
-<section class="slide" data-title="Where we are">
-  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Status</span></div>
-  <div class="body">
-    <p class="kicker rv">Where we are</p>
-    <h2 class="rv" style="--d:1">We say "built" only for what runs.</h2>
-    <div class="rows mt rv" style="--d:2;margin-top:34px">
-      <div><span>Research base, architecture, safety rules, 25-agent build team</span><span class="st built">Built</span></div>
-      <div><span>Clinician workspace: charts, cards, sign-off, decision queue, printable tumour-board report</span><span class="st built">Built</span></div>
-      <div><span>Nine agents: CIViC, ClinicalTrials.gov, interactions, dose calculators, Claude synthesis, safety-critic</span><span class="st built">Built</span></div>
-      <div><span>oncoagent-mcp: seven tools over stdio + Streamable HTTP · 3D structures with Mol*</span><span class="st built">Built</span></div>
-      <div><span>Evaluation: 3/3 gold cases matched, 100% valid citations, 6/6 unsafe drafts caught</span><span class="st mvp">Measured</span></div>
-      <div><span>PDF extraction, guideline RAG, hospital pilot, breast and colorectal</span><span class="st plan">Planned</span></div>
-      <div><span>Research track with a licensed drug-discovery partner</span><span class="st vision">Vision</span></div>
-    </div>
-    <p class="fill"></p>
-    <p class="cap">Live: oncoagent.vercel.app · Code: github.com/shahriyar9507/oncoagent · Fictional patients only.</p>
-  </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">13 / 15</span></div>
-</section>
-
-<!-- 14 ROADMAP -->
-<section class="slide" data-title="Roadmap">
-  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Roadmap</span></div>
-  <div class="body">
-    <p class="kicker rv">Roadmap</p>
-    <h2 class="rv" style="--d:1">From demo to a hospital pilot.</h2>
-    <div class="groups c4 mt rv" style="--d:2">
-      <div class="grp k"><em>0–2</em><b>Foundation</b><span>MVP hardened, evaluation harness, hazard log, regulatory classification</span></div>
-      <div class="grp m"><em>2–8</em><b>NSCLC product</b><span>Full agent set, PDF reports, guideline RAG, 3D insight; ≥ 90% gold-case concordance</span></div>
-      <div class="grp"><em>8–14</em><b>Pilot + breast</b><span>Ethics approval, hospital integration, silent-mode study on real cases</span></div>
-      <div class="grp"><em>14–30</em><b>Scale + research</b><span>Live pilot, colorectal, research zone with a discovery partner</span></div>
-    </div>
-    <div class="groups c2 mt rv" style="--d:3">
-      <div class="grp"><b style="margin-top:0">Who pays</b><span>Cancer hospitals (per-oncologist subscription), molecular labs (interpretation module), research partners (de-identified insight under ethics approval).</span></div>
-      <div class="grp"><b style="margin-top:0">Team DatourX</b><span>Product and AI engineering, full-stack, clinical advisor in oncology, data and design; an NRB collaborator if confirmed.</span></div>
-    </div>
-    <p class="fill"></p>
-    <p class="cap">Months from today.</p>
-  </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">14 / 15</span></div>
-</section>
-
-<!-- 15 CLOSE -->
-<section class="slide" data-title="Close">
-  <div class="close-in">
-    <p class="t0 rv">OncoAgent · Idea to Unicorn 2026</p>
-    <span class="logo rv" style="--d:1"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="4" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span>
-    <p class="t1 rv" style="--d:2">AI proposes. The doctor decides.</p>
-    <p class="t2 rv bn" style="--d:3">AI প্রস্তাব দেয়, ডাক্তার সিদ্ধান্ত নেন।</p>
-    <p class="t3 rv" style="--d:4">Starting with lung cancer, built for the patients who wait longest.</p>
-    <p class="t4 rv" style="--d:5">oncoagent.vercel.app</p>
-  </div>
+  <aside class="notes">
+    <p><b>Say:</b> "Our ask is simple: one cancer centre for a silent-mode pilot under ethics approval, so we can compare OncoAgent's drafts with real tumour-board decisions. You can try it now at oncoagent.vercel.app. For Rahela, and for every doctor with thousands like her: AI proposes. The doctor decides." Then say the Bangla line.</p>
+    <p><b>Why:</b> A small, concrete ask is easy to say yes to. Ending on the patient and the line gives the strongest last memory.</p>
+  </aside>
 </section>
 
 </div>
 <div id="progress"></div>
-<div id="nav" aria-label="Slide controls"><button type="button" id="prev" aria-label="Previous slide">‹</button><span id="count" aria-live="polite">1 / 15</span><button type="button" id="next" aria-label="Next slide">›</button></div>
+<div id="nav" aria-label="Slide controls"><button type="button" id="prev" aria-label="Previous slide">‹</button><span id="count" aria-live="polite">1 / 17</span><button type="button" id="next" aria-label="Next slide">›</button></div>
+<div id="notes-panel" role="complementary" aria-label="Speaker notes"><div class="nh"><span class="nt"></span><span>Press N to hide</span></div><div class="nb"></div></div>
 
 <script>
 (function () {
   var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
   var i = 0, prog = document.getElementById('progress'), count = document.getElementById('count');
+  var panel = document.getElementById('notes-panel');
   function fit() {
     var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
     slides.forEach(function (el) { el.style.setProperty('--s', s); });
+  }
+  function notes() {
+    var a = slides[i].querySelector('.notes');
+    panel.querySelector('.nt').textContent = 'Notes · ' + (i + 1) + ' / ' + slides.length + ' · ' + (slides[i].getAttribute('data-title') || '');
+    panel.querySelector('.nb').innerHTML = a ? a.innerHTML : '<p>No notes for this slide.</p>';
   }
   function go(n, user) {
     n = Math.max(0, Math.min(slides.length - 1, n));
@@ -479,6 +963,7 @@ h2 .g { color: #8b95a6; }
     slides[i].classList.add('on');
     count.textContent = (i + 1) + ' / ' + slides.length;
     prog.style.width = ((i + 1) / slides.length * 100) + '%';
+    notes();
     try { history.replaceState(null, '', '#s' + (i + 1)); } catch (e) {}
   }
   function fromHash() {
@@ -491,6 +976,7 @@ h2 .g { color: #8b95a6; }
     if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(i - 1, true); }
     if (e.key === 'Home') go(0, true);
     if (e.key === 'End') go(slides.length - 1, true);
+    if ((e.key === 'n' || e.key === 'N') && !e.ctrlKey && !e.metaKey && !e.altKey) document.body.classList.toggle('show-notes');
   });
   document.getElementById('next').addEventListener('click', function () { go(i + 1, true); });
   document.getElementById('prev').addEventListener('click', function () { go(i - 1, true); });
