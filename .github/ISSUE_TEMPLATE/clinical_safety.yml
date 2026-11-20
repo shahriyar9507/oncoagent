@@ -1,0 +1,37 @@
+name: Clinical safety concern
+description: Output that could mislead a clinician (wrong drug, dose, trial, interaction, missing warning, unsourced claim).
+labels: [clinical-safety]
+body:
+  - type: markdown
+    attributes:
+      value: "Thank you. Safety reports are reviewed first. Use fictional cases only; never paste real patient data."
+  - type: input
+    id: case
+    attributes:
+      label: Case and card
+      description: Patient ID (P-001, P-002, P-003) and the card text or ID
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is unsafe or wrong
+      description: What the card says, what it should say, and the source (guideline, label, trial) that supports the correction.
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Potential severity if acted on
+      options:
+        - Could cause serious harm
+        - Could cause minor harm or delay
+        - Misleading but unlikely to cause harm
+    validations:
+      required: true
+  - type: checkboxes
+    id: critic
+    attributes:
+      label: Safety-critic
+      options:
+        - label: The safety-critic did not flag this card

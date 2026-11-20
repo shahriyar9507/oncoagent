@@ -1,125 +1,221 @@
-# OncoAgent · Team DatourX
+<div align="center">
 
-**An AI assistant team for oncologists. It reads every report, proposes the next test or treatment with its evidence, and the doctor makes every decision.**
+<img src="docs/assets/social-preview.png" alt="OncoAgent: AI proposes. The doctor decides." width="100%" />
 
-Entry for *Idea to Unicorn · International AI Builders Congress 2026* (CloudCamp Bangladesh) · HealthSphere AI · challenge **PredictRx**.
+# OncoAgent
 
-> All patients in this repository are fictional. OncoAgent is a research prototype, not a medical device and not medical advice.
+**Agentic decision support for oncologists. Nine agents read the case, cite every source and calculate the dose; a safety-critic checks each claim; the doctor decides.**
+
+[![CI](https://github.com/shahriyar9507/oncoagent/actions/workflows/ci.yml/badge.svg)](https://github.com/shahriyar9507/oncoagent/actions/workflows/ci.yml)
+[![Live demo](https://img.shields.io/badge/live%20demo-oncoagent.vercel.app-17ff88?labelColor=050807)](https://oncoagent.vercel.app)
+[![MCP](https://img.shields.io/badge/MCP-9%20tools%20·%20stdio%20%2B%20HTTP-3fd7c4?labelColor=050807)](docs/MCP.md)
+[![License: MIT](https://img.shields.io/badge/license-MIT-e9f2ed?labelColor=050807)](LICENSE)
+![Next.js 16](https://img.shields.io/badge/Next.js-16-e9f2ed?labelColor=050807)
+![Claude Opus 5.5](https://img.shields.io/badge/Claude-Opus%205.5-e9f2ed?labelColor=050807)
+
+[**Live demo**](https://oncoagent.vercel.app) · [**Documentation**](docs/README.md) · [**Architecture**](docs/ARCHITECTURE.md) · [**MCP server**](docs/MCP.md) · [**Evaluation**](docs/EVALUATION.md) · [**Safety**](docs/SAFETY.md)
+
+*Team DatourX · Idea to Unicorn, International AI Builders Congress 2026 · HealthSphere AI · PredictRx*
+
+</div>
+
+> [!IMPORTANT]
+> OncoAgent is a research prototype for clinicians. It is **not a medical device** and not medical advice. **Every patient in this repository and in the live demo is fictional.**
+
+---
+
+## Why
+
+A lung cancer patient progresses on her targeted drug. Before the next tumour board, her oncologist has to read a long molecular report, check the guideline options, look for interactions with her other medicines, search for recruiting trials and recalculate doses from her kidney function. All of it is done by hand, for every patient.
+
+- About **20 million** people were diagnosed with cancer in 2022; **lung cancer caused 1.82 million deaths**, the most of any cancer (GLOBOCAN 2022).
+- Bangladesh recorded **167,256** new cases with about **22 medical oncologists**: roughly **7,600 new patients per medical oncologist**, against about 137 in the United States (rough comparison; definitions differ). [Sources](docs/RESEARCH.md#11-without-ai-vs-with-ai--comparison-numbers-used-in-the-brief)
+- Even in the US only about **45%** of NSCLC patients show evidence of biomarker testing before first-line therapy (JAMA Netw Open 2025).
+
+Precision medicine exists. The bottleneck is the specialist time needed to apply it to each patient.
+
+## What OncoAgent does
+
+When a report lands, or when a clinician **enters a de-identified case and pastes its molecular report**, an orchestrator runs nine agents on the case and returns **recommendation cards**. Each card holds a proposal, the patient facts behind it, evidence IDs, confidence, uncertainty, alternatives and what would change the advice. The oncologist approves, modifies or rejects each card with a reason, and every decision is written to a **SHA-256 hash-chained audit log**.
+
+| # | Agent | Job | Kind | Signs off |
+|---|---|---|---|---|
+| 1 | Sentinel | RECIST 1.1 response and ctDNA trend; red flags | code | Treating oncologist |
+| 2 | Genomic-interpreter | Driver and resistance calls with **live CIViC** evidence | code | Molecular pathologist |
+| 3 | Test-advisor | Missing guideline biomarkers and tests | code | Treating oncologist |
+| 4 | Guideline | Ranked options from a curated, versioned knowledge pack | code | Tumour board |
+| 5 | Pharmacology-safety | Interactions with current medicines (label rules) | code | Pharmacist |
+| 6 | Trial-matcher | Recruiting trials from **ClinicalTrials.gov API v2** | code | Investigator |
+| 7 | Dose-optimizer | Mosteller BSA, Cockcroft–Gault CrCl, Calvert carboplatin (GFR cap 125) | code | Pharmacist + oncologist |
+| 8 | Synthesis | Tumour-board pre-read and up to three cards, citing only given evidence IDs | **Claude Opus 5.5** | Treating oncologist |
+| 9 | Safety-critic | Flags unknown evidence, invented trials, stray doses, contraindicated or wrong-line drugs | code | — |
+
+Eight of the nine agents are plain, testable code; only the synthesis step uses a model. **The model writes language, never numbers:** doses come from the calculator and trial IDs from the registry.
+
+```mermaid
+flowchart LR
+    REC["Patient record<br/>reports · labs · NGS"] --> ORC{{Orchestrator}}
+    ORC --> A1["Sentinel"] & A2["Genomic-interpreter"] & A3["Test-advisor"] & A4["Guideline"] & A5["Pharmacology-safety"] & A6["Trial-matcher"] & A7["Dose-optimizer"]
+    CIVIC[("CIViC · live")] -.-> A2
+    CTG[("ClinicalTrials.gov · live")] -.-> A6
+    A1 & A2 & A3 & A4 & A5 & A6 & A7 --> REG["Evidence registry<br/>pt: kb: civic: trial: label: calc:"]
+    REG --> SYN["Synthesis<br/>Claude Opus 5.5"]
+    SYN --> CRIT{"Safety-critic"}
+    REG --> CRIT
+    CRIT --> CARDS["Recommendation cards"]
+    CARDS --> DOC(["Oncologist<br/>approve · modify · reject"])
+    DOC --> LOG[("Hash-chained audit log")]
+```
+
+## Not just three demo patients
+
+Open **[New case](https://oncoagent.vercel.app/cases/new)**, paste a molecular report and the same agents run on it:
+
+- A **deterministic report reader** (no AI, runs in the browser) finds the alterations: EGFR exon 19 / exon 20 / point mutations, KRAS, BRAF, HER2, MET exon 14, ALK / ROS1 / RET / NTRK / NRG1 fusions. It also finds VAF, PD-L1 TPS, genes reported negative and the sample type. It shows the exact text behind each finding.
+- A **setting selector** places the case in a curated knowledge pack of **20 entries**. The pack covers EGFR, ALK, ROS1, BRAF V600E, MET exon 14, RET, NTRK, KRAS G12C, HER2 and no-driver cases by PD-L1 and histology, plus second line, with **42 drugs, 34 regimens and 54 label-level interaction rules**. When no entry fits, it says so and proposes no treatment.
+- Doses use Calvert, BSA, fixed, weight-band or per-kg rules from the labels.
+- The case stays in the clinician's browser. The server validates and rebuilds it for each run and stores nothing. No names, record numbers or dates of birth are collected.
 
 | | |
 |---|---|
-| Live demo | https://oncoagent.vercel.app |
-| MCP endpoint | `https://oncoagent.vercel.app/api/mcp` (Streamable HTTP) · `npx tsx mcp/stdio.ts` (stdio) · try it at `/mcp` |
-| Submission book | `docs/submission/book.html` |
-| Pitch deck | `docs/submission/deck.html` |
-| Research with sources | `docs/RESEARCH.md` |
-| Architecture | `docs/ARCHITECTURE.md` |
+| ![Case intake](docs/assets/screenshots/16-case-intake.webp) | ![Case cards](docs/assets/screenshots/18-case-cards.webp) |
+| **Case intake.** Paste the report; check what was found. | **Your case, analysed.** KRAS G12C after chemo-immunotherapy: sotorasib with an omeprazole warning. |
 
-## The problem
+## See it
 
-About 20 million people were diagnosed with cancer in 2022 and 9.7 million died; lung cancer leads both (GLOBOCAN 2022). In Bangladesh about 167,000 new patients a year share 22 medical oncologists and one or two dedicated molecular labs. Precision drugs exist, but finding and reading the evidence for each patient (biomarkers, guidelines, interactions, trials, doses) falls on very few specialists, so biomarkers, trials and risks are missed.
+| | |
+|---|---|
+| ![Overview](docs/assets/screenshots/01-overview.webp) | ![Patient record](docs/assets/screenshots/02-patient-record.webp) |
+| **Overview.** Cases, pending decisions, live status. | **Patient record.** Summary, therapy lines, RECIST 1.1 and ctDNA charts. |
+| ![Agent run](docs/assets/screenshots/03-agent-run.webp) | ![Recommendations](docs/assets/screenshots/04-recommendations.webp) |
+| **Agent run.** Nine steps streamed live, with the tumour-board pre-read. | **Cards and dose.** Evidence-backed proposals, calculated dose card. |
+| ![Safety-critic flag](docs/assets/screenshots/14-critic-flag.webp) | ![3D structure](docs/assets/screenshots/07-structure-3d.webp) |
+| **A real catch.** The critic flags lorlatinib while the patient takes carbamazepine. | **Structure insight.** Drug in its pocket; driver and resistance residues highlighted. |
+| ![Decision queue](docs/assets/screenshots/09-decision-queue.webp) | ![Tumour-board report](docs/assets/screenshots/10-tumour-board-report.webp) |
+| **Decision queue.** Every pending card, flagged first, signed in place. | **Tumour-board report.** Printable A4 with decisions, dose and sources. |
 
-## What it does
+More screens: [evidence drawer](docs/assets/screenshots/05-evidence-drawer.webp) · [sign-off dialog](docs/assets/screenshots/06-sign-off-dialog.webp) · [MCP tester](docs/assets/screenshots/11-mcp-playground.webp) · [evaluation](docs/assets/screenshots/12-evaluation.webp) · [phone](docs/assets/screenshots/15-mobile.webp)
 
-A specialist agent team works on each new event in a patient's record:
+## Results
 
-| Agent | Job | Signs off |
-|---|---|---|
-| Sentinel | RECIST 1.1 response and ctDNA trend; red flags | Treating oncologist |
-| Genomic-interpreter | Driver and resistance calls with live CIViC evidence | Molecular pathologist |
-| Test-advisor | Missing biomarkers and tests to order | Treating oncologist |
-| Guideline | Ranked options from a curated, versioned knowledge pack | Tumour board |
-| Pharmacology-safety | Interactions with current medications (label rules) | Pharmacist |
-| Trial-matcher | Recruiting trials from ClinicalTrials.gov API v2 | Investigator |
-| Dose-optimizer | BSA (Mosteller), CrCl (Cockcroft–Gault), Calvert with GFR cap | Pharmacist + oncologist |
-| Synthesis (Claude Opus 5.5) | Tumour-board pre-read and up to three cards, citing only given evidence IDs | Treating oncologist |
-| Safety-critic | Rejects invented trials, doses outside the calculator, unsafe or wrong-line drugs, unknown evidence | — |
-
-Every output is a **recommendation card**: proposal, patient facts used, evidence IDs, confidence, what is uncertain, alternatives, what would change the advice, safety checks. The clinician approves, modifies or rejects (a reason is required), and each decision is written to a **hash-chained audit log**.
-
-### The clinician workspace
-
-- **Patient record**: summary, therapy lines, RECIST 1.1 and ctDNA charts (with table view), timeline, molecular profile against the 10-marker guideline panel, recruiting trials, and a sticky section menu.
-- **Agent run**: live streaming of the nine steps with progress and timings; Claude synthesis can be switched off for a free rules-only run. The latest live run is kept in the browser, so decisions survive a reload.
-- **Recommendation cards**: compact by default, with reasoning, uncertainty and alternatives one click away; evidence opens in a side drawer grouped by source.
-- **Decision queue**: every pending card across patients, flagged ones first, with filters and approve / modify / reject in place.
-- **Tumour-board report**: a printable A4 pre-read (`/patients/<id>/report`) with the record, the AI draft, every card and its decision, the dose card, numbered sources and signature lines.
-- **3D structure**: Mol* view of the drug in its pocket with the driver, resistance and gatekeeper residues highlighted (residue numbers checked against each PDB file).
-- **Live status**: the top bar checks Claude, CIViC and ClinicalTrials.gov on load and says when snapshots are in use.
-- **MCP tester**: call any of the seven tools from the browser against the deployed endpoint.
-
-Live Claude runs are rate-limited in the public demo (6 per 10 minutes per visitor; 10 per hour through MCP). Rules-only runs are free.
-
-Therapy works at three levels: **select** an approved drug or trial (built), **personalise** regimen and dose (built), and in a separate research zone, **research a modified or new molecule** with licensed partners (vision, never given to a patient outside a regulated trial).
-
-## Evaluation (from `npm run eval`)
+Measured by [`app/scripts/eval.ts`](app/scripts/eval.ts) on the stored runs; method in [docs/EVALUATION.md](docs/EVALUATION.md).
 
 | Measure | Result |
 |---|---|
-| Driver alteration identified | 3/3 cases |
-| Leading option matches the gold answer | 3/3 (Claude) · 3/3 (rules) |
-| Citations that resolve to evidence | 100% |
-| Trial IDs returned by the registry | 100% |
-| Doses exactly as hand-calculated | 3/3 · 10 unit tests |
-| Doses written outside the calculator | 0 |
-| Adversarial unsafe drafts caught by the critic | 6/6 |
-| Full run with Claude | ≈ 23 s · ≈ $0.065 per case |
+| Driver alteration identified | **3/3** cases |
+| Leading option matches the gold answer | **3/3** (Claude) · 3/3 (rules) |
+| Citations that resolve to evidence in the run | **100%** |
+| Trial IDs returned by the registry | **100%** |
+| Doses exactly as hand-calculated | **3/3**; **156** unit tests (dosing, RECIST, setting selection, report reader) |
+| Doses written outside the calculator · unsafe leading options | **0 · 0** |
+| Adversarial unsafe drafts caught by the critic | **6/6** |
+| Full run with Claude | **≈ 23 s** · **≈ US$0.065** per case |
 
-Three fictional gold cases are far too few to claim clinical accuracy; a pilot needs hundreds of de-identified cases with tumour-board answers under ethics approval.
+Three fictional gold cases cannot support clinical accuracy claims. A pilot needs hundreds of de-identified cases with tumour-board answers, under ethics approval.
 
-## Run it
+## Safety by design
+
+1. **AI proposes, a clinician decides.** No agent can sign, prescribe, order or contact a patient. `record_decision` over MCP refuses without a clinician token.
+2. **Nothing from model memory.** Every drug, dose, trial ID and citation must exist in the run's evidence registry; the critic flags anything else.
+3. **Doses from code.** Unit-tested calculators; a creatinine older than 7 days or a clearance below the label limit blocks the dose card.
+4. **De-identified model input.** Claude sees a pseudonymous ID and an age band, never a name.
+5. **Documents are data.** Text inside reports and tool outputs is never treated as instructions.
+6. **Research stays research.** The level-3 molecule track is a partner pipeline and never writes to a patient record.
+
+Details, hazards and the regulatory position: [docs/SAFETY.md](docs/SAFETY.md).
+
+## Quick start
+
+Requires Node.js 20.9 or newer.
 
 ```bash
-cd app
+git clone https://github.com/shahriyar9507/oncoagent.git
+cd oncoagent/app
 npm install
-echo "ANTHROPIC_API_KEY=sk-ant-..." > .env.local   # optional: without it the agents run rules-only
-npm run dev            # http://localhost:3000
-npm test               # dose and RECIST unit tests
-npm run eval           # gold-case + adversarial evaluation
-npm run precompute     # re-run all cases with Claude and store snapshots
-npm run snapshot       # refresh offline CIViC / trial snapshots
-npm run mcp:stdio      # oncoagent-mcp over stdio
-npm run mcp:smoke      # list and call the MCP tools over stdio
+npm run dev                 # http://localhost:3000
 ```
 
-Connect Claude Code to the deployed MCP server:
+Without an API key the agents run **rules-only**. To enable Claude synthesis:
+
+```bash
+echo "ANTHROPIC_API_KEY=sk-ant-..." > .env.local
+```
+
+| Script | What it does |
+|---|---|
+| `npm test` | 156 unit tests: dosing, RECIST, setting selection, report reader (Vitest) |
+| `npm run typecheck` · `npm run lint` | TypeScript and ESLint |
+| `npm run eval` | Gold-case and adversarial evaluation on stored runs |
+| `npm run precompute` | Re-run all cases with Claude and store snapshots |
+| `npm run snapshot` | Refresh the offline CIViC and trial snapshots |
+| `npm run mcp:stdio` · `npm run mcp:smoke` | Serve or smoke-test the MCP server over stdio |
+
+Environment variables (`ANTHROPIC_API_KEY`, `CLINICIAN_TOKEN`, `MCP_BEARER_TOKEN`) and deployment: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+
+## Use the tools from any MCP client
 
 ```bash
 claude mcp add --transport http oncoagent https://oncoagent.vercel.app/api/mcp
 ```
 
-Environment variables: `ANTHROPIC_API_KEY` (Claude synthesis), `CLINICIAN_TOKEN` (enables `record_decision` over MCP), `MCP_BEARER_TOKEN` (optional bearer auth on `/api/mcp`).
+Nine tools: `list_patients` · `get_case_timeline` · `interpret_variant` (CIViC) · `search_trials` (ClinicalTrials.gov) · `calculate_dose` · `draft_recommendations` · `extract_report` · `analyze_case` · `record_decision`. One definition serves stdio and Streamable HTTP. You can also call them from the browser on the [MCP page](https://oncoagent.vercel.app/mcp). Reference: [docs/MCP.md](docs/MCP.md).
 
-## MCP tools (`oncoagent-mcp`)
+## Repository map
 
-`list_patients` · `get_case_timeline` · `interpret_variant` (CIViC) · `search_trials` (ClinicalTrials.gov) · `calculate_dose` · `draft_recommendations` · `record_decision` (refuses without a clinician token). One definition serves stdio (`@modelcontextprotocol/server` v2 `serveStdio`) and Streamable HTTP (`mcp-handler` on a Next.js route).
+```text
+oncoagent/
+├── app/                        Next.js 16 clinician workspace, agents and MCP server
+│   ├── src/app/                Routes: overview, patients, cases (new, record, report), queue, mcp, evaluation, architecture, API
+│   ├── src/components/         Workspace UI: case form, patient record, agent run, cards, drawer, charts, Mol* viewer, queue, report
+│   ├── src/lib/agents/         Orchestrator, rule agents, Claude synthesis, safety-critic
+│   ├── src/lib/clinical/       Dose calculators, RECIST 1.1, setting selector, report reader (+ 156 unit tests)
+│   ├── src/lib/tools/          CIViC and ClinicalTrials.gov clients with snapshot fallback
+│   ├── src/lib/mcp/            oncoagent-mcp tool definitions
+│   ├── src/lib/data/           Fictional cases, knowledge pack (20 entries), regimens, medications, structures, stored runs
+│   ├── mcp/stdio.ts            MCP server over stdio
+│   └── scripts/                eval, precompute, snapshot, mcp-smoke
+├── docs/                       Architecture, agents, MCP, API, evaluation, safety, data, design, deployment, roadmap
+│   ├── submission/             Competition book, pitch deck, video script, fact sheet
+│   └── brief/                  Project brief in Bangla
+├── .claude/                    25 project sub-agents and 13 skills used to build OncoAgent
+└── .github/                    CI, issue forms, PR template
+```
+
+## Documentation
+
+| Read | For |
+|---|---|
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System context, run sequence, modules, decisions, target architecture |
+| [docs/AGENTS.md](docs/AGENTS.md) | Each agent's inputs, outputs, autonomy and failure modes; the card schema |
+| [docs/MCP.md](docs/MCP.md) · [docs/API.md](docs/API.md) | Tool and HTTP reference with examples |
+| [docs/EVALUATION.md](docs/EVALUATION.md) | Metrics, adversarial set, results, pilot plan |
+| [docs/SAFETY.md](docs/SAFETY.md) | Intended use, hazards and controls, regulation |
+| [docs/DATA.md](docs/DATA.md) | Data model, fictional cases, provenance, privacy |
+| [docs/DESIGN.md](docs/DESIGN.md) | Design system and accessibility |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) · [docs/ROADMAP.md](docs/ROADMAP.md) | Running it, and what comes next |
+| [docs/RESEARCH.md](docs/RESEARCH.md) | Research base with sources |
 
 ## Stack
 
-Next.js 16 (App Router, TypeScript), plain CSS design system, hand-built SVG charts, Mol* for 3D protein structures (RCSB PDB 1M17, 6OIM, 2XP2), Anthropic TypeScript SDK with structured outputs (`claude-opus-5-5`, server-side refusal fallback), MCP SDK v2, Vitest, Vercel.
+Next.js 16 (App Router, TypeScript strict) · plain-CSS design system and hand-built SVG charts · Anthropic TypeScript SDK with structured outputs (`claude-opus-5-5`) · MCP SDK v2 + `mcp-handler` · Mol* 4.18 with MolViewSpec · Vitest · Vercel.
 
-## Data and AI provenance
+## Roadmap
 
-- Patients: fictional cases written by the team.
-- Variant evidence: CIViC (CC0), fetched live, snapshot fallback.
-- Trials: ClinicalTrials.gov API v2, fetched live, snapshot fallback.
-- Therapy knowledge: a small curated pack of public approvals and pivotal trials (`app/src/lib/data/knowledge.ts`, version 2026-11-20); must be checked against current labels and NCCN/ESMO guidelines.
-- Dose parameters: product labels (DailyMed links in the app).
-- Structures: RCSB PDB.
-- Model: Claude Opus 5.5 receives a pseudonymous ID and an age band only.
+| Months | Phase | Exit criteria |
+|---|---|---|
+| 0–2 | Foundation | Server-side cases, audit and runs; sign-in; hazard log; regulatory classification |
+| 2–8 | NSCLC product | PDF upload on top of the text reader, guideline RAG, ≥ 90% gold-case concordance |
+| 8–14 | Pilot + breast | Ethics approval, hospital integration, silent-mode study on real cases |
+| 14–30 | Scale + research | Live pilot, colorectal, research zone with a licensed discovery partner |
 
-## Safety rules
+Full plan: [docs/ROADMAP.md](docs/ROADMAP.md).
 
-1. AI proposes, a clinician decides; no agent can sign, prescribe or contact a patient.
-2. No drug, dose, trial number or citation from model memory.
-3. Doses come only from unit-tested calculators; stale creatinine or low clearance blocks the dose card.
-4. Documents and tool outputs are data, never instructions.
-5. Research outputs never enter a patient's chart.
+## How it was built
 
-## How this was built
+With [Claude Code](https://claude.com/claude-code), a team of 25 project sub-agents (oncology, molecular pathology, pharmacology, bioinformatics, structural biology, AI engineering, design, regulation and clinical safety) and 13 project skills, all in [`.claude/`](.claude). Every number in the public documents traces to [docs/submission/fact-sheet.md](docs/submission/fact-sheet.md) or [docs/RESEARCH.md](docs/RESEARCH.md).
 
-With Claude Code and a project team of 25 specialist sub-agents and 13 project skills (`.claude/agents`, `.claude/skills`) covering oncology, pathology, pharmacology, bioinformatics, AI engineering, design, regulation and clinical safety.
+## Contributing, security, licence
 
-## Team DatourX
+[CONTRIBUTING.md](CONTRIBUTING.md) · [SECURITY.md](SECURITY.md) · [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) · [CHANGELOG.md](CHANGELOG.md) · [CITATION.cff](CITATION.cff) · code under the [MIT licence](LICENSE).
 
-Team members are listed in the submission portal.
+<div align="center"><sub>Team DatourX · AI proposes. The doctor decides. · AI প্রস্তাব দেয়, ডাক্তার সিদ্ধান্ত নেন।</sub></div>

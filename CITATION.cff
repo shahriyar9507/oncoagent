@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you refer to this work, please cite it as below."
+title: "OncoAgent: agentic decision support for oncologists"
+abstract: "A clinician-only workspace in which nine agents read a lung cancer case, grade genomic evidence, check interactions, match recruiting trials and calculate doses; a language model writes a cited tumour-board pre-read, a deterministic safety-critic checks every claim, and the oncologist approves, modifies or rejects each recommendation into a hash-chained audit log. Research prototype with fictional patients."
+type: software
+authors:
+  - name: "Team DatourX"
+version: 0.3.0
+date-released: 2026-11-20
+license: MIT
+repository-code: "https://github.com/shahriyar9507/oncoagent"
+url: "https://oncoagent.vercel.app"
+keywords:
+  - oncology
+  - clinical decision support
+  - agentic AI
+  - Model Context Protocol
+  - non-small-cell lung cancer
+  - human-in-the-loop

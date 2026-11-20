@@ -10,6 +10,17 @@ const PRESETS: Record<string, Record<string, unknown>> = {
   search_trials: { biomarker: "KRAS G12C", max_results: 3 },
   calculate_dose: { regimen: "carboplatin-pemetrexed", height_cm: 152, weight_kg: 54, age: 55, sex: "F", serum_creatinine_mg_dl: 0.8, creatinine_date: "2026-11-17", today: "2026-11-20" },
   draft_recommendations: { patient_id: "P-003", use_claude: false },
+  extract_report: { text: "Tissue NGS: EGFR p.Leu858Arg (L858R), VAF 31%. TP53 R273H. ALK negative, ROS1 negative. PD-L1 TPS 10%." },
+  analyze_case: {
+    case: {
+      age: 63, sex: "M", smoking: "former", histology: "adenocarcinoma", stage: "IVB", ecog: 1, pdl1Tps: 30,
+      weightKg: 70, heightCm: 170, creatinineMgDl: 0.9, creatinineDate: "2026-11-18", reportDate: "2026-11-15",
+      variants: [{ gene: "MET", alteration: "Exon 14 Skipping Mutation", kind: "indel", sample: "tissue" }],
+      testedNegative: ["EGFR", "ALK", "ROS1", "BRAF", "KRAS", "RET", "NTRK", "ERBB2"],
+      priorLines: [], medications: ["Omeprazole"], recist: [{ date: "2026-11-12", sumMm: 55, newLesions: false }], asOf: "2026-11-20",
+    },
+    use_claude: false,
+  },
   record_decision: { patient_id: "P-001", card_id: "demo-card", action: "approve", reason: "Agree with the plan", clinician_token: "not-a-clinician" },
 };
 
@@ -20,6 +31,8 @@ const HINT: Record<string, string> = {
   search_trials: "Live ClinicalTrials.gov query for recruiting studies.",
   calculate_dose: "Deterministic dose card with formulas.",
   draft_recommendations: "Runs the rules-only agents and the critic (about 2 s).",
+  extract_report: "Deterministic report reader: no model, shows the matched text.",
+  analyze_case: "Runs all agents on a de-identified case you describe (rules-only here).",
   record_decision: "Shows the refusal: an AI client has no clinician token.",
 };
 

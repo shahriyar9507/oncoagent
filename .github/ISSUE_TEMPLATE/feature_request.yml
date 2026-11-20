@@ -1,0 +1,20 @@
+name: Feature request
+description: Propose a capability for clinicians, the agents or the MCP server.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Clinical or technical need
+      description: Who needs this and in which moment of their work?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+  - type: textarea
+    id: safety
+    attributes:
+      label: Safety considerations
+      description: Could this let an agent act without a clinician, use unsourced information or touch real data?

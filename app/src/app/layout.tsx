@@ -8,9 +8,16 @@ import { assessRecist } from "@/lib/clinical/recist";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
+const DESCRIPTION = "An AI assistant team for oncologists: nine agents read every report, propose the next step with its evidence, and the doctor decides. Fictional patients only.";
+
 export const metadata: Metadata = {
-  title: "OncoAgent · DatourX",
-  description: "An AI assistant team for oncologists: it reads every report, proposes the next step with its evidence, and the doctor decides. Fictional patients only.",
+  metadataBase: new URL("https://oncoagent.vercel.app"),
+  title: { default: "OncoAgent · DatourX", template: "%s" },
+  description: DESCRIPTION,
+  applicationName: "OncoAgent",
+  openGraph: { type: "website", siteName: "OncoAgent", title: "OncoAgent · AI proposes. The doctor decides.", description: DESCRIPTION },
+  twitter: { card: "summary_large_image", title: "OncoAgent · AI proposes. The doctor decides.", description: DESCRIPTION },
+  robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = { themeColor: "#050807", colorScheme: "dark" };

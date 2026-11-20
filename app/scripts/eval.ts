@@ -1,12 +1,29 @@
 // Gold-case evaluation of the stored agent runs plus adversarial checks of the safety-critic.
 // Run: npx tsx scripts/eval.ts   (writes src/lib/data/eval-results.json)
-import { readFileSync, writeFileSync } from "node:fs";
+import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { execSync } from "node:child_process";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { patients } from "../src/lib/data/patients";
 import { interactionRules } from "../src/lib/data/knowledge";
 import { criticCheck } from "../src/lib/agents/critic";
 import { EvidenceRegistry } from "../src/lib/agents/rules";
 import type { PipelineResult } from "../src/lib/agents/pipeline";
 import type { RecommendationCard } from "../src/lib/types";
+
+/** Number of passing Vitest cases, taken from Vitest itself so the published figure cannot drift. */
+function countUnitTests(): number {
+  try {
+    const file = join(tmpdir(), `oncoagent-vitest-${process.pid}.json`);
+    execSync(`npx vitest run --reporter=json --outputFile="${file}"`, { stdio: "ignore" });
+    const json = JSON.parse(readFileSync(file, "utf8")) as { numPassedTests: number };
+    return json.numPassedTests;
+  } catch {
+    // Fallback: count test declarations in the source.
+    const dir = "src/lib/clinical";
+    return readdirSync(dir).filter((f) => f.endsWith(".test.ts")).reduce((n, f) => n + (readFileSync(`${dir}/${f}`, "utf8").match(/^\s*(it|test)\(/gm) ?? []).length, 0);
+  }
+}
 
 const GOLD: Record<string, { driver: string; leading: string; mustMention: string[]; mustNotLead: string[]; dose: Record<string, string> }> = {
   "P-001": { driver: "EGFR L858R", leading: "amivantamab", mustMention: ["C797S", "re-biopsy|rebiopsy|biopsy", "ECG|QT"], mustNotLead: ["osimertinib alone"], dose: { Carboplatin: "460 mg", Pemetrexed: "750 mg" } },
@@ -111,7 +128,7 @@ const results = {
     adversarialTotal: adversarial.length,
     meanLatencyS: +(sum((c) => c.latencyMs) / cases.length / 1000).toFixed(1),
     meanCostUsd: +(sum((c) => c.costUsd) / cases.length).toFixed(4),
-    unitTests: 10,
+    unitTests: countUnitTests(),
   },
   cases,
   adversarial,

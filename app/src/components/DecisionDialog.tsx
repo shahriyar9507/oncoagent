@@ -17,7 +17,9 @@ export function DecisionDialog({ card, action, patientId, patientName, onClose }
   const [text, setText] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const needsReason = action !== "approve";
+  const overridesFlag = action === "approve" && card.critic.verdict === "flag";
+  const [ack, setAck] = useState(false);
+  const needsReason = action !== "approve" || overridesFlag;
   const firstRef = useRef<HTMLSelectElement | HTMLTextAreaElement | null>(null);
   const opener = useRef<Element | null>(null);
 
@@ -36,12 +38,16 @@ export function DecisionDialog({ card, action, patientId, patientName, onClose }
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
+    if (overridesFlag && !ack) {
+      setErr("Confirm that you reviewed the safety-critic flag.");
+      return;
+    }
     if (needsReason && text.trim().length < 5) {
       setErr(action === "modify" ? "Describe the change (at least 5 characters)." : "Give the reason (at least 5 characters).");
       return;
     }
     setSaving(true);
-    const log = await appendAudit({ actor: "Dr. Demo", action, patientId, cardId: card.id, reasonCode: needsReason ? reasonCode : undefined, reasonText: text.trim() || undefined });
+    const log = await appendAudit({ actor: "Dr. Demo", action, patientId, cardId: card.id, reasonCode: overridesFlag ? "Approved despite safety-critic flag" : action !== "approve" ? reasonCode : undefined, reasonText: text.trim() || undefined });
     setSaving(false);
     const verb = action === "approve" ? "Approved" : action === "modify" ? "Modified" : "Rejected";
     toast(`${verb} and signed · audit entry #${log[log.length - 1].seq}`, action === "reject" ? "red" : "mint");
@@ -61,17 +67,23 @@ export function DecisionDialog({ card, action, patientId, patientName, onClose }
           <span className="eyebrow">{patientName ? `${patientName} · ` : ""}{card.kind} · {card.origin === "claude" ? "Claude" : card.agent}</span>
           <p>{card.proposal}</p>
         </div>
-        {needsReason && (
+        {overridesFlag && (
+          <div className="critic flag" role="alert">
+            <b>Safety-critic flag:</b> {card.critic.notes.join(" ")}
+            <label className="ack"><input type="checkbox" checked={ack} onChange={(e) => { setAck(e.target.checked); setErr(null); }} /> I have reviewed this flag and take responsibility for approving the card.</label>
+          </div>
+        )}
+        {action !== "approve" && (
           <label className="field" htmlFor="dlg-reason">Reason (required)
             <select id="dlg-reason" ref={(el) => { firstRef.current = el; }} value={reasonCode} onChange={(e) => setReasonCode(e.target.value)}>
               {REASONS.map((r) => <option key={r}>{r}</option>)}
             </select>
           </label>
         )}
-        <label className="field" htmlFor="dlg-text">{action === "modify" ? "What you changed (required)" : action === "reject" ? "Why (required)" : "Note for the record (optional)"}
+        <label className="field" htmlFor="dlg-text">{action === "modify" ? "What you changed (required)" : action === "reject" ? "Why (required)" : overridesFlag ? "Why the flag does not apply (required)" : "Note for the record (optional)"}
           <textarea
             id="dlg-text"
-            ref={(el) => { if (!needsReason) firstRef.current = el; }}
+            ref={(el) => { if (action === "approve") firstRef.current = el; }}
             value={text}
             onChange={(e) => { setText(e.target.value); setErr(null); }}
             placeholder={action === "modify" ? "e.g. Re-biopsy first; discuss at Friday tumour board" : action === "reject" ? "e.g. Patient declined infusion therapy" : "e.g. Agree; discussed with the patient"}

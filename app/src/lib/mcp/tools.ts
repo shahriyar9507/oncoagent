@@ -9,10 +9,12 @@ import { regimens } from "../data/regimens";
 import { assessRecist } from "../clinical/recist";
 import { runPipeline } from "../agents/pipeline";
 import { allow, MCP_CLAUDE_RUNS_PER_HOUR } from "../ratelimit";
+import { CASE_ID_PATTERN, CaseInputSchema, buildPatientFromInput, newCaseId } from "../caseInput";
+import { extractReport } from "../clinical/extract";
 import type { Patient } from "../types";
 
 // oncoagent-mcp: the platform's tools, served over stdio and Streamable HTTP from one definition.
-export const SERVER_INFO = { name: "oncoagent-mcp", version: "0.1.0" };
+export const SERVER_INFO = { name: "oncoagent-mcp", version: "0.2.0" };
 
 function text(data: unknown) {
   return { content: [{ type: "text" as const, text: typeof data === "string" ? data : JSON.stringify(data, null, 2) }] };
@@ -121,6 +123,51 @@ export function registerOncoTools(server: McpServer) {
       const r = await runPipeline(p, { useClaude });
       return text({
         patientId: r.patientId,
+        mode: r.mode,
+        ...(note ? { note } : {}),
+        boardSummary: r.boardSummary,
+        cards: r.cards.map((c) => ({ id: c.id, agent: c.agent, kind: c.kind, proposal: c.proposal, evidenceIds: c.evidenceIds, confidence: c.confidence, critic: c.critic })),
+        evidence: r.evidence.map((e) => ({ id: e.id, label: e.label, url: e.url })),
+        dose: r.dose,
+      });
+    },
+  );
+
+  server.registerTool(
+    "extract_report",
+    {
+      title: "Extract molecular report",
+      description: "Read pasted NGS / PCR / FISH / IHC report text deterministically (no language model) and return the alterations with the exact text that matched, PD-L1 TPS, genes reported negative, the sample type and warnings. A clinician must confirm the result.",
+      inputSchema: z.object({ text: z.string().min(3).max(12000).describe("Report text; remove patient identifiers first") }),
+    },
+    async ({ text: report }) => text(extractReport(report)),
+  );
+
+  server.registerTool(
+    "analyze_case",
+    {
+      title: "Analyze a de-identified case",
+      description: "Run the nine OncoAgent agents on a clinician-entered, de-identified NSCLC case (no names or identifiers) and return draft cards with evidence IDs, the knowledge-pack setting, the dose card and the safety-critic verdicts. Nothing is stored.",
+      inputSchema: z.object({
+        case_id: z.string().optional().describe("Optional ID like C-7K2M9Q; generated when absent"),
+        case: CaseInputSchema,
+        use_claude: z.boolean().default(false).describe("Add the Claude synthesis step (rate-limited on the public endpoint)"),
+      }),
+    },
+    async ({ case_id, case: input, use_claude }) => {
+      const id = case_id && CASE_ID_PATTERN.test(case_id) ? case_id : newCaseId();
+      const p = buildPatientFromInput(input, id);
+      let useClaude = use_claude;
+      let note: string | undefined;
+      if (useClaude && !allow("mcp:claude", MCP_CLAUDE_RUNS_PER_HOUR, 60 * 60 * 1000).ok) {
+        useClaude = false;
+        note = `Claude synthesis is limited to ${MCP_CLAUDE_RUNS_PER_HOUR} runs per hour on the public endpoint; this run used the rules-only agents.`;
+      }
+      const r = await runPipeline(p, { useClaude });
+      return text({
+        caseId: id,
+        setting: p.biomarkerKey || null,
+        settingReason: p.knowledgeReason,
         mode: r.mode,
         ...(note ? { note } : {}),
         boardSummary: r.boardSummary,

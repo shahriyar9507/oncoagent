@@ -1,12 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import type { Patient } from "@/lib/types";
 import type { PipelineResult } from "@/lib/agents/pipeline";
 import type { RecistAssessment } from "@/lib/clinical/recist";
-import { readRun } from "@/lib/runs";
-import { useAudit } from "@/lib/hooks";
+import { useAudit, useStoredRun } from "@/lib/hooks";
 import { fmtDate, fmtDateTime, fmtNum, monthsBetween } from "@/lib/format";
 import { DatourMark } from "./Logo";
 import { IconPrinter } from "./icons";
@@ -14,17 +12,24 @@ import { IconPrinter } from "./icons";
 const KIND_ORDER: Record<string, number> = { treatment: 0, test: 1, safety: 2, dose: 3, trial: 4, monitoring: 5, summary: 6 };
 
 /** Printable tumour-board pre-read: the record, the AI draft, every card with its decision, the dose card and sources. */
-export function ReportView({ patient: p, recist, stored, untested }: { patient: Patient; recist: RecistAssessment[]; stored: PipelineResult; untested: string[] }) {
-  const [run, setRun] = useState<PipelineResult>(stored);
-  const [live, setLive] = useState(false);
+export function ReportView({ patient: p, recist, stored, untested, backHref }: { patient: Patient; recist: RecistAssessment[]; stored: PipelineResult | null; untested: string[]; backHref?: string }) {
+  const saved = useStoredRun(p.id);
+  const live = saved !== null;
   const { audit, decisions, chainOk } = useAudit();
-  useEffect(() => {
-    const r = readRun(p.id);
-    if (r) {
-      setRun(r);
-      setLive(true);
-    }
-  }, [p.id]);
+  const back = backHref ?? `/patients/${p.id}`;
+  const maybeRun = saved ?? stored;
+  if (!maybeRun) {
+    return (
+      <section className="panel">
+        <div className="empty-state">
+          <p><b>No agent run yet for {p.displayName}.</b></p>
+          <p className="sub">The report is built from the latest run and the clinician&apos;s decisions. Run the agents first.</p>
+          <Link href={`${back}#agents`} className="btn sm primary arrow" style={{ marginTop: 12 }}>Open the case</Link>
+        </div>
+      </section>
+    );
+  }
+  const run: PipelineResult = maybeRun;
 
   const cards = [...run.cards].sort((a, b) => (KIND_ORDER[a.kind] ?? 9) - (KIND_ORDER[b.kind] ?? 9));
   const cited = new Set(cards.flatMap((c) => c.evidenceIds));
@@ -38,7 +43,7 @@ export function ReportView({ patient: p, recist, stored, untested }: { patient: 
   return (
     <div className="report-wrap">
       <div className="report-bar no-print">
-        <Link href={`/patients/${p.id}`} className="btn sm">← Back to record</Link>
+        <Link href={back} className="btn sm">← Back to record</Link>
         <span className="sub">{decidedN} of {cards.length} cards decided · {live ? "live run" : "stored run"} · A4 layout</span>
         <button type="button" className="btn primary sm" onClick={() => window.print()}><IconPrinter /> Print or save as PDF</button>
       </div>
@@ -51,7 +56,7 @@ export function ReportView({ patient: p, recist, stored, untested }: { patient: 
             <span>Prepared {fmtDateTime(run.ranAt)} · {run.mode === "claude" ? `synthesis ${run.model}` : "rules only"}</span>
           </div>
         </header>
-        <p className="pp-banner">Draft for clinician review. Not a prescription. Fictional patient for demonstration; every recommendation needs a clinician&apos;s decision.</p>
+        <p className="pp-banner">Draft for clinician review. Not a prescription. {p.id.startsWith("C-") ? "Clinician-entered, de-identified case" : "Fictional patient for demonstration"}; every recommendation needs a clinician&apos;s decision.</p>
 
         <section className="pp-sec pp-grid">
           <div>

@@ -1,117 +1,216 @@
-# OncoAgent: ভিডিও স্ক্রিপ্ট (২–৩ মিনিট)
+# OncoAgent: ভিডিও স্ক্রিপ্ট ও প্রোডাকশন প্ল্যান
 
 **টিম DatourX · Idea to Unicorn 2026 · HealthSphere AI / PredictRx**
-লক্ষ্য দৈর্ঘ্য **২:৪০**। ভিডিওতে সর্বোচ্চ ১০ নম্বর, যা পোর্টালের সবচেয়ে বড় অংশ।
 
-- **Narration (ভয়েস):** ইংরেজিতে, কারণ বিচারকরা আন্তর্জাতিক। প্রতিটি দৃশ্যের নিচে বাংলা অর্থ দেওয়া আছে। চাইলে সেটি সাবটাইটেল বা বাংলা ভয়েস হিসেবে ব্যবহার করুন।
-- **স্ক্রিন:** লাইভ সাইট https://oncoagent.vercel.app ও ডেক (স্লাইড ২ ও ১৫)।
-- **সব রোগী কাল্পনিক।** ভিডিওতে একবার মুখে এবং স্ক্রিনে বলা আছে।
-
----
-
-## রেকর্ডের আগে (১০ মিনিট)
-
-1. **Chrome বা Edge-এ নতুন InPrivate/Incognito উইন্ডো** খুলুন। এতে অডিট লগ খালি থাকবে, কারণ ডেমো লগ ব্রাউজারে জমা থাকে।
-2. একবার রিহার্সাল করুন: P-001 খুলে **Run agents live** চাপুন এবং প্রায় ২৫ সেকেন্ড অপেক্ষা করুন। প্রথম রান একটু ধীর হতে পারে (cold start)। তারপর উইন্ডো বন্ধ করে নতুন Incognito খুলে আসল টেক নিন।
-3. P-001 পেজে **Structure** অংশ খুলুন। ওষুধটি (সাদা) তার পকেটে বসে আছে, আর L858 (সবুজ), C797 (লাল) ও T790 (হলুদ) চিহ্নিত আছে। দৃশ্য ৫-এ এটি ৩ সেকেন্ড দেখাবেন। কম্পিউটারে লোড না হলে এই অংশ বাদ দিন।
-4. লাইভ ডেমোতে Claude রান ১০ মিনিটে ৬ বারের বেশি চালানো যায় না। তাই রিহার্সালে বেশি রান করবেন না; দরকার হলে **Claude synthesis** টিক তুলে বিনা খরচে rules-only রান চালান।
-5. স্ক্রিন 1920×1080, ব্রাউজার জুম 100–110%। বুকমার্ক বার লুকান (Ctrl+Shift+B), অন্য ট্যাব বন্ধ রাখুন, Windows-এ Do Not Disturb চালু করুন।
-6. রেকর্ডার: **Windows Snipping Tool** (Win+Shift+R) অথবা **OBS Studio** (ফ্রি)। মাইক্রোফোন হিসেবে ফোনের ইয়ারফোন যথেষ্ট, শুধু ঘর শান্ত রাখুন।
-7. সহজ উপায়: আগে স্ক্রিন রেকর্ড করুন, পরে ভয়েস আলাদা করে রেকর্ড করে এডিটরে মেলান।
+| | |
+|---|---|
+| দৈর্ঘ্য | **২:৪০** (সীমা ৩:০০) |
+| দর্শক | প্রতিযোগিতার বিচারক: AI ও হেলথ-টেক বোঝেন, তবে অনকোলজিস্ট নন। প্রতিটি ভিডিও তাঁরা একবারই দেখেন। |
+| নম্বর | ভিডিওতে সর্বোচ্চ **১০**, পোর্টালের সবচেয়ে বড় অংশ |
+| ভাষা | ভয়েস ইংরেজিতে, নিচে প্রতিটি লাইনের বাংলা অর্থ। স্ক্রিনে ইংরেজি ক্যাপশন থাকবে। |
+| তথ্যের উৎস | প্রতিটি সংখ্যা [fact-sheet.md](fact-sheet.md) থেকে নেওয়া; নতুন কোনো সংখ্যা যোগ করবেন না |
 
 ---
 
-## দৃশ্য অনুযায়ী স্ক্রিপ্ট
+## ১. দর্শকের মনে যে তিনটি কথা থেকে যাবে
 
-### দৃশ্য ১ · সমস্যা (0:00–0:15)
-**স্ক্রিন:** ডেক স্লাইড ২ (The problem) অথবা সাইটের Overview।
-**Voice:**
-> Lung cancer kills 1.8 million people a year, more than any other cancer. The right treatment often depends on a long gene report that a busy oncologist must check, by hand, against guidelines, trials and drug labels.
+ভিডিও শেষে বিচারক যেন এই তিনটি বাক্য নিজের ভাষায় বলতে পারেন। প্রতিটি দৃশ্য এর কোনো একটিকে শক্ত করে।
 
-**বাংলা:** ফুসফুসের ক্যান্সারে বছরে ১৮ লাখ মানুষ মারা যান, যা অন্য যেকোনো ক্যান্সারের চেয়ে বেশি। সঠিক চিকিৎসা প্রায়ই একটি লম্বা জিন রিপোর্টের উপর নির্ভর করে। ব্যস্ত অনকোলজিস্টকে সেটি হাতে-কলমে গাইডলাইন, ট্রায়াল আর ওষুধের লেবেলের সাথে মিলিয়ে দেখতে হয়।
+1. **সমস্যা মানুষের, সংখ্যা বিশাল।** একজন রোগীর জন্য ডাক্তারকে হাতে-কলমে অনেক কিছু মেলাতে হয়। বাংলাদেশে একজন মেডিকেল অনকোলজিস্টের ভাগে প্রায় ৭,৬০০ নতুন রোগী, আমেরিকায় প্রায় ১৩৭।
+2. **OncoAgent কাজটা ২৩ সেকেন্ডে, সূত্রসহ করে, আর নিজের ভুল নিজেই ধরে।**
+3. **সিদ্ধান্ত সবসময় ডাক্তারের।** প্রতিটি সিদ্ধান্ত কারণসহ সই হয়ে লগে জমা থাকে।
 
-### দৃশ্য ২ · সমাধান (0:15–0:28)
-**স্ক্রিন:** https://oncoagent.vercel.app। হিরো অংশ দেখান ("AI proposes. The doctor decides.")।
-**Voice:**
-> We are Team DatourX. This is OncoAgent: a team of AI agents for oncologists. The agents read every report and propose. The doctor decides. Every patient you will see is fictional.
+## ২. মনস্তত্ত্ব: কোন কৌশল কোথায়, কেন
 
-**বাংলা:** আমরা টিম DatourX। এটি OncoAgent, অনকোলজিস্টদের জন্য AI এজেন্টদের একটি দল। এজেন্টরা প্রতিটি রিপোর্ট পড়ে প্রস্তাব দেয়, সিদ্ধান্ত নেন ডাক্তার। এখানে দেখানো সব রোগী কাল্পনিক।
+| কৌশল | কোথায় | কেন কাজ করে |
+|---|---|---|
+| **Cold open (pattern interrupt)** | প্রথম ৬ সেকেন্ড: লোগো বা ভূমিকা নয়, সরাসরি উপরে উঠতে থাকা টিউমার-রেখা | প্রথম কয়েক সেকেন্ডেই দর্শক ঠিক করেন মনোযোগ দেবেন কিনা। টেনশন দিয়ে শুরু করলে চোখ আটকে থাকে। |
+| **একজন মানুষ, তারপর পরিসংখ্যান (identifiable victim)** | রাহেলা (কাল্পনিক রোগী, স্ক্রিনে লেখা থাকবে), তারপর ৭,৬০০ বনাম ১৩৭ | মানুষ একজনের গল্পে সাড়া দেয়, শুধু সংখ্যায় দেয় না। গল্প আগে এলে সংখ্যাটা অনুভূত হয়। |
+| **খোলা প্রশ্ন (curiosity gap)** | "So what should her doctor do next?"। উত্তর আসে দৃশ্য ৬-এ। | অসমাপ্ত প্রশ্ন দর্শককে উত্তর পর্যন্ত ধরে রাখে। |
+| **তুলনা ও অ্যাঙ্করিং** | ৭,৬০০ বনাম ১৩৭ | দুটি সংখ্যা পাশাপাশি থাকলে সমস্যার মাপ এক নজরে বোঝা যায়। |
+| **নায়ক ডাক্তার, AI সহকারী** | "an assistant team *for* the oncologist", "The doctor decides" | "AI ডাক্তারকে সরিয়ে দেবে" এই ভয় কমায়। হেলথ-টেক বিচারকের প্রথম আপত্তি ঠিক এটাই। |
+| **বলে নয়, দেখিয়ে (show, don't tell)** | দৃশ্য ৫–৮: আসল স্ক্রিনে আসল কাজ | লাইভ প্রোডাক্ট দেখলে "শুধু আইডিয়া" সন্দেহ দূর হয়। |
+| **নির্দিষ্ট সংখ্যা, বিশেষণ নয়** | ২৩ সেকেন্ড, ৪৬০ mg, ৬/৬, ১০০% | "fast", "accurate" কথার চেয়ে নির্দিষ্ট সংখ্যা বেশি বিশ্বাসযোগ্য। |
+| **নিজের ভুল দেখানো (pratfall effect)** | দৃশ্য ৭: সত্যিকারের, আগে থেকে সাজানো নয় এমন critic flag | ত্রুটি স্বীকার করে নিরাপত্তা দেখালে "AI ভুল বানায়" আপত্তির আগেই উত্তর দেওয়া হয়ে যায়। |
+| **সীমাবদ্ধতা স্বীকার (candour)** | "These are fictional cases. The next step is a real pilot." | সৎ সীমা জানালে বাকি দাবিগুলোও বিশ্বাস পায়। |
+| **শেষটা মনে থাকে (peak–end rule)** | শেষ ১৫ সেকেন্ড: স্পষ্ট অনুরোধ, ট্যাগলাইন, লিংক | মানুষ অভিজ্ঞতার সবচেয়ে তীব্র মুহূর্ত আর শেষটাই মনে রাখে। |
+| **সহজে বোঝা (processing fluency)** | প্রতি দৃশ্যে একটি কথা, বড় ক্যাপশন, একই রং ও ফন্ট | কম চেষ্টায় বোঝা গেলে জিনিসটা বেশি বিশ্বাসযোগ্য আর পেশাদার মনে হয়। |
 
-### দৃশ্য ৩ · রোগী (0:28–0:48)
-**স্ক্রিন:** Patients টেবিলে **Rahela Khatun · P-001** ক্লিক করুন। RECIST চার্টের শেষ লাল বিন্দুতে মাউস রাখুন (45 mm · PD), তারপর ctDNA চার্টে।
-**Voice:**
-> Here is a fictional patient on osimertinib. The Sentinel agent calculates RECIST 1.1 from her scans: a partial response, then progression at month fourteen. Her ctDNA came back first, and plasma testing found a resistance mutation, EGFR C797S.
+## ৩. প্রোডাকশন স্পেসিফিকেশন
 
-**বাংলা:** ইনি একজন কাল্পনিক রোগী, osimertinib খাচ্ছেন। Sentinel এজেন্ট স্ক্যান থেকে RECIST 1.1 হিসাব করে: প্রথমে টিউমার কমেছে (partial response), তারপর ১৪তম মাসে আবার বেড়েছে (progression)। রক্তের ctDNA আগেই ফিরে এসেছিল, আর প্লাজমা টেস্টে EGFR C797S নামে একটি রেজিস্ট্যান্স মিউটেশন পাওয়া গেছে।
-
-### দৃশ্য ৪ · এজেন্ট চালানো (0:48–1:15)
-**স্ক্রিন:** **Claude synthesis** টিক দেওয়া আছে কিনা দেখুন, তারপর **Run agents live** চাপুন। ধাপগুলো একে একে সবুজ হবে। ২৩ সেকেন্ডের অপেক্ষা এডিটে ৪x দ্রুত করুন বা কেটে দিন, তবে স্ক্রিনের সময়-সংখ্যা যেন দেখা যায়।
-**Voice:**
-> I press Run. Nine agents work in order: genomic evidence from CIViC, missing tests, guideline options, drug interactions, recruiting trials from ClinicalTrials.gov, and dose calculators. Claude writes a tumour-board summary using only that evidence. Then a safety-critic checks every claim. The whole run takes about twenty-three seconds.
-
-**বাংলা:** Run চাপলে নয়টি এজেন্ট পরপর কাজ করে: CIViC থেকে জিনের প্রমাণ, কোন টেস্ট বাকি, গাইডলাইনের বিকল্প, ওষুধের পারস্পরিক ঝুঁকি, ClinicalTrials.gov থেকে চলমান ট্রায়াল, আর ডোজ ক্যালকুলেটর। Claude শুধু সেই প্রমাণ দিয়ে টিউমার-বোর্ড সারাংশ লেখে। তারপর Safety-critic প্রতিটি দাবি যাচাই করে। পুরো রান প্রায় ২৩ সেকেন্ডের।
-
-### দৃশ্য ৫ · কার্ড, প্রমাণ, ডোজ (1:15–1:45)
-**স্ক্রিন:** উপরের মেনু থেকে **Recommendations** চাপুন। প্রথম treatment কার্ডে **Reasoning, uncertainty and alternatives** চাপলে কার্ডের বিস্তারিত খুলবে। এরপর **N sources** চাপলে ডানে প্রমাণের প্যানেল খুলবে; Esc চেপে বন্ধ করুন। আগের রানে এটি ছিল amivantamab + carboplatin + pemetrexed, তবে লাইভ রানে Claude-এর ভাষা একটু আলাদা হতে পারে। তারপর QT safety কার্ড, তারপর **Dose card** (Carboplatin 460 mg, Pemetrexed 750 mg ও ফর্মুলা)। 3D structure লোড হলে ৩ সেকেন্ড দেখান।
-**Voice:**
-> Every card says why, cites its sources, and shows what would change the advice. The pharmacology agent caught a real risk: osimertinib and citalopram both prolong the QT interval. The dose card shows its working, Calvert formula and Cockcroft–Gault clearance, so carboplatin is 460 milligrams. A creatinine older than seven days would block the card.
-
-**বাংলা:** প্রতিটি কার্ডে লেখা থাকে কেন এই প্রস্তাব, প্রমাণের উৎস কী, আর কী বদলালে পরামর্শ বদলাবে। ফার্মাকোলজি এজেন্ট একটি আসল ঝুঁকি ধরেছে: osimertinib আর citalopram দুটোই হৃদস্পন্দনের QT বাড়ায়। ডোজ কার্ডে পুরো হিসাব দেখানো আছে (Calvert ফর্মুলা, Cockcroft–Gault ক্লিয়ারেন্স), তাই carboplatin ৪৬০ মিলিগ্রাম। ক্রিয়েটিনিন রিপোর্ট ৭ দিনের বেশি পুরোনো হলে কার্ডটি আটকে যায়।
-
-### দৃশ্য ৬ · ডাক্তার সিদ্ধান্ত নেন (1:45–2:02)
-**স্ক্রিন:** treatment কার্ডে **Approve** চাপুন, কারণ লিখুন (যেমন "Agree; re-biopsy first, tumour board Friday"), তারপর **Approve and sign** চাপুন। নিচে-ডানে সবুজ বার্তা আসবে, আর Audit log-এ নতুন এন্ট্রি ও **hash chain intact** দেখা যাবে। এরপর উপরের **Tumour-board report** বাটনে চাপুন এবং ২ সেকেন্ড প্রিন্ট-যোগ্য রিপোর্ট দেখান।
-**Voice:**
-> The AI cannot act on its own. The oncologist approves, modifies or rejects each card with a reason, every decision is written to a hash-chained audit log, and the tumour-board report is ready to print.
-
-**বাংলা:** AI নিজে কিছু করতে পারে না। অনকোলজিস্ট প্রতিটি কার্ড কারণসহ approve, modify বা reject করেন। প্রতিটি সিদ্ধান্ত হ্যাশ-চেইনড অডিট লগে লেখা হয়, যা পরে বদলানো যায় না। টিউমার-বোর্ডের রিপোর্টও প্রিন্টের জন্য তৈরি থাকে।
-
-### দৃশ্য ৭ · প্রমাণ (2:02–2:18)
-**স্ক্রিন:** সাইডবারে **Evaluation** পেজ। উপরের ৮টি সংখ্যা, তারপর Red-team টেবিল দেখান।
-**Voice:**
-> We measure before we trust. On all three gold cases the driver and the leading option matched. Every citation and trial ID is real, and the critic caught six out of six unsafe drafts.
-
-**বাংলা:** বিশ্বাস করার আগে আমরা মাপি। তিনটি gold কেসেই মূল জিন আর প্রধান চিকিৎসা-বিকল্প মিলেছে। প্রতিটি সূত্র আর ট্রায়াল আইডি আসল, আর critic ছয়টির মধ্যে ছয়টি বিপজ্জনক খসড়াই ধরেছে।
-
-### দৃশ্য ৮ · MCP (2:18–2:30)
-**স্ক্রিন:** সাইডবারে **MCP server** পেজ খুলুন। **Try the tools live** অংশে `interpret_variant` বেছে **Call tool** চাপুন; আধা সেকেন্ডের মধ্যে CIViC-এর আসল ফলাফল আসবে।
-**Voice:**
-> The same seven tools run as an MCP server, over stdio and Streamable HTTP. Here I call one live from the browser, exactly as any MCP client would.
-
-**বাংলা:** এই সাতটি টুলই একটি MCP সার্ভার হিসেবে stdio আর Streamable HTTP-তে চলে। এখানে ব্রাউজার থেকে একটি টুল লাইভ চালাচ্ছি, ঠিক যেভাবে যেকোনো MCP ক্লায়েন্ট চালায়।
-
-### দৃশ্য ৯ · সমাপ্তি (2:30–2:42)
-**স্ক্রিন:** ডেক স্লাইড ১৫ (DatourX লোগো + oncoagent.vercel.app)।
-**Voice:**
-> Lung cancer first, then breast and colorectal. OncoAgent: AI proposes, the doctor decides.
-
-**বাংলা:** প্রথমে ফুসফুসের ক্যান্সার, তারপর ব্রেস্ট ও কোলোরেক্টাল। OncoAgent: AI প্রস্তাব দেয়, ডাক্তার সিদ্ধান্ত নেন।
+- **ফরম্যাট:** 1920×1080, 30 fps, MP4 (H.264)।
+- **ভয়েস:** শান্ত, উষ্ণ, আত্মবিশ্বাসী; মিনিটে প্রায় ১৩০–১৪০ শব্দ। স্ক্রিপ্টে `/` মানে আধা সেকেন্ড থামা। প্রতিটি দৃশ্য আলাদা টেকে রেকর্ড করুন।
+- **মিউজিক:** নরম পিয়ানো বা অ্যাম্বিয়েন্ট, ভয়েসের নিচে খুব হালকা। দৃশ্য ৪ (reveal) আর দৃশ্য ১০ (শেষ)-এ সামান্য উঠবে। Clipchamp বা YouTube Audio Library থেকে রয়্যালটি-ফ্রি ট্র্যাক নিন।
+- **ক্যাপশন:** ইংরেজি, নিচে-মাঝে, Inter বা Segoe UI ফন্ট, সাদা লেখা, কালো আধা-স্বচ্ছ ব্যাকগ্রাউন্ড। মূল সংখ্যাগুলো মিন্ট রঙে (#17ff88)।
+- **স্ক্রিন অ্যাকশন:**
+  - মাউস ধীরে চালান; গুরুত্বপূর্ণ জায়গায় ১০–২০% জুম-ইন করুন।
+  - এজেন্ট রানের অপেক্ষা ৪x দ্রুত করুন, তবে টাইমার যেন দেখা যায়।
+- **লেবেল:** রোগী যতবার স্ক্রিনে আসবেন, ততবার কোণে ছোট করে "Fictional patient" লেখা থাকবে।
 
 ---
 
-## এডিট (২০–৩০ মিনিট)
+## ৪. দৃশ্য অনুযায়ী স্ক্রিপ্ট
 
-- **Clipchamp** (Windows 11-এ আছে) বা **CapCut Desktop** ব্যবহার করুন।
-- এজেন্ট রানের অপেক্ষার অংশ ৪x দ্রুত করুন।
-- Auto-captions দিন। ইংরেজি সাবটাইটেল রাখলে বিচারকদের পড়তে সুবিধা হয়।
-- মোট দৈর্ঘ্য **৩:০০-এর নিচে** রাখুন।
-- শেষ ২ সেকেন্ডে স্ক্রিনে লিখুন: "Fictional patients only · Not a medical device".
-- এক্সপোর্ট করুন 1080p-এ।
+### দৃশ্য ১ · Cold open (0:00–0:08)
+**উদ্দেশ্য:** প্রথম মুহূর্তেই টেনশন তৈরি করা।
+**স্ক্রিন:**
+- কালো স্ক্রিন থেকে fade-in করে https://oncoagent.vercel.app/patients/P-001 পেজের RECIST চার্ট আসবে।
+- শেষ লাল বিন্দুতে (45 mm · PD) জুম করুন।
+- ক্যাপশন: **Month 14** · কোণে *Fictional patient*।
 
-## YouTube আপলোড
+**Voice:**
+> Month fourteen. / Rahela's tumour is growing again. / Her cancer has learned to escape her drug.
 
-- **Title:** OncoAgent: Agentic AI for Oncologists | Team DatourX | Idea to Unicorn 2026
-- **Visibility:** পোর্টালে Public চাওয়া থাকলে Public দিন। না থাকলে Unlisted যথেষ্ট, কারণ লিংক থাকলে যে কেউ দেখতে পারে।
+**বাংলা:** চোদ্দ মাস। রাহেলার টিউমার আবার বাড়ছে। তাঁর ক্যান্সার ওষুধকে ফাঁকি দিতে শিখে গেছে।
+
+### দৃশ্য ২ · ডাক্তারের প্রশ্ন (0:08–0:22)
+**উদ্দেশ্য:** খোলা প্রশ্ন তৈরি করা এবং ডাক্তারের কাজের বোঝা চোখে দেখানো।
+**স্ক্রিন:** ডেকের **"Tonight's question"** স্লাইড। কোনো কারণে না পেলে রোগীর পেজের টাইমলাইন আর মলিকুলার প্রোফাইল দ্রুত স্ক্রল করে দেখান।
+**Voice:**
+> Tonight, her oncologist must read a long gene report, / check the guidelines, her other medicines, recruiting trials, / and recalculate her dose. / By hand. For every patient. / So what should her doctor do next?
+
+**বাংলা:** আজ রাতেই তাঁর অনকোলজিস্টকে লম্বা জিন রিপোর্ট পড়তে হবে; গাইডলাইন, অন্য ওষুধ আর চলমান ট্রায়াল মেলাতে হবে; ডোজ আবার হিসাব করতে হবে। সব হাতে-কলমে, প্রতিটি রোগীর জন্য। তাহলে ডাক্তার এখন কী করবেন?
+
+### দৃশ্য ৩ · সমস্যার মাপ (0:22–0:35)
+**উদ্দেশ্য:** তুলনা দিয়ে সমস্যাটা কত বড় তা বোঝানো।
+**স্ক্রিন:** ডেকের **Scale** স্লাইড। "7,603" আর "137" একটির পর একটি আসবে। নিচে উৎস লেখা থাকবে।
+**Voice:**
+> In Bangladesh there is about one medical oncologist for every seven thousand six hundred new patients. / In the United States, about one for every hundred and thirty-seven. / The medicine exists. / The time to apply it does not.
+
+**বাংলা:** বাংলাদেশে প্রায় সাত হাজার ছয়শো নতুন রোগীর জন্য একজন মেডিকেল অনকোলজিস্ট। যুক্তরাষ্ট্রে প্রায় একশো সাঁইত্রিশ জনের জন্য একজন। ওষুধ আছে, কিন্তু প্রতিটি রোগীর জন্য তা কাজে লাগানোর সময় নেই।
+
+### দৃশ্য ৪ · Reveal (0:35–0:45)
+**উদ্দেশ্য:** সমাধান দেখানো; নায়ক ডাক্তার, AI তাঁর সহকারী।
+**স্ক্রিন:** Overview পেজের হিরো অংশ, যেখানে এজেন্ট-বৃত্তের অ্যানিমেশন চলছে। মিউজিক সামান্য উঠবে।
+**Voice:**
+> So we built OncoAgent: / an assistant team for the oncologist. / AI proposes. / The doctor decides.
+
+**বাংলা:** তাই আমরা বানিয়েছি OncoAgent, অনকোলজিস্টের জন্য একটি সহকারী দল। AI প্রস্তাব দেয়, সিদ্ধান্ত নেন ডাক্তার।
+
+### দৃশ্য ৫ · এজেন্টরা কাজ করছে (0:45–1:08)
+**উদ্দেশ্য:** দেখিয়ে দেওয়া যে এটি আসলেই চলে, আর দ্রুত চলে।
+**স্ক্রিন:**
+- রাহেলার পেজে **Claude synthesis** টিক দেওয়া আছে কিনা দেখুন, তারপর **Run agents live** চাপুন।
+- ধাপগুলো একে একে সবুজ হবে; এই অংশ ৪x দ্রুত করুন।
+- শেষে টাইমার আর "Run finished" বার্তায় থামুন।
+
+**Voice:**
+> Nine agents work on her case: / live gene evidence from CIViC, missing tests, guideline options, / drug interactions, recruiting trials, and dose calculators. / Claude writes the tumour-board summary, using only the evidence it was given. / About twenty-three seconds.
+
+**বাংলা:** নয়টি এজেন্ট তাঁর কেস নিয়ে কাজ করে: CIViC থেকে লাইভ জিনের প্রমাণ, কোন টেস্ট বাকি, গাইডলাইনের বিকল্প, ওষুধের পারস্পরিক ঝুঁকি, চলমান ট্রায়াল আর ডোজের হিসাব। Claude টিউমার-বোর্ডের সারাংশ লেখে, শুধু দেওয়া প্রমাণ থেকে। সময় লাগে প্রায় তেইশ সেকেন্ড।
+
+### দৃশ্য ৬ · উত্তর, প্রমাণসহ (1:08–1:32)
+**উদ্দেশ্য:** দৃশ্য ২-এর প্রশ্নের উত্তর দেওয়া; নির্দিষ্ট সংখ্যা দিয়ে বিশ্বাস তৈরি করা।
+**স্ক্রিন:**
+1. মেনুর **Recommendations** চাপুন।
+2. re-biopsy কার্ড দেখান।
+3. QT (ECG) safety কার্ড দেখান।
+4. treatment কার্ডে **Reasoning…** চাপুন, তারপর **sources** চাপলে ডানে প্রমাণের প্যানেল খুলবে।
+5. শেষে **Dose card**-এ "460 mg" আর ফর্মুলায় জুম করুন।
+
+**Voice:**
+> It answers with sources. / Re-biopsy the new liver lesion first. / Her antidepressant and her cancer drug both affect the heart rhythm: check an ECG. / The leading next option, with trials for her mutation. / And a carboplatin dose of four hundred and sixty milligrams, formula shown. / The model never writes a dose.
+
+**বাংলা:** উত্তর আসে প্রমাণসহ। আগে লিভারের নতুন ক্ষতটির বায়োপসি করুন। তাঁর বিষণ্নতার ওষুধ আর ক্যান্সারের ওষুধ দুটোই হৃদস্পন্দনে প্রভাব ফেলে, তাই ECG করুন। পরের ধাপের প্রধান বিকল্প, আর তাঁর মিউটেশনের জন্য চলমান ট্রায়াল। কার্বোপ্ল্যাটিনের ডোজ ৪৬০ মিলিগ্রাম, ফর্মুলাসহ। মডেল কখনো ডোজ লেখে না; ডোজ আসে হিসাবের কোড থেকে।
+
+### দৃশ্য ৭ · নিজের ভুল নিজে ধরে (1:32–1:52)
+**উদ্দেশ্য:** "AI ভুল করলে কী হবে?" প্রশ্নের উত্তর বিচারক জিজ্ঞেস করার আগেই দেওয়া।
+**স্ক্রিন:**
+- সাইডবার থেকে **Nasrin Akter (P-003)** খুলুন, Recommendations-এ হলুদ **critic flag** কার্ডে জুম করুন।
+- তারপর **Evaluation** পেজের Red-team টেবিল দেখান: "6/6 caught"।
+
+**Voice:**
+> And when a draft is unsafe, it says so. / For another patient, one agent listed a drug that her seizure medicine makes unsafe. / The safety-critic flagged the card, so the doctor sees the warning first. / In testing, it caught six out of six unsafe drafts.
+
+**বাংলা:** কোনো খসড়া অনিরাপদ হলে সিস্টেম নিজেই তা জানায়। আরেকজন রোগীর ক্ষেত্রে একটি এজেন্ট এমন একটি ওষুধের নাম দিয়েছিল, যা তাঁর খিঁচুনির ওষুধের সঙ্গে নিরাপদ নয়। Safety-critic কার্ডটিতে সতর্কচিহ্ন দিয়েছে, তাই ডাক্তার আগে সতর্কবার্তাটিই দেখেন। পরীক্ষায় ছয়টি অনিরাপদ খসড়ার ছয়টিই ধরা পড়েছে।
+
+### দৃশ্য ৮ · সিদ্ধান্ত ডাক্তারের (1:52–2:10)
+**উদ্দেশ্য:** নিয়ন্ত্রণ সবসময় ডাক্তারের হাতে, এটি দেখানো; জবাবদিহি আর বাস্তব কাজের প্রমাণ।
+**স্ক্রিন:**
+1. রাহেলার treatment কার্ডে **Approve** চাপুন, কারণ লিখুন ("Agree; re-biopsy first, tumour board Friday") এবং **Approve and sign** চাপুন।
+2. নিচে-ডানের সবুজ বার্তা আর Audit log-এর **hash chain intact** দেখান।
+3. **Tumour-board report** চাপুন, প্রিন্টযোগ্য রিপোর্টটি ধীরে স্ক্রল করুন।
+
+**Voice:**
+> Nothing happens without the doctor. / Approve, modify or reject, with a reason, / and every decision is signed into a tamper-evident log. / The tumour-board report is ready to print.
+
+**বাংলা:** ডাক্তারের অনুমতি ছাড়া কিছুই হয় না। কারণসহ approve, modify বা reject করতে হয়, আর প্রতিটি সিদ্ধান্ত এমন লগে সই হয়ে থাকে যা গোপনে বদলানো যায় না। টিউমার-বোর্ডের রিপোর্ট প্রিন্টের জন্য তৈরি।
+
+### দৃশ্য ৯ · খোলা ও মাপা (2:10–2:24)
+**উদ্দেশ্য:** প্রযুক্তিগত বিশ্বাসযোগ্যতা দেখানো (MCP-তে নম্বর আছে), আর সীমাবদ্ধতা সৎভাবে বলা।
+**স্ক্রিন:**
+1. **MCP server** পেজে `interpret_variant` বেছে **Call tool** চাপুন; আধা সেকেন্ডে CIViC-এর ফলাফল আসবে।
+2. Evaluation পেজের উপরের সংখ্যাগুলো দেখান।
+
+**Voice:**
+> The same tools are open to any AI client through MCP. / On our test cases: drivers found, three of three. Citations verified, one hundred percent. / These are fictional cases. / The next step is a real pilot.
+
+**বাংলা:** একই টুলগুলো MCP দিয়ে যেকোনো AI ক্লায়েন্টের জন্য খোলা। আমাদের পরীক্ষার কেসে মূল জিন ধরা পড়েছে তিনে তিন, সূত্র যাচাই হয়েছে একশো শতাংশ। এগুলো কাল্পনিক কেস; পরের ধাপ সত্যিকারের পাইলট।
+
+### দৃশ্য ১০ · শেষ ও অনুরোধ (2:24–2:40)
+**উদ্দেশ্য:** peak–end; একটি স্পষ্ট অনুরোধ আর মনে রাখার মতো লাইন।
+**স্ক্রিন:** ডেকের শেষ স্লাইড (DatourX লোগো, oncoagent.vercel.app, GitHub লিংক)। মিউজিক উঠবে, শেষ লাইনের পর ১ সেকেন্ড নীরবতা।
+**Voice:**
+> Lung cancer first. Then breast and colorectal. / We are looking for one cancer centre to run a silent pilot with us. / OncoAgent. / AI proposes. / The doctor decides.
+
+**বাংলা:** প্রথমে ফুসফুসের ক্যান্সার, তারপর ব্রেস্ট আর কোলোরেক্টাল। আমাদের সঙ্গে নীরব পাইলট চালাতে একটি ক্যান্সার সেন্টার খুঁজছি। OncoAgent: AI প্রস্তাব দেয়, সিদ্ধান্ত নেন ডাক্তার।
+
+**শেষ ফ্রেম (৩ সেকেন্ড):**
+- oncoagent.vercel.app · github.com/shahriyar9507/oncoagent
+- *Fictional patients only. Not a medical device.*
+
+---
+
+## ৫. রেকর্ডিং চেকলিস্ট
+
+1. **নতুন InPrivate/Incognito উইন্ডো** খুলুন। এতে আগের সিদ্ধান্ত আর লাইভ রান থাকবে না।
+2. **রিহার্সাল:**
+   - একবার P-001-এ Claude রান চালিয়ে দেখুন। প্রথম রান একটু ধীর হতে পারে।
+   - লাইভ ডেমোতে Claude রান ১০ মিনিটে ৬টির বেশি চালানো যায় না, তাই রিহার্সালে Claude টিক তুলে বিনা খরচের rules-only রান চালান।
+   - আসল টেক নিন নতুন Incognito উইন্ডোতে।
+3. **3D ভিউ:** P-001-এর **Structure** অংশে ওষুধ (সাদা), L858 (সবুজ), C797 (লাল) আর T790 (হলুদ) দেখা যায় কিনা দেখে নিন। দৃশ্য ৬-এর পরে চাইলে ২ সেকেন্ড দেখাতে পারেন।
+4. **স্ক্রিন প্রস্তুতি:**
+   - 1920×1080, ব্রাউজার জুম 100–110%।
+   - বুকমার্ক বার লুকান (Ctrl+Shift+B), অন্য ট্যাব বন্ধ রাখুন।
+   - Windows Do Not Disturb চালু করুন।
+5. **রেকর্ডার:** OBS Studio (সবচেয়ে ভালো) বা Windows Snipping Tool (Win+Shift+R)।
+6. **ভয়েস:**
+   - ফোনের ইয়ারফোন মাইক যথেষ্ট; কাপড় বা পর্দাওয়ালা শান্ত ঘরে রেকর্ড করুন।
+   - প্রতিটি দৃশ্য আলাদা ফাইলে রেকর্ড করুন, প্রতিটির দুটি টেক নিন।
+
+## ৬. এডিট প্ল্যান (Clipchamp বা CapCut Desktop)
+
+1. ভয়েস ট্র্যাক আগে বসান। তারপর প্রতিটি দৃশ্যের স্ক্রিন-ক্লিপ ভয়েসের দৈর্ঘ্যে কেটে মেলান।
+2. এজেন্ট রানের অংশ ৪x দ্রুত করুন। Dose card, critic flag আর hash chain-এ ধীরে জুম করুন (Ken Burns 110%)।
+3. Auto-caption দিন, বানান ঠিক করুন। সংখ্যাগুলো (7,603 · 137 · 23 s · 460 mg · 6/6 · 100%) মিন্ট রঙে হাইলাইট করুন।
+4. দৃশ্য বদলের সময় সাধারণ cut বা ১০ ফ্রেমের crossfade রাখুন; চটকদার ট্রানজিশন দেবেন না।
+5. মোট দৈর্ঘ্য ৩:০০-এর নিচে কিনা দেখুন। 1080p-এ এক্সপোর্ট করুন।
+
+## ৭. YouTube আপলোড
+
+- **Title:** OncoAgent: AI proposes, the doctor decides | Team DatourX | Idea to Unicorn 2026
+- **Thumbnail:** `docs/assets/social-preview.png` (1200×630; YouTube 1280×720 চায়, প্রয়োজনে কালো ব্যাকগ্রাউন্ডে বসিয়ে নিন)।
+- **Visibility:** পোর্টালে Public চাওয়া থাকলে Public দিন, নইলে Unlisted।
 - **Description:**
 
 ```
-OncoAgent is an agentic decision-support assistant for oncologists, starting with non-small-cell lung cancer. Nine agents read the case, grade genomic evidence (CIViC), find recruiting trials (ClinicalTrials.gov), check interactions and calculate doses; Claude writes a sourced tumour-board summary; a safety-critic checks every claim. The doctor approves, modifies or rejects every card.
+OncoAgent is an agentic decision-support workspace for oncologists, starting with non-small-cell lung cancer. Nine agents read the case, grade genomic evidence (CIViC), check interactions, match recruiting trials (ClinicalTrials.gov) and calculate doses; Claude writes a cited tumour-board pre-read; a safety-critic checks every claim. The oncologist approves, modifies or rejects every recommendation, and each decision is signed into a hash-chained audit log.
 
 Live demo: https://oncoagent.vercel.app
-Code: https://github.com/shahriyar9507/oncoagent
+Code and docs: https://github.com/shahriyar9507/oncoagent
 MCP endpoint: https://oncoagent.vercel.app/api/mcp
 
+Measured on three fictional cases: drivers 3/3, leading option 3/3, citations 100%, trial IDs 100%, 6/6 unsafe drafts caught, about 23 s and US$0.065 per case.
 All patients are fictional. Research prototype, not a medical device, not medical advice.
+
 Team DatourX · Idea to Unicorn 2026 · HealthSphere AI / PredictRx
 ```
 
-শেষে YouTube লিংক কপি করে পোর্টালের ভিডিও ঘরে বসান।
+## ৮. ৩০ সেকেন্ডের ছোট ভার্সন (সোশ্যাল মিডিয়া বা টিজার)
+
+| সময় | স্ক্রিন | Voice |
+|---|---|---|
+| 0:00–0:06 | RECIST চার্ট, Month 14 | "Month fourteen. Her cancer has learned to escape her drug." |
+| 0:06–0:14 | ৭,৬০০ বনাম ১৩৭ | "In Bangladesh, one medical oncologist for every seven thousand six hundred new patients." |
+| 0:14–0:24 | এজেন্ট রান, তারপর কার্ড আর ডোজ | "OncoAgent reads the case, cites every source and calculates the dose in about twenty-three seconds." |
+| 0:24–0:30 | Approve, তারপর লোগো আর লিংক | "AI proposes. The doctor decides." |

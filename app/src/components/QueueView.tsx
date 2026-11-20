@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { DecisionAction, RecommendationCard } from "@/lib/types";
 import { useAudit, useLiveRuns } from "@/lib/hooks";
+import { useCases } from "@/lib/cases";
 import { fmtDateTime } from "@/lib/format";
 import { DecisionDialog } from "./DecisionDialog";
 import { IconAlert, IconCheck, IconEdit, IconInbox, IconShield, IconX } from "./icons";
@@ -14,13 +15,23 @@ const KIND_LABEL: Record<string, string> = { summary: "molecular" };
 
 export function QueueView({ stored, names }: { stored: Record<string, RecommendationCard[]>; names: Record<string, string> }) {
   const { decisions } = useAudit();
-  const runs = useLiveRuns(Object.keys(stored));
+  const cases = useCases();
+  const runs = useLiveRuns([...Object.keys(stored), ...cases.map((c) => c.id)]);
+  // Entered cases join the queue once they have a run; their names come from the clinician's label or the case ID.
+  const allNames: Record<string, string> = { ...names, ...Object.fromEntries(cases.map((c) => [c.id, c.input.label || `Case ${c.id}`])) };
   const [show, setShow] = useState<"pending" | "decided" | "all">("pending");
   const [patient, setPatient] = useState<string>("all");
   const [kind, setKind] = useState<string>("all");
   const [dialog, setDialog] = useState<{ card: RecommendationCard; action: DecisionAction } | null>(null);
 
-  const items = useMemo(() => Object.entries(stored).flatMap(([pid, cards]) => (runs[pid]?.cards ?? cards).map((c) => ({ ...c, patientId: pid, live: !!runs[pid] }))), [stored, runs]);
+  const items = useMemo(
+    () => [
+      ...Object.entries(stored).flatMap(([pid, cards]) => (runs[pid]?.cards ?? cards).map((c) => ({ ...c, patientId: pid, live: !!runs[pid] }))),
+      ...cases.flatMap((cs) => (runs[cs.id]?.cards ?? []).map((c) => ({ ...c, patientId: cs.id, live: true }))),
+    ],
+    [stored, runs, cases],
+  );
+  const patientIds = Array.from(new Set(items.map((i) => i.patientId)));
   const pending = items.filter((i) => !decisions[i.id]);
   const decided = items.filter((i) => decisions[i.id]);
   const flaggedPending = pending.filter((i) => i.critic.verdict === "flag").length;
@@ -41,7 +52,7 @@ export function QueueView({ stored, names }: { stored: Record<string, Recommenda
       </section>
 
       <div className="grid g4">
-        <section className="panel stat accent"><span className="label">Pending</span><span className="big">{pending.length}</span><span className="foot">across {Object.keys(stored).length} patients</span></section>
+        <section className="panel stat accent"><span className="label">Pending</span><span className="big">{pending.length}</span><span className="foot">across {patientIds.length} patients and cases</span></section>
         <section className="panel stat"><span className="label">Flagged by the critic</span><span className="big" style={{ color: flaggedPending ? "#ffc65c" : undefined }}>{flaggedPending}</span><span className="foot">review these first</span></section>
         <section className="panel stat"><span className="label">Decided in this browser</span><span className="big">{decided.length}</span><span className="foot">{count("approve")} approved · {count("modify")} modified · {count("reject")} rejected</span></section>
         <section className="panel stat"><span className="label">Live runs in use</span><span className="big">{Object.keys(runs).length}</span><span className="foot">others show the stored run</span></section>
@@ -61,8 +72,8 @@ export function QueueView({ stored, names }: { stored: Record<string, Recommenda
         <div className="filters">
           <div className="row" style={{ gap: 6 }} aria-label="Patient">
             <button type="button" className={`chip as-btn${patient === "all" ? " mint" : ""}`} onClick={() => setPatient("all")}>All patients</button>
-            {Object.keys(stored).map((pid) => (
-              <button key={pid} type="button" className={`chip as-btn${patient === pid ? " mint" : ""}`} onClick={() => setPatient(pid)}>{names[pid]}</button>
+            {patientIds.map((pid) => (
+              <button key={pid} type="button" className={`chip as-btn${patient === pid ? " mint" : ""}`} onClick={() => setPatient(pid)}>{allNames[pid] ?? pid}</button>
             ))}
           </div>
           <div className="row" style={{ gap: 6 }} aria-label="Kind">
@@ -82,7 +93,7 @@ export function QueueView({ stored, names }: { stored: Record<string, Recommenda
               return (
                 <li key={r.id} className={`qrow${r.critic.verdict === "flag" ? " flagged" : ""}`}>
                   <div className="q-who">
-                    <Link href={`/patients/${r.patientId}#cards`} className="ul"><b>{names[r.patientId]}</b></Link>
+                    <Link href={`${r.patientId.startsWith("C-") ? "/cases" : "/patients"}/${r.patientId}#cards`} className="ul"><b>{allNames[r.patientId] ?? r.patientId}</b></Link>
                     <span className="muted mono">{r.patientId}{r.live ? " · live run" : ""}</span>
                   </div>
                   <div className="q-what">
@@ -115,7 +126,7 @@ export function QueueView({ stored, names }: { stored: Record<string, Recommenda
           </ol>
         )}
       </section>
-      {dialog && <DecisionDialog card={dialog.card} action={dialog.action} patientId={dialog.card.patientId} patientName={names[dialog.card.patientId]} onClose={() => setDialog(null)} />}
+      {dialog && <DecisionDialog card={dialog.card} action={dialog.action} patientId={dialog.card.patientId} patientName={allNames[dialog.card.patientId]} onClose={() => setDialog(null)} />}
     </>
   );
 }

@@ -1,4 +1,4 @@
-// Fixed-window limiter kept in memory per server instance. Enough to stop a public demo from running up the
+// Sliding-window limiter kept in memory per server instance. Enough to stop a public demo from running up the
 // model bill; production uses a shared store and per-clinician quotas.
 const hits = new Map<string, number[]>();
 

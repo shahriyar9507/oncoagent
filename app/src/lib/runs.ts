@@ -7,15 +7,36 @@ import type { PipelineResult } from "./agents/pipeline";
 const PREFIX = "oncoagent.run.v1.";
 export const RUN_EVENT = "oncoagent-run";
 
-export function readRun(patientId: string): PipelineResult | null {
+/** Raw stored string (stable between renders, so it can back useSyncExternalStore). */
+export function readRunRaw(patientId: string): string | null {
   try {
-    const raw = localStorage.getItem(PREFIX + patientId);
-    if (!raw) return null;
+    return localStorage.getItem(PREFIX + patientId);
+  } catch {
+    return null;
+  }
+}
+
+export function parseRun(raw: string | null, patientId: string): PipelineResult | null {
+  if (!raw) return null;
+  try {
     const r = JSON.parse(raw) as PipelineResult;
     return r && r.patientId === patientId && Array.isArray(r.cards) ? r : null;
   } catch {
     return null;
   }
+}
+
+export function readRun(patientId: string): PipelineResult | null {
+  return parseRun(readRunRaw(patientId), patientId);
+}
+
+export function subscribeRuns(onChange: () => void): () => void {
+  window.addEventListener(RUN_EVENT, onChange);
+  window.addEventListener("storage", onChange);
+  return () => {
+    window.removeEventListener(RUN_EVENT, onChange);
+    window.removeEventListener("storage", onChange);
+  };
 }
 
 export function saveRun(r: PipelineResult) {

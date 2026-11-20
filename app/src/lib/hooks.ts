@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import type { AuditEntry } from "./types";
 import { latestDecisions, readAudit, verifyAudit } from "./audit";
-import { RUN_EVENT, readRun } from "./runs";
+import { RUN_EVENT, parseRun, readRun, readRunRaw, subscribeRuns } from "./runs";
 import type { PipelineResult } from "./agents/pipeline";
 
 /** Audit log from this browser, live-updated, with the hash-chain check. */
@@ -53,4 +53,10 @@ export function useLiveRuns(patientIds: string[]) {
     };
   }, [key]);
   return runs;
+}
+
+/** The live run saved in this browser for one patient, or null. Server render and first paint use null. */
+export function useStoredRun(patientId: string): PipelineResult | null {
+  const raw = useSyncExternalStore(subscribeRuns, () => readRunRaw(patientId), () => null);
+  return useMemo(() => parseRun(raw, patientId), [raw, patientId]);
 }

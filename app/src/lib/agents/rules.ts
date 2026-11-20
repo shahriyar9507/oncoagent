@@ -39,6 +39,21 @@ export function patientEvidence(p: Patient, reg: EvidenceRegistry) {
 }
 
 export function sentinel(p: Patient, reg: EvidenceRegistry): RecommendationCard {
+  if (!p.recist.length) {
+    const imaging = p.events.filter((e) => e.kind === "imaging" || e.kind === "pathology").slice(-1)[0] ?? p.events[0];
+    return {
+      ...base(p, "Sentinel", "monitoring"),
+      proposal: "Record baseline target-lesion measurements (RECIST 1.1) from the latest CT before treatment starts.",
+      why: ["No tumour measurements are in the record, so response cannot be assessed later.", `ECOG ${p.ecog}.`],
+      evidenceIds: imaging ? [`pt:${imaging.id}`] : [],
+      confidence: "high",
+      confidenceReason: "RECIST 1.1 needs a baseline sum of target lesions.",
+      uncertain: "Whether measurable disease exists (at least one lesion ≥ 10 mm, or a lymph node ≥ 15 mm short axis).",
+      alternatives: [],
+      changesIf: "The radiology report already lists target lesions; enter them to enable response tracking.",
+      safety: [],
+    };
+  }
   const a = assessRecist(p.recist);
   const last = a[a.length - 1];
   const recistId = reg.add({
@@ -69,10 +84,32 @@ export function sentinel(p: Patient, reg: EvidenceRegistry): RecommendationCard 
       ],
       evidenceIds: ev,
       confidence: "high",
-      confidenceReason: "Both RECIST criteria are met: ≥ 20% and ≥ 5 mm growth from nadir, and a new lesion.",
-      uncertain: "Radiologist confirmation of the new liver lesion is pending in this record.",
-      alternatives: ["Repeat imaging in 4–6 weeks if the new lesion is equivocal"],
-      changesIf: "The radiologist reclassifies the liver lesion as benign and growth stays below 20%.",
+      confidenceReason: last.newLesions
+        ? last.changeFromNadirPct >= 20 && last.sumMm - last.nadirMm >= 5
+          ? "Both RECIST criteria are met: ≥ 20% and ≥ 5 mm growth from nadir, and a new lesion."
+          : "A new lesion alone meets RECIST 1.1 progression."
+        : "Growth of ≥ 20% and ≥ 5 mm from nadir meets RECIST 1.1 progression.",
+      uncertain: last.newLesions ? "Radiologist confirmation of the new lesion is pending in this record." : "Confirm that the same target lesions were measured on both scans.",
+      alternatives: ["Repeat imaging in 4–6 weeks if the finding is equivocal"],
+      changesIf: last.newLesions ? "The radiologist reclassifies the new lesion as benign and growth stays below 20%." : "Re-measurement brings growth below 20% or 5 mm from nadir.",
+      safety: [],
+    };
+  }
+  if (a.length > 1) {
+    return {
+      ...base(p, "Sentinel", "monitoring"),
+      proposal: `Response is ${last.category} by RECIST 1.1 (${last.changeFromBaselinePct.toFixed(0)}% from baseline); continue the planned scan interval.`,
+      why: [
+        `Latest sum of target lesions ${last.sumMm} mm on ${last.date}; baseline ${a[0].sumMm} mm; nadir ${last.nadirMm} mm.`,
+        `Best response so far: ${bestResponse(a) ?? "not assessable"}.`,
+        `ECOG ${p.ecog}.`,
+      ],
+      evidenceIds: ev,
+      confidence: "high",
+      confidenceReason: "Calculated from the measurements in the record with RECIST 1.1 thresholds.",
+      uncertain: "Non-target lesions and symptoms are not part of this calculation.",
+      alternatives: [],
+      changesIf: "A new lesion appears or growth reaches 20% and 5 mm from nadir.",
       safety: [],
     };
   }
@@ -94,8 +131,17 @@ export function sentinel(p: Patient, reg: EvidenceRegistry): RecommendationCard 
   };
 }
 
+/** Common NSCLC co-mutations with no matched drug: prognostic, not a treatment driver. */
+const CO_MUTATIONS = new Set(["TP53", "STK11", "KEAP1", "SMARCA4", "CDKN2A", "PIK3CA", "NF1", "RB1"]);
+
+/** "EGFR L858R", but "CD74::ROS1" rather than "ROS1 CD74::ROS1". */
+function variantLabel(v: { gene: string; alteration: string }): string {
+  return v.alteration.toUpperCase().includes(v.gene.toUpperCase()) ? v.alteration : `${v.gene} ${v.alteration}`;
+}
+
 export function genomicInterpreter(p: Patient, civic: CivicResult[], reg: EvidenceRegistry): RecommendationCard[] {
   return p.variants.map((v) => {
+    const name = variantLabel(v);
     const r = civic.find((c) => c.query.toLowerCase().includes(v.gene.toLowerCase()) && c.query.toLowerCase().includes(v.alteration.toLowerCase().split("::")[0]));
     const ids: string[] = [];
     for (const e of r?.lungEvidence.slice(0, 4) ?? []) {
@@ -117,22 +163,26 @@ export function genomicInterpreter(p: Patient, civic: CivicResult[], reg: Eviden
     const top = r?.lungEvidence[0];
     let proposal: string;
     if (resistance.length && v.sample === "plasma") {
-      proposal = `${v.gene} ${v.alteration} is an acquired resistance alteration: record it as the cause of progression on the current ${v.gene} inhibitor.`;
+      proposal = `${name} is an acquired resistance alteration: record it as the cause of progression on the current ${v.gene} inhibitor.`;
+    } else if (CO_MUTATIONS.has(v.gene.toUpperCase())) {
+      proposal = `${name} is a co-mutation without a matched drug: record as prognostic, not actionable.`;
     } else if (sensitivity.length) {
-      proposal = `${v.gene} ${v.alteration} is the actionable driver: confirm and sign the molecular interpretation.`;
-    } else if (prognostic.length || v.gene === "TP53") {
-      proposal = `${v.gene} ${v.alteration} is a co-mutation without a matched drug: record as prognostic, not actionable.`;
+      proposal = `${name} is the actionable driver: confirm and sign the molecular interpretation.`;
+    } else if (prognostic.length) {
+      proposal = `${name} is a co-mutation without a matched drug: record as prognostic, not actionable.`;
     } else {
-      proposal = `${v.gene} ${v.alteration}: review the evidence before calling it actionable.`;
+      proposal = `${name}: review the evidence before calling it actionable.`;
     }
     return {
       ...base(p, "Genomic-interpreter", "summary"),
       proposal,
       why: [
-        `${v.gene} ${v.alteration}${v.hgvsP ? ` (${v.hgvsP})` : ""}, ${v.sample}${v.vafPercent !== undefined ? `, VAF ${v.vafPercent}%` : ""}, reported ${v.reportedOn}.`,
-        r && r.source !== "none"
+        `${name}${v.hgvsP ? ` (${v.hgvsP})` : ""}, ${v.sample}${v.vafPercent !== undefined ? `, VAF ${v.vafPercent}%` : ""}, reported ${v.reportedOn}.`,
+        r && r.source !== "none" && r.profileName
           ? `CIViC ${r.profileName}: ${r.totalEvidence} evidence items, ${r.lungEvidence.length} in lung cancer${top ? `; strongest level ${top.level}` : ""} (${r.source === "live" ? "live" : "snapshot"}).`
-          : "CIViC returned no evidence for this profile.",
+          : r && r.source !== "none"
+            ? `CIViC has no curated profile for ${name} (${r.source === "live" ? "live" : "snapshot"}).`
+            : "CIViC could not be reached and no snapshot exists for this profile.",
         resistance.length ? `${resistance.length} lung evidence item(s) report resistance.` : sensitivity.length ? `${sensitivity.length} lung evidence item(s) report sensitivity.` : "No predictive lung evidence in the top results.",
       ],
       evidenceIds: ids,
@@ -146,52 +196,92 @@ export function genomicInterpreter(p: Patient, civic: CivicResult[], reg: Eviden
   });
 }
 
-export function testAdvisor(p: Patient, kb: BiomarkerEntry, reg: EvidenceRegistry): RecommendationCard {
+export function testAdvisor(p: Patient, kb: BiomarkerEntry | null, reg: EvidenceRegistry): RecommendationCard {
   const tested = testedGenes(p);
   const missing = NSCLC_PANEL.filter((g) => !tested.includes(g));
-  const ids = kb.testsToConsider.map((t, i) => reg.add({ id: `kb:${kb.key}:test${i}`, kind: "guideline", label: `Knowledge pack · ${t.test}`, detail: t.why, url: FDA_APPROVALS_URL }));
-  const tests = [...kb.testsToConsider.map((t) => t.test), ...missing.map((g) => `${g} testing (not found in the record)`)];
+  const packTests = kb?.testsToConsider ?? [];
+  const ids = packTests.map((t, i) => reg.add({ id: `kb:${kb!.key}:test${i}`, kind: "guideline", label: `Knowledge pack · ${t.test}`, detail: t.why, url: FDA_APPROVALS_URL }));
+  // Patient-specific checks from the medication list, unless the pack entry already asks for them.
+  const extra: { test: string; why: string }[] = [];
+  const qtMeds = p.medications.filter((m) => m.tags.includes("qt-prolonging"));
+  if (qtMeds.length && !packTests.some((t) => /ECG/i.test(t.test))) extra.push({ test: "Baseline ECG with potassium and magnesium", why: `${qtMeds.map((m) => m.name.split(" ")[0]).join(", ")} prolong${qtMeds.length > 1 ? "" : "s"} QT; several targeted drugs do too.` });
+  const inducer = p.medications.find((m) => m.tags.includes("strong-cyp3a-inducer"));
+  if (inducer && !packTests.some((t) => /inducer|antiseizure/i.test(t.why + t.test))) extra.push({ test: `Medication review of ${inducer.name.split(" ")[0].toLowerCase()}`, why: "Strong CYP3A inducers lower the exposure of most targeted drugs; some are contraindicated." });
+  const recordIds = p.events.filter((e) => e.kind === "molecular" || e.kind === "pathology").map((e) => `pt:${e.id}`);
+  const tests = [...packTests.map((t) => t.test), ...extra.map((t) => t.test), ...missing.map((g) => `${g} testing (not found in the record)`)];
+  const biopsy = tests.some((t) => /biops/i.test(t));
   return {
     ...base(p, "Test-advisor", "test"),
     proposal: tests.length ? `Order: ${tests.join("; ")}.` : "No further tests needed before the decision.",
     why: [
       `Biomarker panel complete for: ${tested.join(", ")}.`,
       missing.length ? `Not found in the record: ${missing.join(", ")}.` : "All guideline biomarkers for NSCLC are present in the record.",
-      ...kb.testsToConsider.map((t) => `${t.test}: ${t.why}`),
+      ...packTests.map((t) => `${t.test}: ${t.why}`),
+      ...extra.map((t) => `${t.test}: ${t.why}`),
     ],
-    evidenceIds: ids,
+    evidenceIds: ids.length ? [...ids, ...recordIds.slice(0, 2)] : recordIds.slice(0, 3),
     confidence: "moderate",
-    confidenceReason: "Tests follow the knowledge pack; local availability and turnaround are not known to the system.",
-    uncertain: "Whether a re-biopsy is feasible and safe for this patient.",
-    alternatives: ["Repeat plasma NGS in 4 weeks if tissue cannot be obtained"],
-    changesIf: "The patient declines biopsy or is clinically too unwell to wait for results.",
+    confidenceReason: "Tests follow the knowledge pack and the medication list; local availability and turnaround are not known to the system.",
+    uncertain: biopsy ? "Whether a re-biopsy is feasible and safe for this patient." : "Local test availability and turnaround time.",
+    alternatives: biopsy ? ["Repeat plasma NGS in 4 weeks if tissue cannot be obtained"] : missing.length ? ["Plasma NGS if tissue is insufficient for the missing markers"] : [],
+    changesIf: biopsy ? "The patient declines biopsy or is clinically too unwell to wait for results." : "Results arrive that change the driver or the line of therapy.",
     safety: [],
   };
 }
 
-export function guideline(p: Patient, kb: BiomarkerEntry, reg: EvidenceRegistry): RecommendationCard {
+/** Interaction rules that fire for this option given the patient's current medications. */
+function optionHits(p: Patient, drugs: string[]) {
+  const tags = new Set(p.medications.flatMap((m) => m.tags));
+  return interactionRules.filter((r) => drugs.includes(r.drug) && tags.has(r.medTag) && r.severity !== "monitor");
+}
+
+export function guideline(p: Patient, kb: BiomarkerEntry | null, reg: EvidenceRegistry): RecommendationCard {
+  if (!kb) {
+    const ids = p.events.filter((e) => e.kind === "molecular" || e.kind === "pathology" || e.kind === "treatment").map((e) => `pt:${e.id}`);
+    return {
+      ...base(p, "Guideline", "treatment"),
+      proposal: "Discuss at tumour board: the curated knowledge pack does not cover this setting, so no option is proposed automatically.",
+      why: [p.knowledgeReason ?? "No knowledge-pack entry matches the driver and line of therapy.", `Variants: ${p.variants.map((v) => `${v.gene} ${v.alteration}`).join(", ") || "none reported"}.`, `Prior lines: ${p.therapyLines.map((l) => l.regimen).join("; ") || "none"}.`],
+      evidenceIds: ids.slice(0, 4),
+      confidence: "low",
+      confidenceReason: "Outside the curated pack; the agents do not guess treatment options.",
+      uncertain: "Which current NCCN/ESMO recommendation applies; check it directly.",
+      alternatives: ["Clinical trial (see the Trial-matcher card)"],
+      changesIf: "New biomarker results or a different line of therapy bring the case inside the pack.",
+      safety: [],
+    };
+  }
   const current = kb.options.filter((o) => o.role !== "later-line").sort((a, b) => a.rank - b.rank);
   const ids = kb.options.map((o) =>
     reg.add({ id: `kb:${o.id}`, kind: "guideline", label: `${o.regimen} · ${o.role}`, detail: `${o.basis} ${o.notes} (${KNOWLEDGE_VERSION})`, url: o.url }),
   );
-  const top = current[0];
+  // Rank options that clash with a current medication below safe ones and say why, so no card proposes a
+  // contraindicated drug silently (the safety-critic still checks independently).
+  // Only a contraindication moves an option down; "avoid" interactions keep the rank and are named on the card.
+  const scored = current.map((o) => ({ o, hits: optionHits(p, o.drugs) }));
+  const blocked = (x: (typeof scored)[number]) => x.hits.some((h) => h.severity === "contraindicated");
+  const ordered = [...scored.filter((x) => !blocked(x)), ...scored.filter(blocked)];
+  const label = (x: (typeof scored)[number]) =>
+    x.hits.length ? `${x.o.regimen} (${x.hits.map((h) => `${h.severity} with current ${h.medTag.replace(/-/g, " ")}`).join("; ")})` : x.o.regimen;
+  const top = ordered[0];
+  const hitIds = scored.flatMap((x) => x.hits).map((h, i) => reg.add({ id: `label:${h.drug}:${h.medTag}:g${i}`, kind: "label", label: h.source, detail: h.message, url: dailymedSearch(h.drug) }));
   return {
     ...base(p, "Guideline", "treatment"),
-    proposal: `Discuss ${top.regimen} as the leading option; ${current.slice(1).map((o) => o.regimen).join(" or ")} as alternatives.`,
-    why: [kb.driver.meaning, `Setting: ${kb.setting}.`, ...current.map((o) => `${o.rank}. ${o.regimen}: ${o.basis}`)],
-    evidenceIds: ids,
+    proposal: `Discuss ${label(top)} as the leading option${ordered.length > 1 ? `; ${ordered.slice(1).map(label).join(" or ")} as alternatives` : ""}.`,
+    why: [kb.driver.meaning, `Setting: ${kb.setting}.`, ...current.map((o) => `${o.rank}. ${o.regimen}: ${o.basis}`), ...scored.flatMap((x) => x.hits.map((h) => `${x.o.regimen}: ${h.message}`))],
+    evidenceIds: [...ids, ...hitIds],
     confidence: "moderate",
     confidenceReason: "Options come from the curated knowledge pack; the current NCCN/ESMO version must be checked.",
     uncertain: "Drug availability, cost and the patient's preferences are not in the record.",
-    alternatives: [...current.slice(1).map((o) => o.regimen), ...kb.options.filter((o) => o.role === "later-line").map((o) => `${o.regimen} (later line)`)],
+    alternatives: [...ordered.slice(1).map(label), ...kb.options.filter((o) => o.role === "later-line").map((o) => `${o.regimen} (later line)`)],
     changesIf: kb.notRecommended.map((n) => `${n.regimen} is not advised: ${n.why}`).join(" "),
-    safety: [],
+    safety: scored.flatMap((x) => x.hits.map((h) => `${h.drug} + ${h.medTag.replace(/-/g, " ")}: ${h.severity}`)),
   };
 }
 
-export function pharmacologySafety(p: Patient, kb: BiomarkerEntry, reg: EvidenceRegistry): RecommendationCard | undefined {
+export function pharmacologySafety(p: Patient, kb: BiomarkerEntry | null, reg: EvidenceRegistry): RecommendationCard | undefined {
   const drugs = new Set<string>();
-  kb.options.filter((o) => o.role !== "later-line").forEach((o) => o.drugs.forEach((d) => drugs.add(d)));
+  kb?.options.filter((o) => o.role !== "later-line").forEach((o) => o.drugs.forEach((d) => drugs.add(d)));
   p.medications.forEach((m) => interactionRules.forEach((r) => m.name.toLowerCase().includes(r.drug) && drugs.add(r.drug)));
   const tags = new Set(p.medications.flatMap((m) => m.tags));
   const hits = interactionRules.filter((r) => drugs.has(r.drug) && tags.has(r.medTag));
@@ -201,11 +291,31 @@ export function pharmacologySafety(p: Patient, kb: BiomarkerEntry, reg: Evidence
   const ids = hits.map((h, i) =>
     reg.add({ id: `label:${h.drug}:${h.medTag}:${i}`, kind: "label", label: h.source, detail: h.message, url: dailymedSearch(h.drug) }),
   );
-  const inducer = p.medications.find((m) => m.tags.includes("strong-cyp3a-inducer"));
+  const short = (name: string) => name.split(" ")[0].toLowerCase();
+  const medWith = (tag: string) => p.medications.find((m) => m.tags.includes(tag));
+  const inducer = medWith("strong-cyp3a-inducer");
+  const inhibitor = medWith("strong-cyp3a-inhibitor");
+  const acid = medWith("acid-reducing");
+  const nsaid = medWith("nsaid");
   const contraindicated = hits.filter((h) => h.severity === "contraindicated");
-  const proposal = inducer
-    ? `Before choosing a drug, ask neurology to replace ${inducer.name.split(" ")[0].toLowerCase()} (strong CYP3A inducer) with a non-inducing alternative${contraindicated.length ? `; ${contraindicated.map((c) => c.drug).join(", ")} is contraindicated while it continues` : ""}.`
-    : `Repeat ECG and electrolytes before the next line: ${qtMeds.map((m) => m.name.split(" ")[0].toLowerCase()).join(" and ")} both prolong QT.`;
+  const drugsFor = (tag: string) => Array.from(new Set(hits.filter((h) => h.medTag === tag).map((h) => h.drug)));
+  const owner = (indication: string) => (/seiz|epilep/i.test(indication) ? "neurology" : "the prescribing doctor");
+  let proposal: string;
+  if (inducer) {
+    proposal = `Before choosing a drug, ask ${owner(inducer.indication)} to replace ${short(inducer.name)} (strong CYP3A inducer) with a non-inducing alternative${contraindicated.length ? `; ${contraindicated.map((c) => c.drug).join(", ")} is contraindicated while it continues` : ""}.`;
+  } else if (inhibitor && drugsFor("strong-cyp3a-inhibitor").length) {
+    proposal = `Review ${short(inhibitor.name)} (strong CYP3A inhibitor) before starting ${drugsFor("strong-cyp3a-inhibitor").join(" or ")}: exposure rises; avoid or adjust per label.`;
+  } else if (acid && drugsFor("acid-reducing").length) {
+    proposal = `Review ${short(acid.name)} (acid-reducing) before starting ${drugsFor("acid-reducing").join(" or ")}: absorption falls; follow the label's timing advice.`;
+  } else if (qtMeds.length >= 2 || drugsFor("qt-prolonging").length) {
+    proposal = qtMeds.length >= 2
+      ? `Repeat ECG and electrolytes before the next line: ${qtMeds.map((m) => short(m.name)).join(" and ")} both prolong QT.`
+      : `Check ECG and electrolytes before starting ${drugsFor("qt-prolonging").join(" or ")}: ${short(qtMeds[0].name)} also prolongs QT.`;
+  } else if (nsaid && drugsFor("nsaid").length) {
+    proposal = `Hold ${short(nsaid.name)} around pemetrexed doses when clearance is reduced, per label.`;
+  } else {
+    proposal = `Review interactions before the next line: ${hits.map((h) => `${h.drug} with ${h.medTag.replace(/-/g, " ")}`).join("; ")}.`;
+  }
   return {
     ...base(p, "Pharmacology-safety", "safety"),
     proposal,
@@ -248,8 +358,12 @@ export function trialMatcher(p: Patient, trials: TrialSearchResult, reg: Evidenc
   };
 }
 
-export function doseOptimizer(p: Patient, kb: BiomarkerEntry, reg: EvidenceRegistry, today: string): { card: RecommendationCard; dose: DoseCard } | undefined {
-  const option = kb.options.filter((o) => o.regimenKey && o.role !== "later-line").sort((a, b) => a.rank - b.rank)[0];
+export function doseOptimizer(p: Patient, kb: BiomarkerEntry | null, reg: EvidenceRegistry, today: string): { card: RecommendationCard; dose: DoseCard } | undefined {
+  if (!kb) return undefined;
+  // Dose the leading option that is not contraindicated with a current medication.
+  const option = kb.options
+    .filter((o) => o.regimenKey && o.role !== "later-line")
+    .sort((a, b) => Number(optionHits(p, a.drugs).some((h) => h.severity === "contraindicated")) - Number(optionHits(p, b.drugs).some((h) => h.severity === "contraindicated")) || a.rank - b.rank)[0];
   if (!option?.regimenKey) return undefined;
   const dose = buildDoseCard(p, option.regimenKey, today);
   const id = reg.add({
@@ -277,8 +391,6 @@ export function doseOptimizer(p: Patient, kb: BiomarkerEntry, reg: EvidenceRegis
   };
 }
 
-export function getKnowledge(p: Patient): BiomarkerEntry {
-  const kb = knowledge[p.biomarkerKey];
-  if (!kb) throw new Error(`No knowledge entry for ${p.biomarkerKey}`);
-  return kb;
+export function getKnowledge(p: Patient): BiomarkerEntry | null {
+  return (p.biomarkerKey && knowledge[p.biomarkerKey]) || null;
 }

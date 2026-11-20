@@ -4,8 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { DatourMark, DatourWord } from "./Logo";
-import { IconGauge, IconGrid, IconInbox, IconLayers, IconPlug, IconShield, IconUsers, IconGithub } from "./icons";
+import { IconGauge, IconGrid, IconInbox, IconLayers, IconPlug, IconShield, IconUsers, IconGithub, IconEdit } from "./icons";
 import { useAudit, useLiveRuns } from "@/lib/hooks";
+import { useCases } from "@/lib/cases";
 import { Toaster } from "./DecisionDialog";
 
 export interface NavPatient {
@@ -26,10 +27,13 @@ export function Shell({ children, nav }: { children: ReactNode; nav: NavPatient[
   const path = usePathname() || "/";
   const crumbs = crumbFor(path, nav);
   const { decisions } = useAudit();
-  const runs = useLiveRuns(nav.map((p) => p.id));
+  const cases = useCases();
+  const runs = useLiveRuns([...nav.map((p) => p.id), ...cases.map((c) => c.id)]);
   const pending = useMemo(
-    () => nav.reduce((n, p) => n + (runs[p.id]?.cards.map((c) => c.id) ?? p.cardIds).filter((id) => !decisions[id]).length, 0),
-    [nav, runs, decisions],
+    () =>
+      nav.reduce((n, p) => n + (runs[p.id]?.cards.map((c) => c.id) ?? p.cardIds).filter((id) => !decisions[id]).length, 0) +
+      cases.reduce((n, c) => n + (runs[c.id]?.cards ?? []).filter((card) => !decisions[card.id]).length, 0),
+    [nav, cases, runs, decisions],
   );
   const isReport = path.endsWith("/report");
 
@@ -63,6 +67,26 @@ export function Shell({ children, nav }: { children: ReactNode; nav: NavPatient[
               );
             })}
           </div>
+        </nav>
+
+        <nav className="nav-group" aria-label="Your cases">
+          <span className="nav-label">Your cases</span>
+          <NavItem href="/cases/new" label="New case" icon={<IconEdit />} active={path === "/cases/new"} />
+          {cases.length > 0 && (
+            <div className="nav-patients nav-cases">
+              {cases.slice(0, 3).map((c) => {
+                const active = path.startsWith(`/cases/${c.id}`);
+                return (
+                  <Link key={c.id} href={`/cases/${c.id}`} className={`nav-pt${active ? " active" : ""}`} aria-current={active ? "page" : undefined} title={c.input.label || c.id}>
+                    <span className={`dot ${runs[c.id] ? "" : "off"}`} />
+                    <span className="nm">{c.input.label || `${c.input.age} ${c.input.sex} · ${c.input.variants[0] ? `${c.input.variants[0].gene} ${c.input.variants[0].alteration}` : "no driver"}`}</span>
+                    <span className="id">{c.id.slice(2, 5)}</span>
+                  </Link>
+                );
+              })}
+              {cases.length > 3 && <Link href="/patients" className="nav-pt"><span className="nm muted">All {cases.length} cases</span></Link>}
+            </div>
+          )}
         </nav>
 
         <nav className="nav-group" aria-label="Platform">
@@ -196,6 +220,13 @@ function Row({ ok, name, detail }: { ok: boolean; name: string; detail: string }
 function crumbFor(path: string, nav: NavPatient[]): { label: string; href?: string }[] {
   if (path === "/") return [{ label: "Overview" }];
   if (path === "/patients") return [{ label: "Patients" }];
+  if (path === "/cases/new") return [{ label: "Patients", href: "/patients" }, { label: "New case" }];
+  if (path.startsWith("/cases/")) {
+    const id = path.split("/")[2];
+    const out: { label: string; href?: string }[] = [{ label: "Patients", href: "/patients" }, { label: `Case ${id}`, href: `/cases/${id}` }];
+    if (path.endsWith("/report")) out.push({ label: "Tumour-board report" });
+    return out;
+  }
   if (path.startsWith("/patients/")) {
     const id = path.split("/")[2];
     const p = nav.find((x) => x.id === id);

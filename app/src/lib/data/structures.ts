@@ -68,3 +68,20 @@ export const structures: Record<string, StructureInfo> = {
     ],
   },
 };
+
+/**
+ * Structure view for a clinician-entered case: reuse a verified PDB scene when the driver matches, and keep only the
+ * highlights that apply to this patient (the gatekeeper site always; driver and resistance residues only when present).
+ */
+export function structureForVariants(variants: { gene: string; alteration: string }[]): StructureInfo | undefined {
+  const has = (gene: string, re: RegExp) => variants.some((v) => v.gene.toUpperCase() === gene && re.test(v.alteration));
+  let baseKey: string | undefined;
+  if (variants.some((v) => v.gene.toUpperCase() === "EGFR")) baseKey = "P-001";
+  else if (has("KRAS", /G12C/i)) baseKey = "P-002";
+  else if (variants.some((v) => v.gene.toUpperCase() === "ALK")) baseKey = "P-003";
+  if (!baseKey) return undefined;
+  const s = structures[baseKey];
+  const applies = (label: string) => variants.some((v) => v.alteration.toUpperCase().startsWith(label.toUpperCase()) || (label === "C12" && /G12C/i.test(v.alteration)));
+  const highlights = s.highlights.filter((h) => h.role === "site" || applies(h.label));
+  return { ...s, highlights, insight: s.insight.filter((line) => !s.highlights.some((h) => line.startsWith(h.label)) || highlights.some((h) => line.startsWith(h.label))) };
+}

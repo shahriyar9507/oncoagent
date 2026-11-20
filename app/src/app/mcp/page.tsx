@@ -12,6 +12,8 @@ const TOOLS = [
   { name: "search_trials", input: "condition, biomarker, max_results", out: "Recruiting ClinicalTrials.gov studies: NCT ID, phase, sponsor, countries", side: "read · live API" },
   { name: "calculate_dose", input: `regimen (${Object.keys(regimens).length} regimens), height, weight, age, sex, creatinine, date`, out: "BSA, CrCl, Calvert and BSA doses with formulas, blocks and premedication", side: "read · deterministic" },
   { name: "draft_recommendations", input: "patient_id, use_claude", out: "Specialist-agent cards, evidence list, safety-critic verdicts, dose card", side: "read · drafts only" },
+  { name: "extract_report", input: "text", out: "Alterations with the matched text, PD-L1 TPS, negative genes, sample type, warnings", side: "read · deterministic" },
+  { name: "analyze_case", input: "case (de-identified NSCLC case), use_claude", out: "Knowledge-pack setting, agent cards, evidence, critic verdicts, dose card", side: "read · drafts only" },
   { name: "record_decision", input: "patient_id, card_id, action, reason, clinician_token", out: "Hash-chained decision entry", side: "write · clinician token required" },
 ];
 
@@ -23,9 +25,9 @@ export default async function McpPage() {
   return (
     <>
       <section className="panel hero glow">
-        <p className="eyebrow">oncoagent-mcp · version 0.1.0</p>
-        <h1 style={{ marginTop: 8 }}>Seven tools, <b>one open layer</b></h1>
-        <p>Every capability the agents use is also an MCP tool, so Claude, IDE agents and hospital systems can call the same evidence lookup, trial search and dose calculator. One definition serves both transports.</p>
+        <p className="eyebrow">oncoagent-mcp · version 0.2.0</p>
+        <h1 style={{ marginTop: 8 }}>Nine tools, <b>one open layer</b></h1>
+        <p>Every capability the agents use is also an MCP tool, so Claude, IDE agents and hospital systems can read a report, analyse a de-identified case, look up evidence, search trials and calculate a dose. One definition serves both transports.</p>
         <div className="row">
           <span className="chip mint"><span className="dot" /> Streamable HTTP</span>
           <span className="chip mint"><span className="dot" /> stdio</span>

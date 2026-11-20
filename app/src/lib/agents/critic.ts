@@ -30,10 +30,15 @@ export function criticCheck(card: RecommendationCard, reg: EvidenceRegistry, opt
     notes.push("A dose appears outside the dose calculator.");
   }
 
-  const kb = knowledge[opts.biomarkerKey];
+  const kb = opts.biomarkerKey ? knowledge[opts.biomarkerKey] : undefined;
+  if (card.kind === "treatment" && !kb) {
+    const named = DRUG_VOCAB.filter((d) => card.proposal.toLowerCase().includes(d));
+    if (named.length) notes.push(`No knowledge-pack entry covers this setting, so ${named.join(", ")} cannot be checked against approved options.`);
+  }
   if (card.kind === "treatment" && kb) {
     const allowed = new Set(kb.options.flatMap((o) => o.drugs));
-    const laterLine = new Set(kb.options.filter((o) => o.role === "later-line").flatMap((o) => o.drugs));
+    const currentDrugs = new Set(kb.options.filter((o) => o.role !== "later-line").flatMap((o) => o.drugs));
+    const laterLine = new Set(kb.options.filter((o) => o.role === "later-line").flatMap((o) => o.drugs).filter((d) => !currentDrugs.has(d)));
     const lead = card.proposal.toLowerCase();
     const mentioned = DRUG_VOCAB.filter((d) => lead.includes(d));
     const outside = mentioned.filter((d) => !allowed.has(d));

@@ -5,7 +5,7 @@ import evalResults from "@/lib/data/eval-results.json";
 import { AgentOrbit } from "@/components/AgentOrbit";
 import { PatientList } from "@/components/PatientList";
 import { PendingStat, RecentActivity } from "@/components/Activity";
-import { IconActivity, IconInbox, IconPlug, IconShield, IconSpark, IconUsers, IconDna, IconCalc } from "@/components/icons";
+import { IconActivity, IconInbox, IconPlug, IconShield, IconSpark, IconUsers, IconDna, IconCalc, IconEdit } from "@/components/icons";
 
 const FLOW = [
   ["Arrives", "Lab, scan, pathology or gene report lands on the timeline."],
@@ -29,13 +29,14 @@ export default function Overview() {
           <p>OncoAgent is an assistant team for oncologists. Nine agents read every report, find the responsible gene, check guidelines, interactions, trials and doses, and a safety-critic verifies every claim. Each proposal waits for a clinician to approve, modify or reject it.</p>
           <div className="row">
             <Link href="/patients/P-001" className="btn primary arrow">Open a case</Link>
+            <Link href="/cases/new" className="btn"><IconEdit /> Enter your own case</Link>
             <Link href="/queue" className="btn"><IconInbox /> Decision queue</Link>
-            <Link href="/mcp" className="btn"><IconPlug /> Connect over MCP</Link>
           </div>
           <div className="hero-facts">
             <span><IconDna width={14} height={14} /> CIViC + ClinicalTrials.gov live</span>
             <span><IconCalc width={14} height={14} /> Unit-tested dose calculators</span>
             <span><IconShield width={14} height={14} /> Hash-chained sign-off</span>
+            <span><IconPlug width={14} height={14} /> 9 tools over MCP</span>
           </div>
         </div>
         <AgentOrbit />
@@ -97,7 +98,7 @@ export default function Overview() {
         </section>
         <section className="panel">
           <p className="eyebrow">Open tools</p>
-          <h3 className="h3">7 tools over MCP</h3>
+          <h3 className="h3">9 tools over MCP</h3>
           <p className="sub" style={{ marginTop: 6 }}>The same tools serve any MCP client over stdio and Streamable HTTP. <Link href="/mcp" className="ul">Try them in the browser</Link>.</p>
         </section>
       </div>

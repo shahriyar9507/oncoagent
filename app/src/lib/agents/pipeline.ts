@@ -1,9 +1,9 @@
 import type { AgentRunResult, Patient, RecommendationCard } from "../types";
 import { interpretVariant, type CivicResult } from "../tools/civic";
 import { searchTrials } from "../tools/trials";
-import { interactionRules } from "../data/knowledge";
+import { interactionRules, knowledge } from "../data/knowledge";
 import type { DoseCard } from "../clinical/dose";
-import { EvidenceRegistry, doseOptimizer, genomicInterpreter, getKnowledge, guideline, patientEvidence, pharmacologySafety, sentinel, testAdvisor, trialMatcher } from "./rules";
+import { EvidenceRegistry, doseOptimizer, genomicInterpreter, guideline, patientEvidence, pharmacologySafety, sentinel, testAdvisor, trialMatcher } from "./rules";
 import { criticCheck } from "./critic";
 import { hasClaude, MODEL, synthesise } from "./claude";
 
@@ -44,7 +44,8 @@ export async function runPipeline(p: Patient, opts: PipelineOptions): Promise<Pi
     }
   }
 
-  const kb = getKnowledge(p);
+  // The knowledge-pack entry for this setting, or null when the pack does not cover it (the Guideline agent then says so).
+  const kb = (p.biomarkerKey && knowledge[p.biomarkerKey]) || null;
   patientEvidence(p, reg);
 
   const s = await step("Sentinel", () => sentinel(p, reg), (c) => c.proposal);
@@ -104,7 +105,7 @@ export async function runPipeline(p: Patient, opts: PipelineOptions): Promise<Pi
   }
 
   if (!boardSummary) {
-    boardSummary = `${p.id}: ${p.age}-year-old ${p.sex === "F" ? "woman" : "man"}, ${p.histology.toLowerCase()}, stage ${p.stage}. ${p.variants.map((v) => `${v.gene} ${v.alteration}`).join(", ")}. ${p.question} Leading option from the knowledge pack: ${kb.options[0].regimen}.`;
+    boardSummary = `${p.id}: ${p.age}-year-old ${p.sex === "F" ? "woman" : "man"}, ${p.histology.toLowerCase()}, stage ${p.stage}. ${p.variants.map((v) => `${v.gene} ${v.alteration}`).join(", ")}. ${p.question} ${kb ? `Leading option from the knowledge pack: ${kb.options[0].regimen}.` : `No knowledge-pack entry covers this setting${p.knowledgeReason ? ` (${p.knowledgeReason})` : ""}; discuss at tumour board.`}`;
   }
 
   const knownTrials = new Set((trials?.trials ?? []).map((x) => x.nctId));

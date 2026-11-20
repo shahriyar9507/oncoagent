@@ -1,5 +1,5 @@
 import type { Patient } from "../types";
-import { regimens, type Regimen } from "../data/regimens";
+import { regimens, type Regimen, type WeightBand } from "../data/regimens";
 
 // Deterministic dose calculators. The language model never produces a dose.
 
@@ -31,6 +31,31 @@ export function roundTo(value: number, step: number): number {
 
 export function daysBetween(a: string, b: string): number {
   return Math.round((Date.parse(b) - Date.parse(a)) / 86_400_000);
+}
+
+/** Per-kilogram dose (mg) on actual body weight, rounded to the nearest whole mg. */
+export function perKgDose(mgPerKg: number, weightKg: number): { raw: number; rounded: number } {
+  if (mgPerKg <= 0 || weightKg <= 0) throw new Error("Dose per kg and weight must be positive");
+  const raw = mgPerKg * weightKg;
+  return { raw, rounded: Math.round(raw) };
+}
+
+/** Index of the band that applies: the first band whose exclusive upper limit is above the weight (the last band is open-ended). */
+export function pickWeightBand(bands: WeightBand[], weightKg: number): number {
+  if (!bands.length) throw new Error("No weight bands defined");
+  if (weightKg <= 0) throw new Error("Weight must be positive");
+  const i = bands.findIndex((b) => b.maxKgExclusive === undefined || weightKg < b.maxKgExclusive);
+  return i === -1 ? bands.length - 1 : i;
+}
+
+/** Human-readable band limits, e.g. "< 50 kg", "50 to < 80 kg", "≥ 80 kg". */
+export function bandLabel(bands: WeightBand[], i: number): string {
+  const lower = i > 0 ? bands[i - 1].maxKgExclusive : undefined;
+  const upper = bands[i].maxKgExclusive;
+  if (lower === undefined && upper !== undefined) return `< ${upper} kg`;
+  if (lower !== undefined && upper !== undefined) return `${lower} to < ${upper} kg`;
+  if (lower !== undefined) return `≥ ${lower} kg`;
+  return "any weight";
 }
 
 export interface DoseLine {
@@ -107,6 +132,35 @@ export function buildDoseCard(p: Patient, regimenKey: string, today: string): Do
         raw,
         rounded,
         text: `${rounded} mg`,
+        schedule: c.schedule,
+        source: c.source,
+        url: c.url,
+      };
+    }
+    if (c.method === "per-kg" && c.mgPerKg) {
+      const r = perKgDose(c.mgPerKg, p.weightKg);
+      return {
+        drug: c.drug,
+        method: "Per kilogram",
+        formula: `Dose = ${c.mgPerKg} mg/kg × ${p.weightKg} kg`,
+        inputs: [`Weight ${p.weightKg} kg (record; confirm it is current)`, "Rounded to the nearest mg"],
+        raw: r.raw,
+        rounded: r.rounded,
+        text: `${r.rounded} mg`,
+        schedule: c.schedule,
+        source: c.source,
+        url: c.url,
+      };
+    }
+    if (c.method === "weight-band" && c.bands?.length) {
+      const bands = c.bands;
+      const i = pickWeightBand(bands, p.weightKg);
+      return {
+        drug: c.drug,
+        method: "Weight band",
+        formula: `Weight-band rule: ${bands.map((b, j) => `${bandLabel(bands, j)} → ${b.dose}`).join("; ")}`,
+        inputs: [`Weight ${p.weightKg} kg (record; confirm it is current)`, `Band applied: ${bandLabel(bands, i)}`],
+        text: bands[i].dose,
         schedule: c.schedule,
         source: c.source,
         url: c.url,

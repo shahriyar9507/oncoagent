@@ -99,6 +99,8 @@ export interface Patient {
   status: string;
   /** Which biomarker key in the knowledge pack applies now. */
   biomarkerKey: string;
+  /** Why the knowledge-pack entry was chosen, or why none covers this setting (clinician-entered cases). */
+  knowledgeReason?: string;
   trialQuery: { condition: string; term: string };
 }
 
@@ -157,4 +159,47 @@ export interface AuditEntry {
   reasonText?: string;
   prevHash: string;
   hash: string;
+}
+
+// ---------- case intake (clinician-entered, de-identified cases) ----------
+
+export type Histology = "adenocarcinoma" | "squamous" | "nsclc-nos";
+
+/** One alteration found in pasted report text by the deterministic extractor. */
+export interface ExtractedVariant {
+  gene: string;
+  /** CIViC-style name: "L858R", "Exon 19 Deletion", "Exon 20 Insertion", "Exon 14 Skipping Mutation", "EML4::ALK", "Fusion", "Amplification". */
+  alteration: string;
+  kind: Variant["kind"];
+  hgvsP?: string;
+  vafPercent?: number;
+  /** The text fragment that produced this match, shown to the clinician for checking. */
+  matched: string;
+}
+
+export interface ReportExtraction {
+  variants: ExtractedVariant[];
+  pdl1Tps?: number;
+  /** Genes the report states were tested and negative (e.g. "ALK negative", "no MET amplification"). */
+  testedNegative: string[];
+  sample?: "tissue" | "plasma";
+  warnings: string[];
+}
+
+export interface KnowledgeSelectionInput {
+  variants: { gene: string; alteration: string; kind: Variant["kind"]; sample: "tissue" | "plasma" }[];
+  /** Regimens already given (free text, e.g. "Osimertinib 80 mg daily"). */
+  priorRegimens: string[];
+  /** True when the disease progressed on the most recent line. */
+  progressedOnCurrentLine: boolean;
+  pdl1Tps?: number;
+  histology: Histology;
+}
+
+export interface KnowledgeSelection {
+  /** Knowledge-pack key, or null when the pack does not cover this setting. */
+  key: string | null;
+  reason: string;
+  /** Search term for ClinicalTrials.gov, e.g. "EGFR exon 20 insertion". */
+  trialTerm: string;
 }

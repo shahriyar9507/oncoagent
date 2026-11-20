@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/shahriyar9507/oncoagent/security/advisories/new
+    about: Report security issues privately.
+  - name: Live demo
+    url: https://oncoagent.vercel.app
+    about: Try the clinician workspace with fictional patients.

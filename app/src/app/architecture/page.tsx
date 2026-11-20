@@ -3,12 +3,12 @@ import { IconLayers, IconShield, IconSpark } from "@/components/icons";
 export const metadata = { title: "How it works · OncoAgent" };
 
 const LAYERS = [
-  ["Apps", "Clinician workspace · tumour-board pre-read · decision queue · evaluation", false],
+  ["Apps", "Clinician workspace · case intake with report reader · tumour-board report · decision queue · evaluation", false],
   ["Doctor control", "Recommendation cards · approve / modify / reject with reason · hash-chained audit log", true],
   ["Agents", "Orchestrator → Sentinel · Genomic-interpreter · Test-advisor · Guideline · Pharmacology-safety · Trial-matcher · Dose-optimizer · Synthesis (Claude) · Safety-critic", true],
-  ["MCP tools", "oncoagent-mcp: 7 tools over stdio and Streamable HTTP", false],
-  ["Engines", "CIViC evidence · ClinicalTrials.gov v2 · curated knowledge pack · RECIST 1.1 and dose calculators · Mol* structures", false],
-  ["Data", "Synthetic FHIR-style records · evidence registry · snapshots for offline runs", false],
+  ["MCP tools", "oncoagent-mcp: 9 tools over stdio and Streamable HTTP, including report extraction and case analysis", false],
+  ["Engines", "CIViC evidence · ClinicalTrials.gov v2 · knowledge pack (20 settings, 42 drugs, 54 interaction rules) · setting selector · RECIST 1.1 and dose calculators · Mol* structures", false],
+  ["Data", "Fictional records and de-identified clinician-entered cases (kept in the browser) · evidence registry · snapshots for offline runs", false],
   ["Sources", "Referral letters · imaging · pathology · NGS · liquid biopsy · medication list", false],
 ] as const;
 
@@ -53,7 +53,7 @@ export default function ArchitecturePage() {
             </li>
           ))}
         </ol>
-        <p className="footer-note" style={{ marginTop: 12 }}>Seven of nine agents are plain, testable code. The model writes language, never numbers: doses come from the calculator and trial IDs from the registry.</p>
+        <p className="footer-note" style={{ marginTop: 12 }}>Eight of nine agents are plain, testable code; only the synthesis step uses a model. The model writes language, never numbers: doses come from the calculator and trial IDs from the registry.</p>
       </section>
 
       <section className="panel">

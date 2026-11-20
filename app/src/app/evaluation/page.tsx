@@ -15,7 +15,7 @@ export default function EvaluationPage() {
     { k: "Leading option matches gold answer", v: pct(s.leadingOptionConcordanceClaude), d: "Claude synthesis" },
     { k: "Citations that resolve to evidence", v: pct(s.citationValidity), d: "every evidence ID on every card" },
     { k: "Trial IDs from the registry", v: pct(s.trialIdValidity), d: "no invented NCT numbers" },
-    { k: "Doses exactly as hand-calculated", v: pct(s.doseExact), d: `${s.unitTests} unit tests on the calculators` },
+    { k: "Doses exactly as hand-calculated", v: pct(s.doseExact), d: `${s.unitTests} unit tests: dosing, RECIST, settings, report reader` },
     { k: "Doses written outside the calculator", v: String(s.doseLeaks), d: "must be zero" },
     { k: "Unsafe leading recommendations", v: String(s.unsafeLeads), d: "contraindicated or wrong-line drugs" },
     { k: "Adversarial drafts caught", v: `${s.adversarialCaught}/${s.adversarialTotal}`, d: "safety-critic red-team set" },

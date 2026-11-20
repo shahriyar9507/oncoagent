@@ -5,10 +5,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { AuditEntry, DecisionAction, EvidenceItem, RecommendationCard } from "@/lib/types";
 import type { PipelineResult, StepEvent } from "@/lib/agents/pipeline";
 import { appendAudit } from "@/lib/audit";
-import { clearRun, readRun, saveRun } from "@/lib/runs";
-import { useAudit } from "@/lib/hooks";
+import { clearRun, saveRun } from "@/lib/runs";
+import { useAudit, useStoredRun } from "@/lib/hooks";
 import { fmtDateTime, fmtNum } from "@/lib/format";
 import { DecisionDialog, toast } from "./DecisionDialog";
+import type { CaseInput } from "@/lib/caseInput";
 import { IconAlert, IconCalc, IconCheck, IconChevronDown, IconEdit, IconExternal, IconFile, IconFlask, IconHistory, IconPill, IconPlay, IconPrinter, IconRefresh, IconShield, IconSpark, IconX, IconActivity, IconDna } from "./icons";
 
 export const AGENTS = ["Sentinel", "Genomic-interpreter", "Test-advisor", "Guideline", "Pharmacology-safety", "Trial-matcher", "Dose-optimizer", "Synthesis (Claude)", "Safety-critic"];
@@ -55,9 +56,15 @@ function kindIcon(kind: RecommendationCard["kind"]) {
   return <IconSpark {...p} />;
 }
 
-export function AgentWorkspace({ patientId, patientName, snapshot }: { patientId: string; patientName: string; snapshot: PipelineResult }) {
-  const [result, setResult] = useState<PipelineResult>(snapshot);
-  const [isLive, setIsLive] = useState(false);
+export function AgentWorkspace({ patientId, patientName, snapshot, caseInput, reportHref }: { patientId: string; patientName: string; snapshot: PipelineResult | null; caseInput?: CaseInput; reportHref?: string }) {
+  const stored = useStoredRun(patientId);
+  // Fallback when browser storage is blocked: keep the finished run on screen for this visit.
+  const [sessionRun, setSessionRun] = useState<PipelineResult | null>(null);
+  const current = stored ?? sessionRun ?? snapshot;
+  const hasRun = current !== null;
+  const result: PipelineResult = current ?? { patientId, ranAt: "", mode: "rules-only", steps: [], evidence: [], cards: [], warnings: [] };
+  const report = reportHref ?? `/patients/${patientId}/report`;
+  const isLive = stored !== null || sessionRun !== null;
   const [running, setRunning] = useState(false);
   const [live, setLive] = useState<StepEvent[] | null>(null);
   const [elapsed, setElapsed] = useState(0);
@@ -70,16 +77,9 @@ export function AgentWorkspace({ patientId, patientName, snapshot }: { patientId
   const { audit, decisions, chainOk } = useAudit();
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(() => {
-    const saved = readRun(patientId);
-    if (saved) {
-      setResult(saved);
-      setIsLive(true);
-    }
-    return () => {
-      if (timer.current) clearInterval(timer.current);
-    };
-  }, [patientId]);
+  useEffect(() => () => {
+    if (timer.current) clearInterval(timer.current);
+  }, []);
 
   const evidenceById = useMemo(() => new Map(result.evidence.map((e) => [e.id, e])), [result.evidence]);
   const cards = useMemo(() => {
@@ -96,12 +96,12 @@ export function AgentWorkspace({ patientId, patientName, snapshot }: { patientId
     setElapsed(0);
     timer.current = setInterval(() => setElapsed((performance.now() - t0) / 1000), 100);
     try {
-      const res = await fetch("/api/agents/run", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ patientId, useClaude }) });
+      const res = await fetch("/api/agents/run", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(caseInput ? { caseId: patientId, caseInput, useClaude } : { patientId, useClaude }) });
       if (!res.ok || !res.body) {
         let msg = `Run failed (HTTP ${res.status})`;
         try {
-          const j = (await res.json()) as { error?: string };
-          if (j.error) msg = j.error;
+          const j = (await res.json()) as { error?: string; issues?: string[] };
+          if (j.error) msg = j.issues?.length ? `${j.error}: ${j.issues.join("; ")}` : j.error;
         } catch {
           /* not JSON */
         }
@@ -127,9 +127,8 @@ export function AgentWorkspace({ patientId, patientName, snapshot }: { patientId
         }
       }
       if (!final) throw new Error("The run ended without a result");
-      setResult(final);
       saveRun(final);
-      setIsLive(true);
+      setSessionRun(final);
       setFilter("all");
       await appendAudit({ actor: "Dr. Demo", action: "agent-run", patientId, reasonText: useClaude ? "Live run with Claude synthesis" : "Live rules-only run" });
       const flagged = final.cards.filter((c) => c.critic.verdict === "flag").length;
@@ -146,8 +145,7 @@ export function AgentWorkspace({ patientId, patientName, snapshot }: { patientId
 
   function restoreStored() {
     clearRun(patientId);
-    setResult(snapshot);
-    setIsLive(false);
+    setSessionRun(null);
     toast("Showing the stored run again");
   }
 
@@ -168,6 +166,8 @@ export function AgentWorkspace({ patientId, patientName, snapshot }: { patientId
             <p className="sub" style={{ marginTop: 4 }}>
               {running ? (
                 <>Agents are working · <span className="mono">{elapsed.toFixed(1)} s</span>{nextAgent ? <> · now: <b style={{ color: "var(--text)" }}>{nextAgent}</b></> : null}</>
+              ) : !hasRun ? (
+                <>No run yet. Press <b style={{ color: "var(--text)" }}>Run agents live</b>: nine agents will read this case (about 2 s rules-only, about 25 s with Claude).</>
               ) : (
                 <>
                   <span className={`chip ${isLive ? "mint" : "ghost"}`} style={{ marginRight: 8 }}>{isLive ? "Live run" : "Stored run"}</span>
@@ -182,7 +182,7 @@ export function AgentWorkspace({ patientId, patientName, snapshot }: { patientId
               <input type="checkbox" checked={useClaude} onChange={(e) => setUseClaude(e.target.checked)} disabled={running} />
               Claude synthesis
             </label>
-            {isLive && !running && <button type="button" className="btn sm" onClick={restoreStored} title="Discard the live run in this browser and show the stored run"><IconHistory /> Stored run</button>}
+            {isLive && !running && snapshot && <button type="button" className="btn sm" onClick={restoreStored} title="Discard the live run in this browser and show the stored run"><IconHistory /> Stored run</button>}
             <button type="button" className="btn primary" onClick={runLive} disabled={running} aria-describedby="run-hint">
               {running ? <IconRefresh className="spin" /> : <IconPlay />} {running ? "Running…" : "Run agents live"}
             </button>
@@ -224,19 +224,27 @@ export function AgentWorkspace({ patientId, patientName, snapshot }: { patientId
           <div style={{ marginTop: 16 }}>
             <div className="row" style={{ justifyContent: "space-between", marginBottom: 8 }}>
               <p className="eyebrow">Tumour-board pre-read · AI draft</p>
-              <Link href={`/patients/${patientId}/report`} className="btn sm"><IconPrinter /> Tumour-board report</Link>
+              <Link href={report} className="btn sm"><IconPrinter /> Tumour-board report</Link>
             </div>
             <p className="summary-box">{result.boardSummary}</p>
           </div>
         )}
-        <div className="row" style={{ marginTop: 14 }}>
+        {hasRun && <div className="row" style={{ marginTop: 14 }}>
           <span className="chip mint"><span className="dot" /> {result.cards.length} cards</span>
           <span className={`chip ${pending ? "" : "mint"}`}>{pending ? `${pending} awaiting decision` : "all decided"}</span>
           <span className={`chip ${flagged ? "amber" : "mint"}`}><IconShield /> Safety-critic: {flagged ? `${flagged} flagged` : "all passed"}</span>
           <button type="button" className="chip ghost as-btn" onClick={() => setDrawer({ title: "All evidence", ids: result.evidence.map((e) => e.id) })}>{result.evidence.length} evidence items</button>
-        </div>
+        </div>}
       </section>
 
+      {!hasRun ? (
+        <section className="panel" id="cards">
+          <div className="empty-state">
+            <p><b>Recommendations appear here after the first run.</b></p>
+            <p className="sub">Each card will cite its evidence, show its confidence and wait for your approve, modify or reject. Nothing is stored on the server; the run is kept in this browser.</p>
+          </div>
+        </section>
+      ) : (
       <div className="split work" id="cards">
         <section className="stack" aria-label="Recommendation cards">
           <div className="toolbar">
@@ -274,6 +282,7 @@ export function AgentWorkspace({ patientId, patientName, snapshot }: { patientId
           <AuditPanel entries={patientAudit} chainOk={chainOk} />
         </aside>
       </div>
+      )}
 
       {drawer && <EvidenceDrawer title={drawer.title} items={drawer.ids.map((id) => evidenceById.get(id) ?? { id, kind: "patient" as const, label: "Unknown evidence", detail: "This ID is not in the run's evidence registry." })} focus={drawer.focus} onClose={() => setDrawer(null)} />}
       {dialog && <DecisionDialog card={dialog.card} action={dialog.action} patientId={patientId} patientName={patientName} onClose={() => setDialog(null)} />}
@@ -481,7 +490,7 @@ function DoseView({ dose }: { dose: NonNullable<PipelineResult["dose"]> }) {
       <div className="dose-lines">
         {dose.lines.map((l) => (
           <div key={l.drug} className="dl">
-            <div className="dl-top"><b>{l.drug}</b><span className="dl-dose">{l.text}</span></div>
+            <div className="dl-top"><b>{l.drug}</b><span className={`dl-dose${blocked ? " withheld" : ""}`}>{blocked ? "withheld" : l.text}</span></div>
             <p className="dl-f">{l.formula}{l.raw !== undefined ? ` = ${l.raw.toFixed(1)} mg` : ""}</p>
             <p className="dl-s">{l.schedule} · <a href={l.url} target="_blank" rel="noreferrer">{l.source}</a></p>
           </div>
