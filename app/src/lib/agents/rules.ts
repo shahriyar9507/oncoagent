@@ -379,7 +379,9 @@ export function doseOptimizer(p: Patient, kb: BiomarkerEntry | null, reg: Eviden
       proposal: dose.blocks.length
         ? `Dose card blocked: ${dose.blocks.join(" ")}`
         : `Dose card ready for ${dose.regimenName}: ${dose.lines.map((l) => `${l.drug} ${l.text}`).join(", ")}. Pharmacist and oncologist to verify.`,
-      why: [dose.asOf, ...dose.lines.map((l) => `${l.drug}: ${l.formula}${l.raw !== undefined ? ` = ${l.raw.toFixed(1)} mg` : ""}`), ...dose.warnings],
+      why: dose.blocks.length
+        ? [dose.asOf, ...dose.blocks, "Amounts are withheld until the blocks are resolved."]
+        : [dose.asOf, ...dose.lines.map((l) => `${l.drug}: ${l.formula}${l.raw !== undefined ? ` = ${l.raw.toFixed(1)} mg` : ""}`), ...dose.warnings],
       evidenceIds: [id, ...dose.lines.map((l, i) => reg.add({ id: `label:dose:${i}:${l.drug.toLowerCase()}`, kind: "label", label: l.source, detail: `${l.drug}: ${l.schedule}`, url: l.url }))],
       confidence: dose.blocks.length ? "low" : "high",
       confidenceReason: "Deterministic, unit-tested formulas with label parameters.",

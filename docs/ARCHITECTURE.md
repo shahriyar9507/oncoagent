@@ -1,34 +1,374 @@
-# Architecture — Agentic AI-based Precision Oncology Platform (working name: OncoAgent)
+# Architecture
 
-Version 0.2 · 2026-11-20 · Status: proposal for review. Evidence behind each design choice: [RESEARCH.md](RESEARCH.md).
+OncoAgent, team DatourX. Version 0.3, 20 November 2026 (describes app v0.3.0).
 
-## 1. Goal and scope
-An AI assistant team **for oncologists and their clinical team** that (1) watches each patient's hospital data continuously, (2) proposes the next test, (3) interprets results down to the responsible gene/protein, (4) proposes therapy at three levels — select an approved drug/trial, personalise regimen and dose, and (research only) explore modified or new molecules when resistance leaves no option, (5) explains the molecular mechanism in 3D, and (6) feeds a research pipeline for licensed drug-discovery partners. **Every clinical step ends in a clinician's decision.**
+This document has two halves:
 
-- **Users:** doctors and clinical staff only (oncologists, pathologists, radiologists, tumor boards, pharmacists, oncology nurses, research scientists). No patient app, no patient-facing messages.
-- **First cancer:** non-small-cell lung cancer (NSCLC). Then breast, then colorectal. All modules are cancer-agnostic; a new cancer = clinical rules + knowledge-base configuration + gold cases.
+- **[As built (MVP)](#2-as-built-mvp)** describes the code in [`app/`](../app) today. Every statement there can be checked against a file linked next to it.
+- **[Target (production)](#3-target-production)** describes the platform we intend to build. Nothing in that half is implemented unless the [as-built half](#2-as-built-mvp) says so.
 
-Two tracks share one data platform but have a hard wall between them:
-- **Clinical track** — patient care, approved drugs, guidelines, registered trials. Regulated decision support.
-- **Research track** — de-identified cohorts, target dossiers, structure work, partner discovery pipeline. Output never enters a patient's chart as a recommendation.
+Evidence behind the design choices is in [RESEARCH.md](RESEARCH.md). The phased plan is in [ROADMAP.md](ROADMAP.md).
 
-## 2. Design principles
-1. HITL at every clinical gate (autonomy levels A0–A3; A4 forbidden) — see `.claude/skills/hitl-clinical-governance`.
-2. Tools, not memory: every drug, dose, trial and citation fetched and cited.
-3. Explain or don't show: every proposal is a recommendation card with reason, evidence, confidence and uncertainty.
-4. Privacy by design and in-country data residency where law requires.
-5. Evaluation before deployment; monitoring after.
-6. Standards-first data (FHIR R4 + mCODE, GRIG, OMOP, DICOM).
-7. Licences clean (AlphaFold 3 non-commercial; OncoKB commercial licence; NCCN redistribution limits).
+> The demo patients in this repository are fictional, and cases entered through the intake form must be de-identified or fictional. OncoAgent is a research prototype for oncologists and clinical staff. It is not a medical device and it gives no advice to patients.
 
-## 3. Layered architecture
+## 1. Purpose and scope
+
+OncoAgent is a decision-support workspace for oncologists. For each new event in a patient's record a team of agents proposes the next test, interprets the molecular result, lists guideline options, checks interactions, finds recruiting trials and calculates doses. Every proposal is a recommendation card with its evidence, and a clinician approves, modifies or rejects it.
+
+- **Users:** oncologists and clinical staff only. There is no patient app and no patient-facing message.
+- **First cancer:** non-small-cell lung cancer (NSCLC), then breast, then colorectal. Cancer-specific content lives in data files (knowledge pack, regimens, panels); the agent code is cancer-agnostic.
+- **Two tracks:** the clinical track (approved drugs, guidelines, registered trials) and a research track (de-identified cohorts, target dossiers, partner discovery). The research track is not built; when it is, its outputs never enter a patient's chart.
+
+### Status at a glance
+
+| Concern | As built (MVP) | Target (production) |
+|---|---|---|
+| Patient data | 3 fictional NSCLC records in TypeScript ([patients.ts](../app/src/lib/data/patients.ts)), plus de-identified cases entered by clinicians and kept in the browser | FHIR R4 + mCODE from hospital systems, de-identified research mart |
+| Data entry | Case intake form; pasted report text read by a deterministic reader in the browser; the server validates each case (Zod) and rebuilds the record per run | FHIR ingestion, lab and PDF report feeds, clinician confirmation of extracted fields |
+| Agents | 9 agents in one in-process pipeline ([pipeline.ts](../app/src/lib/agents/pipeline.ts)) | Durable workflow orchestrator, more agents (imaging, pathology, report-writer) |
+| Language model | Claude Opus 5.5 for synthesis only, structured output | Same rule (model writes language, not numbers) behind a de-identification gateway |
+| Evidence | CIViC and ClinicalTrials.gov live with committed snapshots; curated knowledge pack of 20 settings, 34 regimens, 54 interaction rules | Licensed knowledge bases, versioned guideline retrieval |
+| Clinician decision | Approve / modify / reject with reason (acknowledgement and reason to approve a flagged card), SHA-256 hash chain in the browser | Same flow with SSO identity, e-signature and an append-only server table |
+| Interfaces | Web workspace, NDJSON run API, MCP server with nine tools (stdio and HTTP) | Plus FHIR / CDS Hooks into the EHR |
+| Hosting | Vercel (Next.js functions), no database | In-country hosting option, Kubernetes, managed database |
+
+## 2. As built (MVP)
+
+### 2.1 System context
+
+```mermaid
+flowchart LR
+  clin["Oncologist or clinical staff<br/>(browser)"]
+  mcpc["MCP clients<br/>Claude Code, Claude Desktop, IDE agents"]
+  subgraph app["OncoAgent on Vercel (Next.js 16)"]
+    ui["Clinician workspace<br/>React pages"]
+    intake["Case intake /cases/new<br/>report reader runs in the browser"]
+    run["POST /api/agents/run<br/>NDJSON stream"]
+    health["GET /api/health"]
+    mcp["/api/mcp<br/>Streamable HTTP"]
+    core["Agent pipeline<br/>runPipeline()"]
+  end
+  stdio["oncoagent-mcp over stdio<br/>(local process)"]
+  claude["Claude API<br/>claude-opus-5-5"]
+  civic["CIViC GraphQL API"]
+  ctgov["ClinicalTrials.gov API v2"]
+  pdb["RCSB PDB<br/>mmCIF files"]
+  cdn["jsDelivr<br/>Mol* 4.18 viewer"]
+  clin --> ui
+  clin --> intake
+  intake -- "saved case (browser storage)" --> ui
+  ui --> run
+  ui --> health
+  mcpc --> mcp
+  mcpc --> stdio
+  run --> core
+  mcp --> core
+  stdio --> core
+  core --> claude
+  core --> civic
+  core --> ctgov
+  health --> civic
+  health --> ctgov
+  ui -- "3D view, loaded in the browser" --> pdb
+  ui --> cdn
 ```
+
+- The browser never calls Claude, CIViC or ClinicalTrials.gov for agent work; the server does. The API key stays on the server ([claude.ts](../app/src/lib/agents/claude.ts)).
+- The 3D structure view is the exception: the browser loads Mol* from jsDelivr and the structure file from RCSB PDB directly ([MoleculeViewer.tsx](../app/src/components/MoleculeViewer.tsx)).
+- Case intake runs in the browser: the report reader, the setting preview and the case store. Pasted report text never leaves the browser; a saved case is sent to the server only as a validated `caseInput` with each run.
+- The stdio MCP server runs the same pipeline in a local process ([mcp/stdio.ts](../app/mcp/stdio.ts)).
+
+### 2.2 One agent run, end to end
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor Dr as Clinician
+  participant UI as AgentWorkspace (browser)
+  participant API as POST /api/agents/run
+  participant P as runPipeline()
+  participant Ext as CIViC and ClinicalTrials.gov
+  participant C as Claude API
+  participant K as criticCheck()
+  participant LS as Browser storage
+  Dr->>UI: Run agents live (Claude on or off)
+  UI->>API: JSON body with patientId, or caseId and caseInput, and useClaude
+  opt Clinician-entered case
+    API->>API: Validate caseInput (Zod), rebuild the Patient record
+  end
+  API->>API: Rate limit when useClaude is true and a key is configured
+  API->>P: Start run with an onStep callback
+  P->>P: Sentinel (RECIST 1.1, ctDNA)
+  P-->>UI: step line
+  P->>Ext: Genomic-interpreter queries CIViC per variant
+  Ext-->>P: Evidence (live, else snapshot)
+  P-->>UI: step line
+  P->>P: Test-advisor, Guideline, Pharmacology-safety
+  P->>Ext: Trial-matcher queries ClinicalTrials.gov
+  Ext-->>P: Recruiting studies (live, else snapshot)
+  P->>P: Dose-optimizer (unit-tested calculators)
+  alt Claude synthesis enabled and key configured
+    P->>C: De-identified case, evidence list, draft cards
+    C-->>P: Board summary and 1 to 3 cards (schema-checked)
+  else Rules-only run
+    P->>P: Synthesis step marked skipped
+  end
+  P->>K: Check every card against the evidence registry
+  K-->>P: pass or flag with notes
+  P-->>UI: result line (cards, evidence, dose card)
+  UI->>LS: saveRun() and an agent-run audit entry
+  Dr->>UI: Approve, modify or reject a card
+  UI->>LS: appendAudit() hash-chained entry
+```
+
+Notes on the sequence:
+
+1. Each agent runs inside a `step()` wrapper in [pipeline.ts](../app/src/lib/agents/pipeline.ts). An exception inside an agent becomes a step with `status: "error"` and a warning; the run continues with the other agents.
+2. The route streams one JSON object per line ([route.ts](../app/src/app/api/agents/run/route.ts)): `step` events as agents finish, then one `result`, or one `error` if the pipeline itself fails. Details in [API.md](API.md).
+3. Claude's cards are placed before the rules cards. The safety-critic then checks all cards, including Claude's.
+4. The live run and the audit log are kept in the browser in the MVP (section 2.6). For an entered case the server keeps nothing after the response.
+
+### 2.3 Case intake
+
+Since v0.3 a clinician can enter a de-identified NSCLC case and run the same agents on it. Details: [DATA.md](DATA.md#3-clinician-entered-cases).
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor Dr as Clinician
+  participant F as CaseForm (browser)
+  participant X as extractReport()
+  participant S as selectKnowledgeKey()
+  participant LS as Browser storage
+  participant V as CaseView (browser)
+  participant API as POST /api/agents/run
+  Dr->>F: Paste molecular report text
+  F->>X: Read the text (rules only, in the browser)
+  X-->>F: Alterations with matched text, PD-L1, negatives, warnings
+  Dr->>F: Use these, then check and complete the fields
+  F->>S: Live preview of the setting, BSA and CrCl
+  S-->>F: Pack entry or not covered, with the reason
+  F->>F: Validate with CaseInputSchema
+  F->>LS: saveCase() with a new C-XXXXXX ID
+  Dr->>V: Open the case and run the agents
+  V->>API: caseId and caseInput
+  API->>API: Validate again, buildPatientFromInput()
+  API-->>V: NDJSON steps and result
+```
+
+- One Zod schema (`CaseInputSchema` in [caseInput.ts](../app/src/lib/caseInput.ts)) validates the form, the run API and the MCP `analyze_case` tool. The server never accepts a client-built record.
+- `buildPatientFromInput()` is deterministic and turns every entered fact into a timeline event, so the agents can cite it as `pt:` evidence.
+- The setting selector ([select.ts](../app/src/lib/clinical/select.ts)) picks the knowledge-pack entry from the driver, the line of therapy, PD-L1 and histology. When no entry fits it returns none, and the agents propose no treatment.
+- The report reader ([extract.ts](../app/src/lib/clinical/extract.ts)) uses regular expressions only; each finding carries the text it came from, and the clinician confirms it.
+
+![Case intake form](assets/screenshots/16-case-intake.webp)
+
+### 2.4 Module map
+
+```mermaid
+flowchart TB
+  subgraph pages["app/src/app (routes)"]
+    pg["Pages: /, /patients, /patients/[id] and report,<br/>/cases/new, /cases/[id] and report,<br/>/queue, /mcp, /evaluation, /architecture"]
+    apis["API: agents/run, health, mcp"]
+  end
+  subgraph comps["app/src/components"]
+    ws["PatientRecord, AgentWorkspace,<br/>DecisionDialog, QueueView, ReportView"]
+    caseui["CaseForm, CaseView,<br/>CaseList, ClientOnly"]
+    viz["Charts, MoleculeViewer,<br/>AgentOrbit, Shell, SubNav"]
+  end
+  subgraph agents["lib/agents"]
+    pipe["pipeline.ts"]
+    rules["rules.ts"]
+    critic["critic.ts"]
+    claude["claude.ts"]
+  end
+  subgraph clinical["lib/clinical"]
+    dose["dose.ts"]
+    recist["recist.ts"]
+    extract["extract.ts"]
+    select["select.ts"]
+  end
+  subgraph tools["lib/tools"]
+    civic["civic.ts"]
+    trials["trials.ts"]
+    cache["cache/*.json"]
+  end
+  subgraph data["lib/data"]
+    pts["patients.ts"]
+    kb["knowledge.ts, regimens.ts,<br/>medications.ts"]
+    st["structures.ts"]
+    snaps["snapshots/*.json, eval-results.json"]
+  end
+  subgraph state["lib (client state and helpers)"]
+    audit["audit.ts, runs.ts, hooks.ts, cases.ts"]
+    caseinput["caseInput.ts"]
+    rl["ratelimit.ts, format.ts"]
+  end
+  mcpdef["lib/mcp/tools.ts"]
+  stdio["mcp/stdio.ts"]
+  scripts["scripts: eval, precompute,<br/>snapshot, mcp-smoke"]
+  apis --> pipe
+  apis --> mcpdef
+  stdio --> mcpdef
+  mcpdef --> pipe
+  pg --> ws
+  pg --> viz
+  pg --> caseui
+  ws --> audit
+  caseui --> audit
+  caseui --> extract
+  caseui --> caseinput
+  apis --> caseinput
+  mcpdef --> caseinput
+  mcpdef --> extract
+  caseinput --> select
+  pipe --> rules
+  pipe --> claude
+  pipe --> critic
+  rules --> dose
+  rules --> recist
+  pipe --> civic
+  pipe --> trials
+  civic --> cache
+  trials --> cache
+  rules --> kb
+  rules --> pts
+  scripts --> pipe
+  scripts --> snaps
+```
+
+| Path | Responsibility | Key exports |
+|---|---|---|
+| [lib/types.ts](../app/src/lib/types.ts) | Domain types | `Patient`, `RecommendationCard`, `EvidenceItem`, `AgentRunResult`, `AuditEntry` |
+| [lib/agents/pipeline.ts](../app/src/lib/agents/pipeline.ts) | Orchestrator: runs the nine agents in order | `runPipeline`, `PipelineResult` |
+| [lib/agents/rules.ts](../app/src/lib/agents/rules.ts) | Seven deterministic agents and the evidence registry | `EvidenceRegistry`, `sentinel`, `genomicInterpreter`, `testAdvisor`, `guideline`, `pharmacologySafety`, `trialMatcher`, `doseOptimizer` |
+| [lib/agents/claude.ts](../app/src/lib/agents/claude.ts) | Synthesis agent (Claude, structured output) | `synthesise`, `hasClaude`, `MODEL` |
+| [lib/agents/critic.ts](../app/src/lib/agents/critic.ts) | Safety-critic | `criticCheck` |
+| [lib/clinical/dose.ts](../app/src/lib/clinical/dose.ts) | Mosteller BSA, Cockcroft–Gault, Calvert, per-kg and weight-band dosing, dose card | `buildDoseCard`, `perKgDose`, `pickWeightBand`, `GFR_CAP`, `CREATININE_MAX_AGE_DAYS` |
+| [lib/clinical/recist.ts](../app/src/lib/clinical/recist.ts) | RECIST 1.1 categories from target-lesion sums | `assessRecist`, `bestResponse` |
+| [lib/clinical/extract.ts](../app/src/lib/clinical/extract.ts) | Deterministic molecular-report reader | `extractReport`, `normaliseGene`, `threeToOne` |
+| [lib/clinical/select.ts](../app/src/lib/clinical/select.ts) | Knowledge-pack setting selector for entered cases | `selectKnowledgeKey` |
+| [lib/caseInput.ts](../app/src/lib/caseInput.ts) | Case schema and record builder, shared by browser, API and MCP | `CaseInputSchema`, `buildPatientFromInput`, `newCaseId`, `CASE_ID_PATTERN` |
+| [lib/cases.ts](../app/src/lib/cases.ts) | Browser storage of entered cases | `saveCase`, `getCase`, `deleteCase`, `useCases`, `useCase` |
+| [lib/tools/civic.ts](../app/src/lib/tools/civic.ts) | CIViC GraphQL client with snapshot fallback | `interpretVariant`, `fetchCivicRaw` |
+| [lib/tools/trials.ts](../app/src/lib/tools/trials.ts) | ClinicalTrials.gov v2 client with snapshot fallback | `searchTrials`, `fetchTrialsRaw` |
+| [lib/data/](../app/src/lib/data) | Fictional patients, knowledge pack (20 entries), regimens (34), medication catalogue (59), PDB structures, stored runs, eval results | `patients`, `knowledge`, `interactionRules`, `regimens`, `MEDICATION_CATALOGUE`, `tagsFor`, `structures`, `structureForVariants` |
+| [lib/mcp/tools.ts](../app/src/lib/mcp/tools.ts) | The nine MCP tools, shared by both transports | `registerOncoTools`, `SERVER_INFO` |
+| [lib/audit.ts](../app/src/lib/audit.ts), [lib/runs.ts](../app/src/lib/runs.ts), [lib/hooks.ts](../app/src/lib/hooks.ts) | Browser-side audit chain and live-run storage | `appendAudit`, `verifyAudit`, `saveRun`, `useAudit`, `useStoredRun` |
+| [lib/ratelimit.ts](../app/src/lib/ratelimit.ts) | In-memory sliding-window limiter | `allow`, `CLAUDE_RUNS_PER_IP`, `MCP_CLAUDE_RUNS_PER_HOUR` |
+| [components/](../app/src/components) | UI components (see [DESIGN.md](DESIGN.md)) | `PatientRecord`, `AgentWorkspace`, `DecisionDialog`, `QueueView`, `ReportView`, `CaseForm`, `CaseView`, `CaseList`, `ClientOnly`, `Charts`, `MoleculeViewer` |
+| [scripts/](../app/scripts) | Evaluation, stored-run generation, snapshot refresh, MCP smoke test | see [DEPLOYMENT.md](DEPLOYMENT.md) |
+
+### 2.5 Data flow and the evidence registry
+
+Every fact an agent uses is registered once in an `EvidenceRegistry` ([rules.ts](../app/src/lib/agents/rules.ts)) under a typed ID. Cards cite these IDs. The synthesis agent receives the registry as its `EVIDENCE` list and may cite only those IDs; the safety-critic flags any ID that is not in the registry.
+
+| Prefix | Kind | Created by | Example | Content |
+|---|---|---|---|---|
+| `pt:` | `patient` | `patientEvidence()` | `pt:e5` | One timeline event: date, title, detail, source document |
+| `kb:` | `guideline` | `guideline()`, `testAdvisor()` | `kb:alk1-alectinib`, `kb:ALK_1L:test0` | A knowledge-pack option or test, with basis and pack version |
+| `civic:` | `civic` | `genomicInterpreter()` | `civic:EID964` | A CIViC evidence item: level, significance, disease, therapies, PMID, URL |
+| `trial:` | `trial` | `trialMatcher()` | `trial:NCT05256290` | A recruiting study from ClinicalTrials.gov: phase, status, sponsor, countries, URL |
+| `label:` | `label` | `guideline()`, `pharmacologySafety()`, `doseOptimizer()` | `label:lorlatinib:strong-cyp3a-inducer:0`, `label:brigatinib:strong-cyp3a-inducer:g1`, `label:dose:0:carboplatin` | A product-label rule or dose parameter, with a DailyMed link |
+| `calc:` | `calculator` | `sentinel()`, `doseOptimizer()` | `calc:recist`, `calc:dose` | A deterministic calculation with its inputs and result |
+
+```mermaid
+flowchart LR
+  rec["Patient record<br/>(demo record, or rebuilt from a case)"] --> agents["Seven deterministic agents"]
+  kb["Knowledge pack and regimens"] --> agents
+  live["CIViC and ClinicalTrials.gov<br/>(live or snapshot)"] --> agents
+  agents --> reg[("Evidence registry<br/>pt: kb: civic: trial: label: calc:")]
+  agents --> drafts["Draft cards"]
+  reg --> syn["Synthesis (Claude)<br/>cites registry IDs only"]
+  drafts --> syn
+  syn --> cards["All cards"]
+  drafts --> cards
+  cards --> critic["Safety-critic"]
+  reg --> critic
+  critic --> out["Cards with pass or flag"]
+```
+
+### 2.6 State: where data lives
+
+| Data | MVP location | Lifetime | Production (planned) |
+|---|---|---|---|
+| Demo patient records | [patients.ts](../app/src/lib/data/patients.ts), in the bundle | Until the code changes | FHIR server (mCODE) |
+| Clinician-entered cases | Browser `localStorage`, key `oncoagent.cases.v1` ([cases.ts](../app/src/lib/cases.ts)); rebuilt in server memory for each run and then discarded | Until deleted or browser storage is cleared | The hospital's own database inside its network |
+| Knowledge pack, regimens, structures | [lib/data/](../app/src/lib/data), version `nsclc-pack 2026-11-20` | Until the code changes | Versioned knowledge service with review workflow |
+| CIViC and trial snapshots | [lib/tools/cache/](../app/src/lib/tools/cache), written by `npm run snapshot` | Until refreshed and committed | Scheduled refresh with a stored fetch date |
+| Stored agent runs | [lib/data/snapshots/P-00x.json](../app/src/lib/data/snapshots), written by `npm run precompute` | Until regenerated | Server-side run store |
+| Live agent run (latest per patient or case) | Browser `localStorage`, key `oncoagent.run.v1.<id>` ([runs.ts](../app/src/lib/runs.ts)) | Until the browser storage is cleared, "Stored run" is pressed or the case is deleted | Server-side run store linked to the audit log |
+| Audit log (decisions and live runs) | Browser `localStorage`, key `oncoagent.audit.v1` ([audit.ts](../app/src/lib/audit.ts)) | Until the browser storage is cleared | Append-only, hash-chained database table |
+| MCP `record_decision` chain | Server memory, per function instance ([tools.ts](../app/src/lib/mcp/tools.ts)) | Until the instance is recycled | Same append-only table as the web app |
+| Rate-limit counters | Server memory, per function instance ([ratelimit.ts](../app/src/lib/ratelimit.ts)) | Until the instance is recycled | Shared store with per-clinician quotas |
+
+For the demo patients the UI shows the stored run first, so every page renders instantly and the evaluation is reproducible. Entered cases have no stored run until the clinician runs the agents. A clinician can start a live run at any time; the newest live run then replaces the stored run in that browser.
+
+### 2.7 Deployment topology
+
+```mermaid
+flowchart LR
+  repo["GitHub repository"] --> build["Vercel build<br/>project root: app"]
+  build --> static["Vercel CDN<br/>pre-rendered pages and assets"]
+  build --> fns["Vercel Functions (Node.js)<br/>/api/agents/run, /api/mcp, /api/health"]
+  envs[("Encrypted environment variables<br/>ANTHROPIC_API_KEY<br/>CLINICIAN_TOKEN<br/>MCP_BEARER_TOKEN")] -.-> fns
+  fns --> claude["Claude API"]
+  fns --> civic["CIViC"]
+  fns --> ctgov["ClinicalTrials.gov"]
+```
+
+- One Next.js 16 app serves the pages and the API routes. Patient pages are pre-rendered for the three fictional records (`generateStaticParams`); `/mcp` renders per request because it reads the host header to show the endpoint URL; `/cases/*` pages render in the browser because the case lives in browser storage (`ClientOnly`, `useCase`).
+- `/api/agents/run` and `/api/mcp` set `maxDuration = 300` seconds. A run with Claude takes about 23 s ([EVALUATION.md](EVALUATION.md)).
+- [next.config.ts](../app/next.config.ts) removes the `X-Powered-By` header and adds `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin` and `X-Frame-Options: SAMEORIGIN` to every response.
+- All three environment variables are optional. Without `ANTHROPIC_API_KEY` the agents run rules-only and the top bar says so. Setup, scripts and key rotation: [DEPLOYMENT.md](DEPLOYMENT.md).
+
+### 2.8 Key decisions
+
+| # | Decision | Why | Trade-off |
+|---|---|---|---|
+| 1 | Eight of nine agents are deterministic code; the model writes language only | Doses, trial IDs and interaction verdicts must be testable and repeatable | Rules must be curated per cancer type; less flexible than free reasoning |
+| 2 | Typed evidence registry; cards cite IDs; the model may cite only given IDs | Citations can be checked mechanically and opened by the clinician | The model cannot bring in literature that no tool retrieved |
+| 3 | Deterministic safety-critic after synthesis, which flags rather than deletes | The clinician sees what was wrong and why; the checks are unit-testable | String matching can miss unsafe phrasing; approving a flagged card needs an acknowledgement and a reason, not a second person |
+| 4 | Structured output validated against a Zod schema (`messages.parse`) | No free-text parsing; the model cannot emit `dose`, `trial` or `summary` cards | Schema changes need a code change and a re-run of the evaluation |
+| 5 | Live CIViC and ClinicalTrials.gov with committed snapshots as fallback | A source outage never leaves a card empty; the evaluation is reproducible | Snapshots age; the cache files do not record their fetch date |
+| 6 | Stored runs shown first, live runs on demand | Instant pages, controlled model cost, same data for judges and the evaluation | The run on screen can be older than the live sources |
+| 7 | Audit log and live runs kept in the browser in the MVP | No database and no server-side clinical data in a public demo | Not shared between users, lost when storage is cleared; the hash chain detects edits but the browser owner could rebuild it |
+| 8 | NDJSON stream over one POST | Per-agent progress with plain `fetch`; works in serverless functions | No resume after a dropped connection |
+| 9 | One MCP tool definition for stdio and Streamable HTTP | The two transports cannot drift apart | Decision chain and rate limits are per process or instance |
+| 10 | One Next.js app, plain CSS, hand-built SVG charts | One deployable; full control of accessibility and of the visual system | Heavy services (FHIR, workflows, imaging) move out in production |
+| 11 | Pinned model ID `claude-opus-5-5`, effort `medium`, server-side refusal fallback | Reproducible behaviour, bounded latency and cost, synthesis survives a refusal | A fallback model may answer; the run records `response.model` |
+| 12 | In-memory rate limits (a sliding window of timestamps per key), counted only for real Claude runs | Caps model spend on a public demo without extra infrastructure | Per instance, resets on cold start, keyed by IP |
+| 13 | Fictional records frozen at an `asOf` date (2026-11-20) | Freshness rules (creatinine age) give the same result on any day | Entered cases carry the save date as `asOf`; real records must use the current date |
+| 14 | One Zod schema for entered cases in the browser, the API and MCP; the server rebuilds the record | One definition of a valid case; a client cannot inject a crafted record | Schema changes touch all three surfaces at once |
+| 15 | Deterministic report reader with regular expressions, run in the browser | No report text leaves the browser; every finding shows its source text; testable (81 tests) | Unusual phrasing is missed or becomes a warning; no PDF or image input yet |
+| 16 | Deterministic setting selector; uncovered settings return no entry | The agents never guess a treatment outside the curated pack, and the reason is shown | Many real settings (later lines, uncommon mutations) end in "discuss at tumour board" until the pack grows |
+| 17 | Entered cases stored in the browser in the MVP | No server-side clinical data on a public demo; zero operations | A case exists only in one browser; not shared with colleagues; lost when storage is cleared |
+
+## 3. Target (production)
+
+Status: design for review. Nothing in this section is implemented unless section 2 says so.
+
+### 3.1 Design principles
+
+1. Human in the loop at every clinical gate. Autonomy levels A0 to A3 are allowed; A4 (acting without a clinician) is forbidden.
+2. Tools, not memory: every drug, dose, trial and citation is fetched and cited.
+3. Explain or do not show: every proposal is a recommendation card with reason, evidence, confidence and uncertainty.
+4. Privacy by design, with in-country data residency where the law requires it.
+5. Evaluation before deployment, monitoring after.
+6. Standards-first data: FHIR R4 with mCODE, HL7 Genomics Reporting, OMOP, DICOM.
+7. Clean licences: AlphaFold 3 weights are non-commercial; OncoKB needs a commercial licence; NCCN content has redistribution limits.
+
+Principles 1 to 3 and 5 are already enforced in the MVP (sections 2.2 to 2.4 and [EVALUATION.md](EVALUATION.md)).
+
+### 3.2 Layered architecture
+
+```text
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│ L6 APPS  Clinician workspace · Tumor-board mode · Research workbench          │
-│          Admin & compliance console          (clinician-only, no patient app) │
+│ L6 APPS  Clinician workspace · Tumour-board mode · Research workbench         │
+│          Admin and compliance console      (clinician-only, no patient app)  │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │ L5 HITL  Recommendation cards · Approval queues · E-signature · Override      │
-│          reasons · Escalation/on-call · Immutable audit log                   │
+│          reasons · Escalation / on-call · Immutable audit log                 │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │ L4 AGENTS  Orchestrator (durable workflow)                                    │
 │   Sentinel · Test-advisor · Genomic-interpreter · Imaging · Pathology ·       │
@@ -37,57 +377,80 @@ Two tracks share one data platform but have a hard wall between them:
 │                     ║ research wall ║ Discovery-liaison · Analog-lab          │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │ L3 ENGINES  NGS pipelines (nf-core) · Variant KB service · Imaging AI (MONAI) │
-│   Pathology foundation models · Clinical NLP/extraction · Risk models ·       │
-│   Guideline RAG · Structure service (PDB / AlphaFold DB / licensed AF3-class) │
+│   Pathology foundation models · Clinical NLP / extraction · Risk models ·     │
+│   Guideline RAG · Structure service (PDB / AlphaFold DB / licensed predictor) │
 ├──────────────────────────────────────────────────────────────────────────────┤
-│ L2 DATA  HAPI FHIR (mCODE) · PostgreSQL+pgvector · Object store (BAM/VCF/WSI) │
+│ L2 DATA  HAPI FHIR (mCODE) · PostgreSQL + pgvector · Object store (BAM/VCF/WSI)│
 │   Orthanc DICOMweb · Knowledge graph (gene–variant–drug–trial) · OMOP mart    │
 │   (de-identified research zone)                                              │
 ├──────────────────────────────────────────────────────────────────────────────┤
-│ L1 SOURCES  EHR/HIS · LIS · PACS · NGS labs (incl. external PDF reports) ·     │
-│   Pathology scanners · Clinician/nurse notes & symptom entries · Public KBs    │
+│ L1 SOURCES  EHR/HIS · LIS · PACS · NGS labs (incl. external PDF reports) ·    │
+│   Pathology scanners · Clinician / nurse notes and symptom entries · KBs      │
 └──────────────────────────────────────────────────────────────────────────────┘
- Cross-cutting: Identity/consent · Security zones · De-identification gateway ·
- LLMOps/MLOps evaluation · Observability · Quality management system
+ Cross-cutting: identity and consent · security zones · de-identification gateway ·
+ LLMOps / MLOps evaluation · observability · quality management system
 ```
 
-## 4. Agent catalogue
+How the MVP maps onto these layers:
+
+| Layer | MVP component | Production replacement |
+|---|---|---|
+| L6 Apps | Next.js workspace, decision queue, printable tumour-board report | Same, plus research workbench and admin console, Bangla UI |
+| L5 HITL | `DecisionDialog`, browser audit chain, critic flags | SSO identity, e-signature, server audit table, escalation rules |
+| L4 Agents | `runPipeline()` with nine agents | Durable workflows (for example Temporal) with retries and state |
+| L3 Engines | CIViC and trials clients, calculators, knowledge pack | Variant KB service, guideline retrieval, imaging and pathology models |
+| L2 Data | TypeScript records and JSON snapshots | FHIR server, PostgreSQL, object store, OMOP mart |
+| L1 Sources | Fictional records written by the team; de-identified cases entered by clinicians with pasted report text | EHR, LIS, PACS, NGS reports (VCF and PDF) |
+
+### 3.3 Agent catalogue (target)
+
+The nine MVP agents are documented as built in [AGENTS.md](AGENTS.md). The target set:
+
 | Agent | Trigger | Main inputs | Tools | Output | Autonomy | Approver |
 |---|---|---|---|---|---|---|
-| Orchestrator | any new event | event + case context | all agents, workflow engine | routes work, enforces gates | A3 (routing only) | — |
-| Sentinel monitor | new lab/scan/vital/clinician symptom entry; schedule | timeline, thresholds, CTCAE entries | FHIR, rules engine, risk models | red-flag alert or watch note | A1 (critical interrupts) | on-call clinician |
-| Test-advisor | new diagnosis, progression, missing biomarker | diagnosis, stage, prior tests | guideline RAG, test catalogue (local labs, turnaround, cost) | "order test X" card | A1/A2 draft order | treating oncologist |
-| Genomic-interpreter | new NGS/molecular report | VCF/MAF or PDF report | variant KB (OncoKB/CIViC/ClinVar), pipelines | tiered findings + GRIG report draft | A2 | molecular pathologist |
-| Imaging | new imaging report/study | DICOM, reports, prior lesions | imaging AI, RECIST calculator, NLP | response assessment draft | A2 | radiologist |
-| Pathology | new pathology report/WSI | report, slides | NLP extraction, pathology FM (triage) | structured path data, biomarker triage flag | A2 | pathologist |
-| Guideline | any treatment decision point | mCODE case summary | guideline RAG (versioned) | options ranked by guideline | A1 | oncologist / tumor board |
-| Trial-matcher | diagnosis, progression, new biomarker | case summary, location | ClinicalTrials.gov, local trial registry | matched trials per criterion | A1 | investigator |
-| Pharmacology-safety | any drug proposal or med change | meds, labs (renal/hepatic), PGx | interaction DB, label DB, local formulary | interaction/dose-check verdict | A1 (blocks on critical) | pharmacist/oncologist |
-| Structure-insight | actionable or resistance variant | gene, variant | PDB, AlphaFold DB, licensed predictor, literature | 3D insight card (explanatory) | A0 | — (information) |
-| Dose-optimizer (therapy L2) | regimen approved in principle; new labs; toxicity | weight/height, renal/hepatic function, PGx, toxicity grade, drug levels | label/guideline dose tables, BSA & Calvert calculators, PGx rules | dose card with formula and sources | A2 | pharmacist + oncologist |
-| Report-writer | tumor board scheduled; referral; treatment summary | approved content only | templates, mCODE summary | tumor-board pre-read, referral letter, treatment summary (for clinicians) | A2 | treating clinician |
-| Safety-critic | every card before display | card + sources | citation verifier, rule checks | pass / fail with reasons | A3 (can block) | — |
-| Discovery-liaison (research zone) | cohort signal threshold | de-identified cohort stats | knowledge graph, literature, partner API | target dossier | A2 | principal scientist + biosafety |
-| Analog-lab (therapy L3, research zone) | approved target dossier | structures, known compounds, assay data | licensed partner engine or approved in-house scoring; ADMET/synthesizability predictors | ranked candidate hypotheses with uncertainty | A2 | computational medicinal chemist + principal scientist + biosafety |
+| Orchestrator | Any new event | Event and case context | All agents, workflow engine | Routes work, enforces gates | A3 (routing only) | — |
+| Sentinel | New lab, scan, vital or clinician symptom entry; schedule | Timeline, thresholds, CTCAE entries | FHIR, rules engine, risk models | Red-flag alert or watch note | A1 (critical interrupts) | On-call clinician |
+| Test-advisor | New diagnosis, progression, missing biomarker | Diagnosis, stage, prior tests | Guideline retrieval, local test catalogue (labs, turnaround, cost) | "Order test X" card | A1 / A2 draft order | Treating oncologist |
+| Genomic-interpreter | New NGS or molecular report | VCF/MAF or PDF report | Variant KBs (OncoKB, CIViC, ClinVar), pipelines | Tiered findings and report draft | A2 | Molecular pathologist |
+| Imaging | New imaging report or study | DICOM, reports, prior lesions | Imaging AI, RECIST calculator, NLP | Response assessment draft | A2 | Radiologist |
+| Pathology | New pathology report or slide | Report, slides | Extraction, pathology foundation model (triage) | Structured pathology data, biomarker triage flag | A2 | Pathologist |
+| Guideline | Any treatment decision point | mCODE case summary | Versioned guideline retrieval | Options ranked by guideline | A1 | Oncologist or tumour board |
+| Trial-matcher | Diagnosis, progression, new biomarker | Case summary, location | ClinicalTrials.gov, local trial registry | Matched trials per criterion | A1 | Investigator |
+| Pharmacology-safety | Any drug proposal or medication change | Medications, renal and hepatic labs, PGx | Licensed interaction database, labels, local formulary | Interaction and dose-check verdict | A1 (blocks on critical) | Pharmacist or oncologist |
+| Structure-insight | Actionable or resistance variant | Gene, variant | PDB, AlphaFold DB, licensed predictor, literature | Explanatory 3D card | A0 | — (information) |
+| Dose-optimizer (therapy L2) | Regimen approved in principle; new labs; toxicity | Weight, height, organ function, PGx, toxicity grade, drug levels | Label and guideline dose tables, BSA and Calvert calculators, PGx rules | Dose card with formula and sources | A2 | Pharmacist and oncologist |
+| Report-writer | Tumour board scheduled; referral; treatment summary | Approved content only | Templates, mCODE summary | Pre-read, referral letter, treatment summary (for clinicians) | A2 | Treating clinician |
+| Safety-critic | Every card before display | Card and sources | Citation verifier, rule checks | Pass or fail with reasons | A3 (can block) | — |
+| Discovery-liaison (research zone) | Cohort signal threshold | De-identified cohort statistics | Knowledge graph, literature, partner API | Target dossier | A2 | Principal scientist and biosafety review |
+| Analog-lab (therapy L3, research zone) | Approved target dossier | Structures, known compounds, assay data | Licensed partner engine or approved in-house scoring | Ranked hypotheses with uncertainty | A2 | Computational medicinal chemist, principal scientist and biosafety review |
 
-### 4a. Therapy engine levels
-| Level | Question | Track | Evidence status (Nov 2026) |
-|---|---|---|---|
-| L1 Select | Which approved drug / regimen / trial fits this target protein? | clinical | strong for in-indication guideline matches; weak for off-label guessing (SHIVA negative, NCI-MATCH low yield) |
-| L2 Personalise | Which dose and schedule for this patient's organ function, genes, toxicity? | clinical | label calculators standard; AI N-of-1 dosing (CURATE.AI) and ex-vivo testing (EXALT) promising but small |
-| L3 Research | If resistance leaves no option, can a modified or new molecule work? | research only | per-mutation redesign succeeds over years (4th-gen EGFR inhibitors in phase 1/2; daraxonrasib phase 3); per-patient small molecules not routine; per-patient vaccines/ASOs/gene editing exist |
+Autonomy levels: A0 information only, A1 suggest, A2 draft for sign-off, A3 automatic within a narrow scope (routing, blocking). A4, acting on a patient without a clinician, is never allowed.
 
-## 5. Key flow — "new molecular report arrives"
-1. Lab uploads PDF or VCF → ingestion service stores file, creates FHIR DiagnosticReport; malware scan; prompt-injection sanitiser for text.
-2. Orchestrator starts workflow `molecular_report_received(patient, report)`.
-3. Genomic-interpreter extracts variants (structured or LLM-extraction with field-level confidence), annotates via KB service, assigns tiers.
-4. In parallel: Guideline agent (options for the tumour type + variant), Trial-matcher, Pharmacology-safety (against current meds), Structure-insight (if resistance/actionable).
-5. Safety-critic verifies every claim has a source and checks contraindications; failures marked "AI disagreement".
-6. HITL: molecular pathologist confirms variant interpretation → oncologist sees combined card set → Approve / Modify / Reject with reason → optional tumor-board scheduling.
-7. Approved plan → Dose-optimizer drafts the dose card → pharmacist and oncologist verify → orders drafted for signature in EHR (via FHIR/CDS Hooks) → Report-writer drafts the treatment summary for the chart.
-8. Audit log records every step; eval store captures the decision for learning.
+### 3.4 Therapy engine levels
 
-## 6. Core data model (beyond FHIR)
+| Level | Question | Track | MVP status | Evidence status (Nov 2026) |
+|---|---|---|---|---|
+| L1 Select | Which approved drug, regimen or trial fits this target protein? | Clinical | Built (Guideline and Trial-matcher agents) | Strong for in-indication guideline matches; weak for off-label matching (SHIVA negative, NCI-MATCH low yield) |
+| L2 Personalise | Which dose and schedule for this patient's organ function, genes and toxicity? | Clinical | Built for label calculators (Dose-optimizer) | Label calculators are standard; AI N-of-1 dosing and ex-vivo testing are promising but small |
+| L3 Research | If resistance leaves no option, could a modified or new molecule work? | Research only | Not built (vision) | Per-mutation redesign succeeds over years; per-patient small molecules are not routine |
+
+Level 3 output is a research hypothesis for licensed partners. It never reaches a patient outside an approved trial or a regulator-sanctioned programme. See [SAFETY.md](SAFETY.md#5-research-track-and-biosafety-boundary).
+
+### 3.5 Key flow: a new molecular report arrives
+
+1. The lab uploads a PDF or VCF. The ingestion service stores the file, creates a FHIR `DiagnosticReport`, scans for malware and sanitises text against prompt injection.
+2. The orchestrator starts the workflow `molecular_report_received(patient, report)`.
+3. The Genomic-interpreter extracts variants (structured, or model extraction with field-level confidence), annotates them through the knowledge-base service and assigns tiers.
+4. In parallel: Guideline (options for tumour type and variant), Trial-matcher, Pharmacology-safety (against current medications), Structure-insight (if actionable or resistance).
+5. The safety-critic verifies that every claim has a source and checks contraindications; failures are shown as "AI disagreement".
+6. The molecular pathologist confirms the variant interpretation; the oncologist sees the combined card set and approves, modifies or rejects with a reason; the case can be sent to the tumour board.
+7. For an approved plan the Dose-optimizer drafts the dose card; the pharmacist and oncologist verify; orders are drafted for signature in the EHR (FHIR, CDS Hooks); the Report-writer drafts the treatment summary.
+8. The audit log records every step; the evaluation store captures the decision for learning.
+
+The MVP implements a text-paste version of step 1 (deterministic reader, clinician confirmation, no PDF), a deterministic stand-in for step 3 (setting selector), steps 4 to 6, and the dose part of step 7.
+
+### 3.6 Core data model (beyond FHIR)
+
 - `case_event` (id, patient_ref, type, source_ref, received_at)
 - `agent_run` (id, agent, model_id, prompt_version, input_hash, started/ended, cost, status)
 - `recommendation_card` (id, patient_ref, type, proposal, why[], evidence[], confidence, uncertainty, alternatives[], changes_if, safety_checks[], critic_verdict, status)
@@ -96,69 +459,88 @@ Two tracks share one data platform but have a hard wall between them:
 - `evidence_item` (source type guideline/kb/trial/pmid, identifier, version, retrieved_at, excerpt)
 - `target_dossier` (research zone only; cohort-level, no patient identifiers)
 
-## 7. Technology stack (recommended)
-| Concern | Choice | Why |
-|---|---|---|
-| Frontend | Next.js + TypeScript + Tailwind + Radix/shadcn, next-intl (en/bn) | fast, typed, i18n |
-| Visual | Mol* (3D proteins), igv.js (genome), Cornerstone3D/OHIF (DICOM), Plotly/Recharts/D3, Cytoscape.js | domain-standard viewers |
-| Backend | Python 3.12 FastAPI, Pydantic v2 | best bio/ML ecosystem |
-| Workflows | Temporal (durable) + agent framework inside activities | retries, state, auditability |
-| Clinical data | HAPI FHIR (mCODE), PostgreSQL 16 + pgvector | standards + RAG |
-| Imaging | Orthanc (DICOMweb) | open source |
-| Files | MinIO / S3 | BAM/VCF/WSI |
-| Events | NATS JetStream (or Kafka at scale) | real-time monitoring |
-| Bio pipelines | Nextflow + nf-core (sarek, rnaseq, rnafusion), VEP | reproducible |
-| ML | PyTorch, MONAI, scikit-learn, lifelines | clinical ML |
-| LLMs | Claude (Opus 5.5 case synthesis, Sonnet 5.5 agent steps, Haiku 5.5 extraction) behind a de-identification gateway; pinned IDs; eval-gated changes | quality + controllability |
-| Auth | Keycloak (OIDC, MFA), RBAC+ABAC | hospital SSO |
-| Infra | Docker Compose (dev), Kubernetes + OpenTofu (prod), in-country hosting option | residency |
-| Observability | OpenTelemetry, Prometheus/Grafana, Langfuse-style LLM tracing (self-hosted) | traces with PHI controls |
+The MVP types in [types.ts](../app/src/lib/types.ts) already follow this shape for cards, evidence and audit entries ([DATA.md](DATA.md)).
 
-## 8. Security and privacy
-- Zones: **PHI zone** (FHIR, files, audit), **De-identified research zone** (OMOP, dossiers, Analog Lab), **Edge** (clinician web access via SSO/VPN only). One-way de-identification pipeline PHI → research.
-- De-identification gateway for every external model call; minimum-necessary context; no training on our data by providers (contractual).
-- Encryption at rest (KMS) and in transit (mTLS); secrets in vault; least privilege; break-glass access logged.
-- Consent enforced at query time (FHIR Consent).
-- Threat model covers prompt injection, model data exfiltration, insider misuse, ransomware; backups + DR tested.
+### 3.7 Technology stack (recommended for production)
 
-## 9. Evaluation and monitoring
-- Gold-case suite per cancer type (synthetic first, then de-identified retrospective with tumor-board answers).
-- Metrics: tumor-board concordance, citation precision, unsupported-claim rate, contraindication-miss (= 0 gate), time saved, override reasons, alert acceptance, subgroup equity.
-- CI gate: any prompt/model/tool change re-runs suite; regression blocks release.
+| Concern | Choice | Why | MVP today |
+|---|---|---|---|
+| Frontend | Next.js + TypeScript, i18n (en/bn) | Typed, fast, one codebase | Next.js 16, TypeScript strict, plain CSS, English only |
+| Visual | Mol* (proteins), igv.js (genome), Cornerstone3D/OHIF (DICOM), D3 | Domain-standard viewers | Mol* 4.18, hand-built SVG charts |
+| Backend | Python 3.12 FastAPI, Pydantic v2 | Bio and ML ecosystem | Next.js route handlers |
+| Workflows | Temporal (durable) with agents inside activities | Retries, state, auditability | In-process `runPipeline()` |
+| Clinical data | HAPI FHIR (mCODE), PostgreSQL 16 + pgvector | Standards and retrieval | TypeScript records |
+| Imaging | Orthanc (DICOMweb) | Open source | — |
+| Files | MinIO or S3 | BAM, VCF, WSI | — |
+| Events | NATS JetStream (or Kafka at scale) | Real-time monitoring | — |
+| Bio pipelines | Nextflow + nf-core (sarek, rnaseq, rnafusion), VEP | Reproducible | — |
+| ML | PyTorch, MONAI, scikit-learn, lifelines | Clinical ML | — |
+| LLMs | Claude (Opus for case synthesis; smaller models for extraction steps) behind a de-identification gateway; pinned IDs; evaluation-gated changes | Quality and control | Claude Opus 5.5, pinned, synthesis only |
+| Auth | Keycloak (OIDC, MFA), RBAC + ABAC | Hospital SSO | Demo identity "Dr. Demo"; tokens for MCP |
+| Infra | Docker Compose (dev), Kubernetes + OpenTofu (prod), in-country hosting | Data residency | Vercel |
+| Observability | OpenTelemetry, Prometheus/Grafana, self-hosted LLM tracing | Traces with PHI controls | Step timings and token usage in each run |
+
+### 3.8 Security and privacy (target)
+
+- Zones: **PHI zone** (FHIR, files, audit), **de-identified research zone** (OMOP, dossiers, Analog Lab), **edge** (clinician access through SSO or VPN only). A one-way de-identification pipeline runs from PHI to research.
+- A de-identification gateway sits in front of every external model call; minimum necessary context; contractual no-training on our data.
+- Encryption at rest (KMS) and in transit (mTLS); secrets in a vault; least privilege; break-glass access logged.
+- Consent enforced at query time (FHIR `Consent`).
+- Threat model covers prompt injection, model data exfiltration, insider misuse and ransomware; backups and disaster recovery are tested.
+
+What the MVP already does and the full hazard log: [SAFETY.md](SAFETY.md).
+
+### 3.9 Evaluation and monitoring (target)
+
+- Gold-case suite per cancer type: fictional first, then de-identified retrospective cases with tumour-board answers.
+- Metrics: tumour-board concordance, citation precision, unsupported-claim rate, contraindication misses (gate: zero), time saved, override reasons, alert acceptance, subgroup equity.
+- CI gate: any prompt, model or tool change re-runs the suite; a regression blocks release.
 - Production: drift, acceptance and override dashboards; monthly safety review; incident process.
 
-## 10. Repository layout (to create in Phase 0)
+The MVP harness and results: [EVALUATION.md](EVALUATION.md).
+
+### 3.10 Repository layout
+
+As built:
+
+```text
+app/                    Next.js 16 app: pages, API routes, agents, calculators, MCP server
+  src/app/              routes and API handlers
+  src/components/       UI components
+  src/lib/              agents, clinical calculators, tools, data, MCP tools, state helpers
+  mcp/stdio.ts          stdio transport for oncoagent-mcp
+  scripts/              eval, precompute, snapshot, mcp-smoke
+docs/                   architecture, agents, API, MCP, data, design, evaluation, safety, roadmap
+.claude/                25 project sub-agents and 13 project skills used to build the project
 ```
-apps/web/              Next.js clinician + tumor board + research workbench
-services/dosing/       Level-2 calculators (BSA, Calvert, adjustments) with unit tests
+
+Target:
+
+```text
+apps/web/              Next.js clinician workspace, tumour board, research workbench
+services/dosing/       Level-2 calculators with unit tests
 services/research/     Level-3 Analog Lab adapters (research zone only)
 services/api/          FastAPI gateway, auth, cards, decisions, audit
-services/agents/       orchestrator workflows + specialist agents + critic
-services/genomics/     Nextflow configs, annotation & tiering service
-services/structure/    structure-insight service (PDB/AFDB, licence gate)
-services/ingest/       FHIR/HL7/PDF/DICOM ingestion + de-identification
-packages/schemas/      OpenAPI + JSON Schemas (recommendation card etc.)
-evals/                 gold cases, red-team set, runners
-infra/                 docker-compose, k8s, IaC
-docs/                  architecture, research, regulatory, hazards, KPIs, plan
+services/agents/       Orchestrator workflows, specialist agents, critic
+services/genomics/     Nextflow configs, annotation and tiering service
+services/structure/    Structure-insight service (PDB / AlphaFold DB, licence gate)
+services/ingest/       FHIR / HL7 / PDF / DICOM ingestion and de-identification
+packages/schemas/      OpenAPI and JSON Schemas (recommendation card and others)
+evals/                 Gold cases, red-team set, runners
+infra/                 docker-compose, Kubernetes, IaC
+docs/                  Architecture, research, regulatory, hazards, KPIs, plan
 ```
 
-## 11. Roadmap
-| Phase | Time | Deliverable | Exit criteria |
-|---|---|---|---|
-| 0 Foundation | months 0–2 | repo, dev stack, schemas, design system, synthetic **NSCLC** patients (TCGA/GENIE-informed), eval harness skeleton, hazard log, regulatory classification | one synthetic NSCLC patient flows end-to-end in a demo |
-| 1 NSCLC MVP | months 2–8 | patient timeline, Sentinel (rules), Test-advisor, Genomic-interpreter (structured + PDF), Guideline RAG, Trial-matcher, Pharmacology-safety, Dose-optimizer (L2 calculators), cards + approvals + audit, Report-writer, structure-insight viewer (EGFR/ALK/KRAS first) | ≥ 90 % concordance on NSCLC gold cases, 0 contraindication misses, 0 dose-calculation errors, clinician usability target met |
-| 2 Pilot + breast | months 8–14 | ethics approval, hospital integration (FHIR/HL7, PACS), silent-mode prospective study, imaging/pathology triage models, ctDNA trends; add breast cancer rules | silent-mode safety + concordance report; go/no-go for live pilot |
-| 3 Scale + research | months 14–30 | live pilot with HITL, colorectal rules, OMOP research zone, target dossiers, Analog Lab (L3) with a discovery partner, regulatory submission for any SaMD parts | pilot outcomes published; partner agreement; regulatory pathway confirmed |
+### 3.11 Team mapping
 
-## 12. Team mapping
-Every component has an owner agent in `.claude/agents/` (see roster in `.claude/skills/precision-oncology-platform/SKILL.md`). Clinical features require chief-medical-oncologist + clinical-safety-qa sign-off.
+Every component has an owner role in [`.claude/agents/`](../.claude/agents) (25 roles; roster in the project skill `precision-oncology-platform`). Clinical features need sign-off from the chief medical oncologist and clinical safety QA roles before release. These are AI sub-agent roles used during development; clinical sign-off in a pilot comes from licensed clinicians.
 
-## 13. Decisions
-Made (2026-11-20): clinician-only product; first cancer NSCLC, then breast, then colorectal; 3-level therapy engine with Level 3 in the research zone.
+### 3.12 Decisions
 
-Open (need the founder):
-1. First market and first hospital partner (Bangladesh recommended) — drives regulation, hosting and language.
-2. Product form: demo for investors/partners vs hospital pilot product.
-3. Budget and team (real oncologists/pathologists must join before any pilot).
-4. Discovery-partner strategy for Level 3 (industry partnership vs academic medicinal-chemistry lab).
+Made (20 Nov 2026): clinician-only product; first cancer NSCLC, then breast, then colorectal; three-level therapy engine with Level 3 in the research zone; the model writes language and never numbers.
+
+Open:
+
+1. First market and first hospital partner (Bangladesh recommended), which drives regulation, hosting and language.
+2. Budget and team: practising oncologists and pathologists must join before any pilot.
+3. Discovery-partner strategy for Level 3 (industry partnership or academic medicinal-chemistry lab).

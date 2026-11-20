@@ -106,7 +106,7 @@ Measured by [`app/scripts/eval.ts`](app/scripts/eval.ts) on the stored runs; met
 | Leading option matches the gold answer | **3/3** (Claude) · 3/3 (rules) |
 | Citations that resolve to evidence in the run | **100%** |
 | Trial IDs returned by the registry | **100%** |
-| Doses exactly as hand-calculated | **3/3**; **156** unit tests (dosing, RECIST, setting selection, report reader) |
+| Doses exactly as hand-calculated | **3/3**; **167** unit tests (dosing, RECIST, setting selection, report reader) |
 | Doses written outside the calculator · unsafe leading options | **0 · 0** |
 | Adversarial unsafe drafts caught by the critic | **6/6** |
 | Full run with Claude | **≈ 23 s** · **≈ US$0.065** per case |
@@ -143,7 +143,7 @@ echo "ANTHROPIC_API_KEY=sk-ant-..." > .env.local
 
 | Script | What it does |
 |---|---|
-| `npm test` | 156 unit tests: dosing, RECIST, setting selection, report reader (Vitest) |
+| `npm test` | 167 unit tests: dosing, RECIST, setting selection, report reader (Vitest) |
 | `npm run typecheck` · `npm run lint` | TypeScript and ESLint |
 | `npm run eval` | Gold-case and adversarial evaluation on stored runs |
 | `npm run precompute` | Re-run all cases with Claude and store snapshots |
@@ -168,7 +168,7 @@ oncoagent/
 │   ├── src/app/                Routes: overview, patients, cases (new, record, report), queue, mcp, evaluation, architecture, API
 │   ├── src/components/         Workspace UI: case form, patient record, agent run, cards, drawer, charts, Mol* viewer, queue, report
 │   ├── src/lib/agents/         Orchestrator, rule agents, Claude synthesis, safety-critic
-│   ├── src/lib/clinical/       Dose calculators, RECIST 1.1, setting selector, report reader (+ 156 unit tests)
+│   ├── src/lib/clinical/       Dose calculators, RECIST 1.1, setting selector, report reader (+ 167 unit tests)
 │   ├── src/lib/tools/          CIViC and ClinicalTrials.gov clients with snapshot fallback
 │   ├── src/lib/mcp/            oncoagent-mcp tool definitions
 │   ├── src/lib/data/           Fictional cases, knowledge pack (20 entries), regimens, medications, structures, stored runs

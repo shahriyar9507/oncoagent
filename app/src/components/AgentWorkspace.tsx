@@ -491,7 +491,7 @@ function DoseView({ dose }: { dose: NonNullable<PipelineResult["dose"]> }) {
         {dose.lines.map((l) => (
           <div key={l.drug} className="dl">
             <div className="dl-top"><b>{l.drug}</b><span className={`dl-dose${blocked ? " withheld" : ""}`}>{blocked ? "withheld" : l.text}</span></div>
-            <p className="dl-f">{l.formula}{l.raw !== undefined ? ` = ${l.raw.toFixed(1)} mg` : ""}</p>
+            <p className="dl-f">{blocked ? "Calculation withheld until the blocks below are resolved" : <>{l.formula}{l.raw !== undefined ? ` = ${l.raw.toFixed(1)} mg` : ""}</>}</p>
             <p className="dl-s">{l.schedule} · <a href={l.url} target="_blank" rel="noreferrer">{l.source}</a></p>
           </div>
         ))}

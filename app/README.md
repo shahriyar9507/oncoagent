@@ -23,7 +23,7 @@ MCP_BEARER_TOKEN=...           # requires a bearer token on /api/mcp
 |---|---|
 | `npm run dev` · `npm run build` · `npm start` | Develop, build, serve |
 | `npm run typecheck` · `npm run lint` | TypeScript and ESLint |
-| `npm test` | 156 unit tests: dosing, RECIST 1.1, setting selection, report reader |
+| `npm test` | 167 unit tests: dosing, RECIST 1.1, setting selection, report reader |
 | `npm run eval` | Score stored runs against gold answers and the adversarial set; writes `src/lib/data/eval-results.json` |
 | `npm run precompute` | Re-run every case with Claude and store the runs in `src/lib/data/snapshots/` |
 | `npm run snapshot` | Refresh offline CIViC and ClinicalTrials.gov snapshots in `src/lib/tools/cache/` |

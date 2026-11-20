@@ -118,7 +118,7 @@ Use these carefully: say "about", keep the source next to the number, and never 
 | Leading option matches the gold answer | 3/3 (Claude) · 3/3 (rules) |
 | Citations that resolve to evidence in the run | 100% |
 | Trial IDs returned by the registry | 100% |
-| Doses exactly as hand-calculated | 3/3; 156 unit tests in total (dose and RECIST, knowledge-pack selection and dosing, report reader) |
+| Doses exactly as hand-calculated | 3/3; 167 unit tests in total (dose and RECIST, knowledge-pack selection and dosing, report reader) |
 | Doses written outside the calculator | 0 |
 | Unsafe leading recommendations | 0 |
 | Adversarial unsafe drafts caught by the critic | 6/6 (invented trial number, model-written dose, unknown evidence ID, later-line drug first, contraindicated drug without warning, drug outside the pack) |

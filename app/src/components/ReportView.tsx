@@ -153,7 +153,7 @@ export function ReportView({ patient: p, recist, stored, untested, backHref }: {
             <table className="pp-table">
               <thead><tr><th>Drug</th><th>Dose</th><th>Formula</th><th>Schedule</th></tr></thead>
               <tbody>
-                {run.dose.lines.map((l) => <tr key={l.drug}><td><b>{l.drug}</b></td><td><b>{l.text}</b></td><td>{l.formula}{l.raw !== undefined ? ` = ${l.raw.toFixed(1)} mg` : ""}</td><td>{l.schedule}</td></tr>)}
+                {run.dose.lines.map((l) => <tr key={l.drug}><td><b>{l.drug}</b></td><td><b>{run.dose!.blocks.length ? "Withheld" : l.text}</b></td><td>{run.dose!.blocks.length ? "Withheld until the blocks are resolved" : <>{l.formula}{l.raw !== undefined ? ` = ${l.raw.toFixed(1)} mg` : ""}</>}</td><td>{l.schedule}</td></tr>)}
               </tbody>
             </table>
             {[...run.dose.blocks, ...run.dose.warnings].map((w) => <p key={w} className="pp-flag">{w}</p>)}

@@ -35,7 +35,7 @@ All notable changes to OncoAgent. Dates are in Asia/Dhaka time.
   - Common co-mutations (TP53, STK11, KEAP1, …) are recorded as prognostic.
 - **Approval and dosing**: approving a card the critic flagged needs an acknowledgement and a reason; a blocked dose card withholds the dose amounts.
 - **Rate limit**: counts only real Claude runs.
-- **Evaluation**: the script reads the unit-test count from Vitest (now 156).
+- **Evaluation**: the script reads the unit-test count from Vitest (now 167, including case-input and critic tests).
 
 ### Fixed
 - The safety-critic no longer treats a drug as later-line when it is also a current option.
