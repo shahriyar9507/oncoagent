@@ -30,12 +30,15 @@ Status at v0.3.0 (20 November 2026).
 | Clinician case intake with a deterministic report reader | Done (v0.3): form, pasted-text reader, setting selector, browser storage, server-side validation | [DATA.md](DATA.md#3-clinician-entered-cases) |
 | Knowledge pack beyond the demo | Done for 20 NSCLC settings, 34 regimens, 54 interaction rules, 59-medicine catalogue | [knowledge.ts](../app/src/lib/data/knowledge.ts) |
 | Nine agents with recommendation cards | Done | [AGENTS.md](AGENTS.md) |
-| Unit tests | 167 (case input and critic 11, calculators and RECIST 10, report reader 81, knowledge pack and selector 65) | [EVALUATION.md](EVALUATION.md#1-what-is-evaluated) |
+| Unit tests | 186 (case input and critic 11, calculators and RECIST 10, report reader 81, knowledge pack and selector 65, sign-in and storage 19) | [EVALUATION.md](EVALUATION.md#1-what-is-evaluated) |
 | Evaluation harness and adversarial set | Done, run by hand; stored runs predate the v0.3 agent changes | [EVALUATION.md](EVALUATION.md) |
-| Hash-chained sign-off, override reason for flagged cards | Done in the browser | [audit.ts](../app/src/lib/audit.ts), [DecisionDialog.tsx](../app/src/components/DecisionDialog.tsx) |
+| Hash-chained sign-off, override reason for flagged cards | Done; signed by the session user; append-only in PostgreSQL when a database is connected | [audit.ts](../app/src/lib/audit.ts), [store.ts](../app/src/lib/server/store.ts), [DecisionDialog.tsx](../app/src/components/DecisionDialog.tsx) |
 | MCP server (stdio and HTTP), nine tools | Done | [MCP.md](MCP.md) |
 | Hazard log | Second version (20 hazards) | [SAFETY.md](SAFETY.md#3-hazard-log) |
-| Server-side case, run and audit store; authentication; CI gate | Not started | Backlog items 1 to 3 |
+| Clinician sign-in on every page and API | Done (v0.4): signed session cookie, scrypt hashes, lockout, global sign-out | [SECURITY.md](../SECURITY.md#hardening-already-in-place) |
+| Server-side case, run and audit store | Done (v0.4) when `DATABASE_URL` is set; the public demo runs in browser mode | [DEPLOYMENT.md](DEPLOYMENT.md#3-environment-variables) |
+| CI: types, lint, tests, evaluation, build, smoke test | Done; a deploy does not wait for it yet | [ci.yml](../.github/workflows/ci.yml) |
+| SSO and roles; evaluation gate on metric drops | Not started | Backlog items 1 to 3 |
 | PDF upload, guideline retrieval, FHIR ingestion | Not started (text paste is done) | Backlog items 4 to 6 |
 | Regulatory classification memo | Not started | [SAFETY.md](SAFETY.md#6-regulatory-position) |
 
@@ -45,9 +48,9 @@ Derived from the code as it is today. Each item names the current behaviour that
 
 | # | Item | Today in the code | First step | Phase |
 |---|---|---|---|---|
-| 1 | Server-side case, run and audit store | Entered cases, live runs and the audit log live in browser `localStorage` ([cases.ts](../app/src/lib/cases.ts), [runs.ts](../app/src/lib/runs.ts), [audit.ts](../app/src/lib/audit.ts)); MCP decisions in process memory ([tools.ts](../app/src/lib/mcp/tools.ts)) | PostgreSQL tables for cases, `agent_run` and an append-only `audit_log` with the same hash chain, inside the hospital network; one API for the web app, `analyze_case` and `record_decision` | 0 |
-| 2 | Authentication and roles | Every decision is signed as "Dr. Demo"; MCP uses shared tokens compared with `!==` | OIDC SSO with MFA; roles for oncologist, pharmacist, pathologist; OAuth for MCP; constant-time token checks | 0 |
-| 3 | CI with an evaluation gate | `npm test` and `npm run eval` are run by hand (the eval now reads the test count from Vitest) | GitHub Actions: type check, lint, `npm test`, `npm run eval`; fail on any metric drop; regenerate stored runs when agents change | 0 |
+| 1 | One store for every channel | The web app stores cases, runs and the audit log in PostgreSQL per account when `DATABASE_URL` is set ([store.ts](../app/src/lib/server/store.ts)); MCP `record_decision` still keeps its chain in process memory ([tools.ts](../app/src/lib/mcp/tools.ts)) | Route `record_decision` and `analyze_case` through the same store and account; backups and a tested restore; the hospital's own PostgreSQL in country | 0 |
+| 2 | SSO and roles | Accounts come from environment variables with scrypt hashes and a signed session cookie; every account has the same rights; MCP uses a shared bearer token | OIDC SSO with MFA; roles for oncologist, pharmacist, pathologist, tumour-board chair; OAuth for MCP; per-session revocation | 0 |
+| 3 | Evaluation gate | CI runs types, lint, `npm test`, `npm run eval`, the build and a smoke test on every push ([ci.yml](../.github/workflows/ci.yml)), but metric drops do not fail it and deploys do not wait for it | Fail CI on any metric drop; deploy only from a green build; regenerate stored runs when agents change | 0 |
 | 4 | PDF report upload | Report text must be pasted ([extract.ts](../app/src/lib/clinical/extract.ts)) | Text extraction from text-based PDFs in the browser, feeding the same deterministic reader; then scanned reports with a clinician-confirmed extraction step | 1 |
 | 5 | Guideline retrieval | The knowledge pack is a hand-written summary ([knowledge.ts](../app/src/lib/data/knowledge.ts)) | Versioned guideline and label retrieval with citations to section level, under the right licences; pack entries become reviewed records | 1 |
 | 6 | FHIR R4 / mCODE ingestion | Records are TypeScript objects or typed case input ([caseInput.ts](../app/src/lib/caseInput.ts)) | Map `CaseInput` and `Patient` to mCODE profiles; ingest from a HAPI FHIR test server with Synthea data | 1 |

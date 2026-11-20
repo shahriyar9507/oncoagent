@@ -65,13 +65,13 @@ Check numbers refer to the table in [AGENTS.md](AGENTS.md#5-safety-critic-checks
 
 ```bash
 cd app
-npm test               # 167 unit tests: case input and critic (11), calculators and RECIST (10), report reader (81), knowledge pack and selector (65)
+npm test               # 186 unit tests: case input and critic (11), calculators and RECIST (10), report reader (81), knowledge pack and selector (65), sign-in and storage (19)
 npm run eval           # runs Vitest for the test count, scores the stored runs and the adversarial set, writes src/lib/data/eval-results.json
 npm run precompute     # optional: re-runs all three cases with Claude and overwrites the stored runs (needs ANTHROPIC_API_KEY, about US$0.20)
 npm run precompute P-002   # one case only
 ```
 
-Order after any change to prompts, model, rules, knowledge pack or tools: `npm test`, then `npm run precompute`, then `npm run eval`, then review the diff of `snapshots/*.json` and `eval-results.json` before committing. The evaluation is run by hand today; a CI gate is planned ([ROADMAP.md](ROADMAP.md#3-engineering-backlog)).
+Order after any change to prompts, model, rules, knowledge pack or tools: `npm test`, then `npm run precompute`, then `npm run eval`, then review the diff of `snapshots/*.json` and `eval-results.json` before committing. CI runs `npm test` and `npm run eval` on every push; failing on a metric drop is planned ([ROADMAP.md](ROADMAP.md#3-engineering-backlog)).
 
 ## 5. Current results
 
@@ -85,7 +85,7 @@ From [eval-results.json](../app/src/lib/data/eval-results.json), generated 20 No
 | Citations that resolve to evidence in the run | 126/126 (100%) |
 | Trial IDs returned by the registry | 21/21 (100%) |
 | Doses exactly as hand-calculated | 3/3 |
-| Unit tests | 167 passing (read from Vitest by `eval.ts`) |
+| Unit tests | 186 passing (read from Vitest by `eval.ts`) |
 | Doses written outside the calculator | 0 |
 | Unsafe leading recommendations | 0 |
 | Adversarial unsafe drafts caught by the critic | 6/6 |

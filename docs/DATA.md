@@ -113,7 +113,7 @@ From [dose.ts](../app/src/lib/clinical/dose.ts).
 |---|---|
 | `seq` | 1, 2, 3 … |
 | `at` | ISO time |
-| `actor` | `Dr. Demo` in the MVP |
+| `actor` | Display name of the signed-in clinician, set on the server from the session (`Dr. Demo` only when sign-in is off) |
 | `action` | `approve`, `modify`, `reject` or `agent-run` |
 | `cardId`, `patientId` | |
 | `reasonCode`, `reasonText` | Reason code required for modify and reject; `Approved despite safety-critic flag` when a flagged card is approved |
@@ -153,7 +153,7 @@ flowchart LR
   rx --> confirm["Clinician confirms<br/>or edits fields"]
   form["Form fields"] --> confirm
   confirm --> zod1["CaseInputSchema<br/>(browser)"]
-  zod1 --> store[("localStorage<br/>oncoagent.cases.v1")]
+  zod1 --> store[("PostgreSQL oa_cases (per account)<br/>or localStorage oncoagent.cases.v1")]
   store --> api["POST /api/agents/run<br/>caseId and caseInput"]
   api --> zod2["CaseInputSchema<br/>(server)"]
   zod2 --> build["buildPatientFromInput()"]
@@ -243,7 +243,7 @@ The form offers four examples to start from: EGFR exon 19 deletion (new diagnosi
 
 ### 3.6 StoredCase
 
-[cases.ts](../app/src/lib/cases.ts) keeps cases in browser `localStorage` under `oncoagent.cases.v1`, newest first, as `{ id, createdAt, updatedAt, input }`. Entries that fail `CaseInputSchema` on read are dropped. `deleteCase()` removes the case and its live run; signed audit entries are kept. A case exists only in the browser where it was created.
+[cases.ts](../app/src/lib/cases.ts) stores cases as `{ id, createdAt, updatedAt, input }`, newest first. With `DATABASE_URL` set they go through `/api/cases` to the `oa_cases` table, one set per account; the server validates `input` with `CaseInputSchema` on every write. Without it they stay in browser `localStorage` under `oncoagent.cases.v1`, and entries that fail `CaseInputSchema` on read are dropped. `deleteCase()` removes the case and its live run; signed audit entries are kept. A browser-mode case exists only in the browser where it was created.
 
 ## 4. Knowledge pack
 
@@ -343,7 +343,7 @@ Not used: OncoKB (needs a commercial licence), NCCN content (redistribution limi
 |---|---|
 | Collected by the intake form | Age, sex, clinical fields, free-text label, sites, regimen names, medication names and question. No name, record number, address, phone number or date of birth field |
 | Pasted report text | Read in the browser; not saved and not sent to the server by the workspace. The MCP `extract_report` tool does send text to the server, and its description asks callers to remove identifiers first |
-| Sent to the server for a case run | The validated `CaseInput` (including the label); the server rebuilds the record in memory and stores nothing |
+| Sent to the server for a case run | The validated `CaseInput` (including the label); the server rebuilds the record in memory. With server storage the case and the finished run are saved for the signed-in account |
 | Sent to Claude | Pseudonymous ID, age band, sex, smoking, diagnosis, stage with sites, ECOG, PD-L1, variants, therapy lines, RECIST, ctDNA, medication names and tags, the question, the evidence list (including timeline event text) and draft card summaries ([claude.ts](../app/src/lib/agents/claude.ts)) |
 | Never sent to Claude | Display name or case label, exact age, weight, height, creatinine, allergies, pasted report text |
 | Returned by MCP `get_case_timeline` | Age band instead of age; no display name |
@@ -356,11 +356,12 @@ Free-text fields of an entered case reach the model as written, and dates are se
 
 | Data | MVP | Production (planned) |
 |---|---|---|
-| Entered cases | Browser `localStorage`, key `oncoagent.cases.v1`. Kept until deleted in the workspace or until site data is cleared. Not shared between browsers or users | The hospital's own database, inside its network, with access control and retention per policy and law |
-| Audit log | Browser `localStorage`, key `oncoagent.audit.v1`, an array of `AuditEntry`. Kept until the user clears site data; deleting a case keeps its audit entries | Append-only server table with signed entries, backed up |
-| Live runs | Browser `localStorage`, key `oncoagent.run.v1.<patientId or caseId>`, one `PipelineResult` each. Replaced by the next live run; removed by "Stored run" (demo patients) or by deleting the case | Server run store linked to the audit log and the model and prompt versions |
+| Entered cases | Server mode: `oa_cases`, per account, until deleted. Browser mode: `localStorage`, key `oncoagent.cases.v1`, until deleted or site data is cleared; not shared between browsers or users | The hospital's own database, inside its network, with access control and retention per policy and law |
+| Audit log | Server mode: `oa_audit`, append-only (no updates or deletes), kept indefinitely; deleting a case keeps its entries. Browser mode: `localStorage`, key `oncoagent.audit.v1`, until site data is cleared | Same table, backed up, with signed exports |
+| Live runs | Server mode: `oa_runs`, one per account and patient or case ID. Browser mode: `localStorage`, key `oncoagent.run.v1.<patientId or caseId>`. Replaced by the next live run; removed by "Stored run" (demo patients) or by deleting the case | Run store linked to the audit log and the model and prompt versions |
+| Sessions | Signed cookie in the browser, 12 hours; nothing stored on the server | SSO session with central revocation |
 | MCP decisions | Server memory per instance; lost on restart | Same table as the audit log |
-| Server logs | Platform default request logs; the app writes no patient data to logs | Central logging with PHI controls and a retention schedule |
+| Server logs | Platform request logs plus structured JSON events (sign-in, run finished, audit appended) carrying the account, client IP (sign-in only), the case ID and counts; no clinical content | Central logging with PHI controls and a retention schedule |
 | Stored runs, snapshots, eval results | Committed to the repository | Versioned artefacts in the evaluation store |
 
 If browser storage is full or blocked (for example in some private windows), saving a case fails with a message, a finished run stays on screen for the visit only, and new audit entries are not kept after the page reloads.

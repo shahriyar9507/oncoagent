@@ -29,6 +29,7 @@
 | **খোলা প্রশ্ন (curiosity gap)** | "So what should her doctor do next?"। উত্তর আসে দৃশ্য ৬-এ। | অসমাপ্ত প্রশ্ন দর্শককে উত্তর পর্যন্ত ধরে রাখে। |
 | **তুলনা ও অ্যাঙ্করিং** | ৭,৬০০ বনাম ১৩৭ | দুটি সংখ্যা পাশাপাশি থাকলে সমস্যার মাপ এক নজরে বোঝা যায়। |
 | **নায়ক ডাক্তার, AI সহকারী** | "an assistant team *for* the oncologist", "The doctor decides" | "AI ডাক্তারকে সরিয়ে দেবে" এই ভয় কমায়। হেলথ-টেক বিচারকের প্রথম আপত্তি ঠিক এটাই। |
+| **পেশাদার টুল, প্রথম দেখাতেই (sign-in)** | দৃশ্য ৪: ডাক্তার সাইন-ইন করেন, সোজা নিজের decision queue-তে পৌঁছান | এক সেকেন্ডেই বোঝা যায় এটি শুধু ক্লিনিশিয়ানদের জন্য। প্রতিটি সইয়ের পেছনে একজন নির্দিষ্ট ডাক্তার থাকেন, তাই দৃশ্য ৮-এর জবাবদিহির কথা আরও বিশ্বাসযোগ্য হয়। |
 | **বলে নয়, দেখিয়ে (show, don't tell)** | দৃশ্য ৫–৮: আসল স্ক্রিনে আসল কাজ | লাইভ প্রোডাক্ট দেখলে "শুধু আইডিয়া" সন্দেহ দূর হয়। |
 | **নির্দিষ্ট সংখ্যা, বিশেষণ নয়** | ২৩ সেকেন্ড, ৪৬০ mg, ৬/৬, ১০০% | "fast", "accurate" কথার চেয়ে নির্দিষ্ট সংখ্যা বেশি বিশ্বাসযোগ্য। |
 | **নিজের ভুল দেখানো (pratfall effect)** | দৃশ্য ৭: সত্যিকারের, আগে থেকে সাজানো নয় এমন critic flag | ত্রুটি স্বীকার করে নিরাপত্তা দেখালে "AI ভুল বানায়" আপত্তির আগেই উত্তর দেওয়া হয়ে যায়। |
@@ -79,15 +80,19 @@
 
 **বাংলা:** বাংলাদেশে প্রায় সাত হাজার ছয়শো নতুন রোগীর জন্য একজন মেডিকেল অনকোলজিস্ট। যুক্তরাষ্ট্রে প্রায় একশো সাঁইত্রিশ জনের জন্য একজন। ওষুধ আছে, কিন্তু প্রতিটি রোগীর জন্য তা কাজে লাগানোর সময় নেই।
 
-### দৃশ্য ৪ · Reveal (0:35–0:45)
-**উদ্দেশ্য:** সমাধান দেখানো; নায়ক ডাক্তার, AI তাঁর সহকারী।
-**স্ক্রিন:** Overview পেজের হিরো অংশ, যেখানে এজেন্ট-বৃত্তের অ্যানিমেশন চলছে। মিউজিক সামান্য উঠবে।
+### দৃশ্য ৪ · Reveal (0:35–0:47)
+**উদ্দেশ্য:** সমাধান দেখানো; নায়ক ডাক্তার, AI তাঁর সহকারী। সাইন-ইন দেখিয়ে বোঝানো যে এটি ডাক্তারদের নিজস্ব কাজের জায়গা।
+**স্ক্রিন:**
+1. https://oncoagent.vercel.app/login?next=/queue পেজ (বাঁদিকে ব্র্যান্ড প্যানেল, ডানে sign-in কার্ড)। Username টাইপ করুন; password ঘরে শুধু বিন্দু দেখা যায়। **Sign in** চাপুন। (মোট ২ সেকেন্ড; টাইপিং অংশ দ্রুত করুন।)
+2. সোজা **Decision queue** খুলবে, উপরের বারে ডাক্তারের নাম। ১ সেকেন্ড থামুন।
+3. Overview পেজের হিরো অংশে কাট করুন, যেখানে এজেন্ট-বৃত্তের অ্যানিমেশন চলছে। মিউজিক সামান্য উঠবে।
+
 **Voice:**
-> So we built OncoAgent: / an assistant team for the oncologist. / AI proposes. / The doctor decides.
+> So we built OncoAgent: / an assistant team for the oncologist. / She signs in, and her cases are waiting. / AI proposes. / The doctor decides.
 
-**বাংলা:** তাই আমরা বানিয়েছি OncoAgent, অনকোলজিস্টের জন্য একটি সহকারী দল। AI প্রস্তাব দেয়, সিদ্ধান্ত নেন ডাক্তার।
+**বাংলা:** তাই আমরা বানিয়েছি OncoAgent, অনকোলজিস্টের জন্য একটি সহকারী দল। ডাক্তার সাইন-ইন করেন, তাঁর কেসগুলো অপেক্ষা করছে। AI প্রস্তাব দেয়, সিদ্ধান্ত নেন ডাক্তার।
 
-### দৃশ্য ৫ · এজেন্টরা কাজ করছে (0:45–1:08)
+### দৃশ্য ৫ · এজেন্টরা কাজ করছে (0:47–1:08)
 **উদ্দেশ্য:** দেখিয়ে দেওয়া যে এটি আসলেই চলে, আর দ্রুত চলে।
 **স্ক্রিন:**
 - রাহেলার পেজে **Claude synthesis** টিক দেওয়া আছে কিনা দেখুন, তারপর **Run agents live** চাপুন।
@@ -128,7 +133,7 @@
 **উদ্দেশ্য:** নিয়ন্ত্রণ সবসময় ডাক্তারের হাতে, এটি দেখানো; জবাবদিহি আর বাস্তব কাজের প্রমাণ।
 **স্ক্রিন:**
 1. রাহেলার treatment কার্ডে **Approve** চাপুন, কারণ লিখুন ("Agree; re-biopsy first, tumour board Friday") এবং **Approve and sign** চাপুন।
-2. নিচে-ডানের সবুজ বার্তা আর Audit log-এর **hash chain intact** দেখান।
+2. ডায়ালগে সই করা ডাক্তারের নাম দেখান: নামটি সাইন-ইন থেকে আসে, ব্রাউজারে বদলানো যায় না। তারপর নিচে-ডানের সবুজ বার্তা আর Audit log-এর **hash chain intact** দেখান।
 3. **Tumour-board report** চাপুন, প্রিন্টযোগ্য রিপোর্টটি ধীরে স্ক্রল করুন।
 
 **Voice:**
@@ -143,9 +148,9 @@
 2. Evaluation পেজের উপরের সংখ্যাগুলো দেখান।
 
 **Voice:**
-> The same tools are open to any AI client through MCP. / On our test cases: drivers found, three of three. Citations verified, one hundred percent. / These are fictional cases. / The next step is a real pilot.
+> The same tools are open to any authorised AI client through MCP. / On our test cases: drivers found, three of three. Citations verified, one hundred percent. / These are fictional cases. / The next step is a real pilot.
 
-**বাংলা:** একই টুলগুলো MCP দিয়ে যেকোনো AI ক্লায়েন্টের জন্য খোলা। আমাদের পরীক্ষার কেসে মূল জিন ধরা পড়েছে তিনে তিন, সূত্র যাচাই হয়েছে একশো শতাংশ। এগুলো কাল্পনিক কেস; পরের ধাপ সত্যিকারের পাইলট।
+**বাংলা:** একই টুলগুলো MCP দিয়ে যেকোনো অনুমোদিত AI ক্লায়েন্টের জন্য খোলা। আমাদের পরীক্ষার কেসে মূল জিন ধরা পড়েছে তিনে তিন, সূত্র যাচাই হয়েছে একশো শতাংশ। এগুলো কাল্পনিক কেস; পরের ধাপ সত্যিকারের পাইলট।
 
 ### দৃশ্য ১০ · শেষ ও অনুরোধ (2:24–2:40)
 **উদ্দেশ্য:** peak–end; একটি স্পষ্ট অনুরোধ আর মনে রাখার মতো লাইন।
@@ -164,6 +169,8 @@
 ## ৫. রেকর্ডিং চেকলিস্ট
 
 1. **নতুন InPrivate/Incognito উইন্ডো** খুলুন। এতে আগের সিদ্ধান্ত আর লাইভ রান থাকবে না।
+   - দলের অ্যাকাউন্ট দিয়ে সাইন-ইন করুন (বিবরণ সাবমিশন ফর্মে দেওয়া আছে)। Password কখনো স্ক্রিনে বা ভয়েসে বলবেন না; ব্রাউজার password সেভ করতে চাইলে **Never** চাপুন।
+   - সাইন-ইন ১২ ঘণ্টা থাকে। দৃশ্য ১–৩-এর রেকর্ডিং সাইন-ইনের পরে নিন; দৃশ্য ৪-এর সাইন-ইন অংশ আলাদা টেকে, sign out করে আবার রেকর্ড করুন।
 2. **রিহার্সাল:**
    - একবার P-001-এ Claude রান চালিয়ে দেখুন। প্রথম রান একটু ধীর হতে পারে।
    - লাইভ ডেমোতে Claude রান ১০ মিনিটে ৬টির বেশি চালানো যায় না, তাই রিহার্সালে Claude টিক তুলে বিনা খরচের rules-only রান চালান।
@@ -198,7 +205,9 @@ OncoAgent is an agentic decision-support workspace for oncologists, starting wit
 
 Live demo: https://oncoagent.vercel.app
 Code and docs: https://github.com/shahriyar9507/oncoagent
-MCP endpoint: https://oncoagent.vercel.app/api/mcp
+MCP endpoint: https://oncoagent.vercel.app/api/mcp (bearer token)
+
+The live demo is a clinician workspace and needs a sign-in; reviewers receive the sign-in details with the submission.
 
 Measured on three fictional cases: drivers 3/3, leading option 3/3, citations 100%, trial IDs 100%, 6/6 unsafe drafts caught, about 23 s and US$0.065 per case.
 All patients are fictional. Research prototype, not a medical device, not medical advice.

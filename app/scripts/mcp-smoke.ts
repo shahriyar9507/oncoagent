@@ -1,6 +1,6 @@
 // Connects to oncoagent-mcp, lists its tools and calls four of them.
 // stdio:  npx tsx scripts/mcp-smoke.ts
-// HTTP:   npx tsx scripts/mcp-smoke.ts https://<host>/api/mcp
+// HTTP:   MCP_BEARER_TOKEN=<token> npx tsx scripts/mcp-smoke.ts https://<host>/api/mcp
 import { Client, StreamableHTTPClientTransport } from "@modelcontextprotocol/client";
 import { StdioClientTransport } from "@modelcontextprotocol/client/stdio";
 
@@ -8,7 +8,9 @@ async function main() {
   const url = process.argv[2];
   const client = new Client({ name: "oncoagent-smoke", version: "1.0.0" });
   const transport = url
-    ? new StreamableHTTPClientTransport(new URL(url))
+    ? new StreamableHTTPClientTransport(new URL(url), {
+        requestInit: process.env.MCP_BEARER_TOKEN ? { headers: { authorization: `Bearer ${process.env.MCP_BEARER_TOKEN}` } } : undefined,
+      })
     : new StdioClientTransport({ command: process.execPath, args: ["--import", "tsx", "mcp/stdio.ts"] });
   await client.connect(transport);
   console.log(`connected via ${url ? "Streamable HTTP" : "stdio"}`);

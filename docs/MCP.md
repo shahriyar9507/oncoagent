@@ -18,11 +18,11 @@ One tool definition serves both transports, so they cannot drift apart.
 | Transport | Entry point | How it starts | Notes |
 |---|---|---|---|
 | stdio | [mcp/stdio.ts](../app/mcp/stdio.ts) | `serveStdio()` from `@modelcontextprotocol/server/stdio` creates an `McpServer` and calls `registerOncoTools` | Loads `.env.local` (then `../.env.local`) from the working directory, if present. Run with `npm run mcp:stdio` or `npx tsx mcp/stdio.ts` from `app/` |
-| Streamable HTTP | [api/mcp/route.ts](../app/src/app/api/mcp/route.ts) | `createMcpHandler()` from `mcp-handler` on a Next.js route; `GET`, `POST` and `DELETE` | `maxDuration = 300` s. Optional bearer token (below) |
+| Streamable HTTP | [api/mcp/route.ts](../app/src/app/api/mcp/route.ts) | `createMcpHandler()` from `mcp-handler` on a Next.js route; `GET`, `POST` and `DELETE` | `maxDuration = 300` s. Bearer token or signed-in session (below) |
 
 ### Authentication on the HTTP endpoint
 
-If the server has `MCP_BEARER_TOKEN` set, every request must carry `Authorization: Bearer <token>`. Otherwise the route answers:
+A request is accepted when it carries `Authorization: Bearer <MCP_BEARER_TOKEN>` (compared in constant time), or when it comes from a signed-in clinician's browser (the in-app tester on `/mcp`). Otherwise the route answers:
 
 ```http
 HTTP/1.1 401 Unauthorized
@@ -32,22 +32,18 @@ www-authenticate: Bearer
 {"error":"unauthorized"}
 ```
 
-The public demo runs without a bearer token so judges can try it. Production replaces this with OAuth or hospital SSO ([ROADMAP.md](ROADMAP.md#3-engineering-backlog)).
+The endpoint is open when `MCP_PUBLIC=true` (a deliberate choice for a public review: the tools read fictional records and public sources, `record_decision` still needs the clinician token, and Claude runs stay rate-limited), or when no token is set **and** sign-in is off (`AUTH_MODE=off`, local work). Since v0.4 the public demo sets a token, so external clients need it; after signing in, judges can use the in-app tester on `/mcp` without one. Production replaces the shared token with OAuth or hospital SSO ([ROADMAP.md](ROADMAP.md#3-engineering-backlog)).
 
 ## 2. Connecting a client
 
 ### Claude Code (HTTP)
 
 ```bash
-claude mcp add --transport http oncoagent https://oncoagent.vercel.app/api/mcp
-```
-
-With a bearer token:
-
-```bash
-claude mcp add --transport http oncoagent https://<your-host>/api/mcp \
+claude mcp add --transport http oncoagent https://oncoagent.vercel.app/api/mcp \
   --header "Authorization: Bearer <token>"
 ```
+
+Without the header the client gets 401. On a local server with `AUTH_MODE=off` and no `MCP_BEARER_TOKEN`, leave it out.
 
 ### Claude Desktop (HTTP through `mcp-remote`)
 
@@ -56,7 +52,7 @@ claude mcp add --transport http oncoagent https://<your-host>/api/mcp \
   "mcpServers": {
     "oncoagent": {
       "command": "npx",
-      "args": ["-y", "mcp-remote", "https://oncoagent.vercel.app/api/mcp"]
+      "args": ["-y", "mcp-remote", "https://oncoagent.vercel.app/api/mcp", "--header", "Authorization: Bearer <token>"]
     }
   }
 }
@@ -95,12 +91,12 @@ On Windows the binary is `node_modules\.bin\tsx.cmd`.
 ```bash
 cd app
 npm run mcp:smoke                                          # stdio
-npx tsx scripts/mcp-smoke.ts https://oncoagent.vercel.app/api/mcp   # Streamable HTTP
+MCP_BEARER_TOKEN=<token> npx tsx scripts/mcp-smoke.ts https://oncoagent.vercel.app/api/mcp   # Streamable HTTP
 ```
 
 ### Raw JSON-RPC over HTTP
 
-Send JSON-RPC 2.0 with `Accept: application/json, text/event-stream`. The deployed handler answers a single `tools/list` or `tools/call` request without a prior `initialize`, which is how the in-browser tester works; standard MCP clients perform the full handshake. The response may arrive as a Server-Sent Events frame (`event: message` and a `data:` line holding the JSON-RPC response); read the last `data:` line.
+Send JSON-RPC 2.0 with `Accept: application/json, text/event-stream` and `Authorization: Bearer <token>`. The deployed handler answers a single `tools/list` or `tools/call` request without a prior `initialize`, which is how the in-browser tester works; standard MCP clients perform the full handshake. The response may arrive as a Server-Sent Events frame (`event: message` and a `data:` line holding the JSON-RPC response); read the last `data:` line.
 
 Each tool returns one `text` content item whose text is JSON (pretty-printed). Errors set `isError: true`. The examples below show the decoded JSON and are trimmed with `…`.
 

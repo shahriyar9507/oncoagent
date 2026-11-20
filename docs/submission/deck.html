@@ -1026,11 +1026,11 @@ html.print .cnt::after { content: none !important; display: none !important; }
       <p>Three fictional gold cases cannot support clinical accuracy claims. A pilot needs hundreds of de-identified cases with tumour-board answers, reviewed under ethics approval.</p>
     </div>
     <p class="fill"></p>
-    <p class="src">scripts/eval.ts on stored runs, 20 Nov 2026. <span class="cnt">167</span> unit tests cover dose and RECIST, knowledge-pack selection and dosing, and the report reader. Fictional patients only.</p>
+    <p class="src">scripts/eval.ts on stored runs, 20 Nov 2026. <span class="cnt">186</span> unit tests cover dose and RECIST, knowledge-pack selection and dosing, the report reader, sign-in and storage. Fictional patients only.</p>
   </div>
   <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">14 / 20</span></div>
   <aside class="notes">
-    <p><b>Say:</b> "We measure every run. On our three fictional gold cases: the right driver, the right leading option, every citation real, every trial ID from the registry, no dose outside the calculator, 23 seconds and about six and a half cents per case, with 167 unit tests underneath. And the limit: three cases show the pipeline works. They do not prove clinical accuracy. That needs hundreds of real cases under ethics approval."</p>
+    <p><b>Say:</b> "We measure every run. On our three fictional gold cases: the right driver, the right leading option, every citation real, every trial ID from the registry, no dose outside the calculator, 23 seconds and about six and a half cents per case, with 186 unit tests underneath. And the limit: three cases show the pipeline works. They do not prove clinical accuracy. That needs hundreds of real cases under ethics approval."</p>
     <p><b>Why:</b> Candour. Stating the limit ourselves makes every number above it believable.</p>
   </aside>
 </section>
@@ -1044,12 +1044,12 @@ html.print .cnt::after { content: none !important; display: none !important; }
       <h2 class="rv m" style="--d:1">Every proposal waits for a clinician's signature.</h2>
       <div class="ctl stg" style="--d:2">
         <div><div class="acts"><em class="a">Approve</em><em>Modify</em><em>Reject</em></div><span style="margin-top:12px">A reason is required to modify or reject. Approving a card the critic flagged needs an explicit acknowledgement and a reason.</span></div>
-        <div><b>Signed and chained</b><span>Each decision is SHA-256 hash-chained to the one before. It cannot be edited afterwards.</span></div>
+        <div><b>Signed and chained</b><span>The signer comes from the clinician's sign-in. Each decision is SHA-256 hash-chained and cannot be edited afterwards.</span></div>
         <div><b>Decision queue</b><span>Flagged cards come first, then safety, treatment and tests.</span></div>
         <div><b>Tumour-board report</b><span>A printable pre-read with every card and its status.</span></div>
       </div>
       <p class="fill"></p>
-      <p class="src">The decision tool refuses to sign without a clinician token. In the demo the log is stored in the browser; production stores it server-side.</p>
+      <p class="src">Every page needs a clinician sign-in. The live demo keeps the log in the browser; with a database connected it is stored per account in PostgreSQL.</p>
     </div>
     <div class="col grow mid">
       <div class="shot crop rv" style="--d:3;width:100%;height:640px"><img src="../assets/screenshots/06-sign-off-dialog.webp" alt="Approve this card dialog: the doctor adds a note and signs; the entry is SHA-256 hash-chained" style="width:1440px;left:-326px;top:-130px"></div>
@@ -1095,13 +1095,13 @@ html.print .cnt::after { content: none !important; display: none !important; }
         <i>list_patients</i><i>get_case_timeline</i><i>interpret_variant</i><i>search_trials</i><i>calculate_dose</i><i>draft_recommendations</i><i class="m">extract_report</i><i class="m">analyze_case</i><i class="k">record_decision</i>
       </div>
       <div class="facts stg" style="--d:5">
-        <div><b>Server</b><span>oncoagent-mcp v0.2.0: nine tools, one definition</span></div>
+        <div><b>Server</b><span>oncoagent-mcp v0.4.0: nine tools, one definition</span></div>
         <div><b>New</b><span><code>extract_report</code> reads report text with no AI; <code>analyze_case</code> runs all nine agents on a de-identified case</span></div>
         <div><b>Transports</b><span>stdio and Streamable HTTP, both tested with an MCP client</span></div>
-        <div><b>Safety</b><span><code>record_decision</code> refuses without a clinician token</span></div>
+        <div><b>Safety</b><span>HTTP needs a bearer token or sign-in; <code>record_decision</code> needs a clinician token</span></div>
       </div>
       <p class="fill"></p>
-      <p class="src">Endpoint: <b style="color:var(--ink);font-weight:600">oncoagent.vercel.app/api/mcp</b> (Streamable HTTP) · stdio: npx tsx mcp/stdio.ts. Every client gets the same nine tools and the same clinician-token rule.</p>
+      <p class="src">Endpoint: <b style="color:var(--ink);font-weight:600">oncoagent.vercel.app/api/mcp</b> (Streamable HTTP, bearer token) · stdio: npx tsx mcp/stdio.ts. Every client gets the same nine tools and the same clinician-token rule.</p>
     </div>
     <div class="col grow mid">
       <div class="shot rv" style="--d:3;width:100%;height:700px"><img src="../assets/screenshots/11-mcp-playground.webp" alt="MCP tool tester calling interpret_variant for EGFR C797S and returning live CIViC evidence"></div>

@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { createHash, timingSafeEqual } from "node:crypto";
 import { APP_VERSION } from "../version";
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/server";
@@ -13,6 +13,12 @@ import { allow, MCP_CLAUDE_RUNS_PER_HOUR } from "../ratelimit";
 import { CASE_ID_PATTERN, CaseInputSchema, buildPatientFromInput, newCaseId } from "../caseInput";
 import { extractReport } from "../clinical/extract";
 import type { Patient } from "../types";
+
+/** Constant-time comparison of two secrets (hashing first makes the lengths equal). */
+function sameSecret(given: string, expected: string): boolean {
+  const digest = (v: string) => createHash("sha256").update(v).digest();
+  return timingSafeEqual(digest(given), digest(expected));
+}
 
 // oncoagent-mcp: the platform's tools, served over stdio and Streamable HTTP from one definition.
 export const SERVER_INFO = { name: "oncoagent-mcp", version: APP_VERSION };
@@ -194,7 +200,7 @@ export function registerOncoTools(server: McpServer) {
     },
     async (a) => {
       const expected = process.env.CLINICIAN_TOKEN;
-      if (!expected || a.clinician_token !== expected) {
+      if (!expected || !sameSecret(a.clinician_token, expected)) {
         return { ...text("Refused: decisions can only be signed with a valid clinician session token. The AI proposes; a clinician decides."), isError: true };
       }
       const prevHash = chain.length ? chain[chain.length - 1].hash : "0".repeat(64);

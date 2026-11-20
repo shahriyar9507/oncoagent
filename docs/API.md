@@ -1,16 +1,49 @@
 # HTTP API
 
-The workspace exposes three HTTP routes. All are Next.js route handlers in [`app/src/app/api/`](../app/src/app/api).
+All routes are Next.js route handlers in [`app/src/app/api/`](../app/src/app/api).
 
-| Method | Path | Purpose | Auth (MVP) |
+| Method | Path | Purpose | Auth |
 |---|---|---|---|
-| `POST` | `/api/agents/run` | Run the agent pipeline for one patient and stream progress as NDJSON | None; Claude runs are rate-limited |
-| `GET` | `/api/health` | Report whether Claude is configured and whether CIViC and ClinicalTrials.gov answer | None |
-| `GET`, `POST`, `DELETE` | `/api/mcp` | MCP Streamable HTTP endpoint | Optional bearer token |
+| `POST` | `/api/auth/login` | Sign in; sets the session cookie | Public; lockout after repeated failures |
+| `POST` | `/api/auth/logout` | Clear the session cookie | Public |
+| `GET` | `/api/auth/session` | The signed-in clinician | Session |
+| `POST` | `/api/agents/run` | Run the agent pipeline for one patient and stream progress as NDJSON | Session; Claude runs are rate-limited |
+| `GET`, `POST` | `/api/cases` | List or create entered cases | Session + server storage |
+| `GET`, `PUT`, `DELETE` | `/api/cases/[id]` | Read, create-or-update, or delete one case | Session + server storage |
+| `GET` | `/api/runs?ids=P-001,C-…` | Latest stored run for each ID | Session + server storage |
+| `DELETE` | `/api/runs/[id]` | Forget the stored run for one ID | Session + server storage |
+| `GET`, `POST` | `/api/audit` | Read the account's audit log with a chain check, or append an entry | Session + server storage |
+| `GET` | `/api/store` | Which storage this deployment uses | Session |
+| `GET` | `/api/health` | Version, sign-in and storage readiness, Claude, CIViC and ClinicalTrials.gov | Public |
+| `GET`, `POST`, `DELETE` | `/api/mcp` | MCP Streamable HTTP endpoint | Bearer token or session |
 
 Base URL of the public demo: `https://oncoagent.vercel.app`. Locally: `http://localhost:3000`.
 
-The API has no version prefix and no user authentication in the MVP. Both are planned ([ROADMAP.md](ROADMAP.md#3-engineering-backlog)). Every response carries the security headers set in [next.config.ts](../app/next.config.ts) (`X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `X-Frame-Options: SAMEORIGIN`).
+### Authentication
+
+Sign in once; the session is a signed cookie (`oa_session`, `httpOnly`, `SameSite=Lax`, `Secure` in production, 12 hours). Without it, pages redirect to `/login?next=<page>` and API routes answer `401 {"error":"Sign in required"}`. Route handlers check the session again before touching data ([`proxy.ts`](../app/src/proxy.ts), [`auth.ts`](../app/src/lib/server/auth.ts)).
+
+```bash
+# sign in and keep the cookie
+curl -s -c jar.txt https://oncoagent.vercel.app/api/auth/login \
+  -H "content-type: application/json" -d '{"username":"<username>","password":"<password>"}'
+# {"ok":true,"user":{"name":"…","role":"clinician","username":"…"},"next":"/"}
+
+curl -s -b jar.txt https://oncoagent.vercel.app/api/auth/session
+curl -s -b jar.txt -X POST https://oncoagent.vercel.app/api/auth/logout
+```
+
+| Login answer | Meaning |
+|---|---|
+| 200 | Signed in; `next` is a safe same-site path to open |
+| 400 | Username or password missing |
+| 401 | Wrong username or password (the same message for an unknown username) |
+| 429 | 10 failures from this IP or 20 for this username within 15 minutes; see `retry-after` |
+| 503 | Sign-in not configured (`AUTH_SECRET` missing) |
+
+`POST`, `PUT`, `PATCH` and `DELETE` requests to `/api/*` that carry an `Origin` header from another site are refused with `403 {"error":"Cross-site request refused"}`.
+
+The API has no version prefix. Every response carries the security headers set in [next.config.ts](../app/next.config.ts): Content Security Policy, `Strict-Transport-Security` (production), `Cross-Origin-Opener-Policy`, `Permissions-Policy`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin` and `X-Frame-Options: SAMEORIGIN`. API answers also carry `Cache-Control: no-store`.
 
 ## 1. `POST /api/agents/run`
 
@@ -98,6 +131,7 @@ Card and evidence fields: [AGENTS.md](AGENTS.md#3-recommendation-card-schema). D
 
 | Status | Body | Cause |
 |---|---|---|
+| `401` | `{"error":"Sign in required"}` | No valid session cookie |
 | `400` | `{"error":"Invalid JSON body"}` | Body is not JSON |
 | `400` | `{"error":"Invalid caseId"}` | `caseInput` sent without a valid `caseId` |
 | `400` | `{"error":"Invalid case","issues":["age: Too small: expected number to be >=18","creatinineDate: Not a real date"]}` | `caseInput` fails `CaseInputSchema`; up to 8 issues as `path: message` |
@@ -117,10 +151,10 @@ Live Claude runs are limited to **6 per 10 minutes per client IP** (`CLAUDE_RUNS
 
 ### curl
 
-Rules-only run, print each line as it arrives:
+Sign in first and pass the cookie jar (`-b jar.txt`, see [Authentication](#authentication)). Rules-only run, print each line as it arrives:
 
 ```bash
-curl -N -s https://oncoagent.vercel.app/api/agents/run \
+curl -N -s -b jar.txt https://oncoagent.vercel.app/api/agents/run \
   -H "content-type: application/json" \
   -d '{"patientId":"P-002","useClaude":false}'
 ```
@@ -128,7 +162,7 @@ curl -N -s https://oncoagent.vercel.app/api/agents/run \
 Keep only the final cards with their critic verdicts (needs `jq`):
 
 ```bash
-curl -N -s https://oncoagent.vercel.app/api/agents/run \
+curl -N -s -b jar.txt https://oncoagent.vercel.app/api/agents/run \
   -H "content-type: application/json" \
   -d '{"patientId":"P-003","useClaude":false}' \
   | jq -c 'select(.type=="result") | .result.cards[] | {agent, kind, verdict: .critic.verdict, proposal}'
@@ -137,7 +171,7 @@ curl -N -s https://oncoagent.vercel.app/api/agents/run \
 Run with Claude synthesis and show the rate-limit headers if you hit the limit:
 
 ```bash
-curl -N -s -D - https://oncoagent.vercel.app/api/agents/run \
+curl -N -s -D - -b jar.txt https://oncoagent.vercel.app/api/agents/run \
   -H "content-type: application/json" \
   -d '{"patientId":"P-001"}'
 ```
@@ -145,12 +179,12 @@ curl -N -s -D - https://oncoagent.vercel.app/api/agents/run \
 Rules-only run on a de-identified case (the body is a full `CaseInput`; see [MCP.md](MCP.md#38-analyze_case) for a complete example):
 
 ```bash
-curl -N -s https://oncoagent.vercel.app/api/agents/run   -H "content-type: application/json"   -d @case.json     # {"caseId":"C-7K2M9Q","caseInput":{…},"useClaude":false}
+curl -N -s -b jar.txt https://oncoagent.vercel.app/api/agents/run   -H "content-type: application/json"   -d @case.json     # {"caseId":"C-7K2M9Q","caseInput":{…},"useClaude":false}
 ```
 
 ### How the workspace uses it
 
-[AgentWorkspace.tsx](../app/src/components/AgentWorkspace.tsx) sends `{ patientId, useClaude }` for a demo patient or `{ caseId, caseInput, useClaude }` for an entered case, reads the stream with `fetch` and a `TextDecoder`, splits on newlines, updates the step tiles for each `step`, and on `result` saves the run in the browser (`saveRun()`, keyed by patient or case ID) and writes an `agent-run` audit entry. If browser storage is blocked, the finished run stays on screen for the visit. An `error` line or a non-200 response is shown above the cards, the previous run stays on screen, and the clinician is offered a rules-only run.
+[AgentWorkspace.tsx](../app/src/components/AgentWorkspace.tsx) sends `{ patientId, useClaude }` for a demo patient or `{ caseId, caseInput, useClaude }` for an entered case, reads the stream with `fetch` and a `TextDecoder`, splits on newlines and updates the step tiles for each `step`. With server storage, the route itself stores the finished run and an `agent-run` audit entry signed by the session user, and the `result` line carries `persisted: true`. In browser mode the workspace saves the run in the browser (`saveRun()`, keyed by patient or case ID) and writes the `agent-run` entry there. If browser storage is blocked, the finished run stays on screen for the visit. An `error` line or a non-200 response is shown above the cards, the previous run stays on screen, and the clinician is offered a rules-only run.
 
 ## 2. `GET /api/health`
 
@@ -162,6 +196,10 @@ curl -s https://oncoagent.vercel.app/api/health
 
 ```json
 {
+  "status": "ok",
+  "version": "0.4.0",
+  "auth": { "required": true, "ready": true },
+  "storage": { "mode": "browser", "ok": true },
   "claude": { "configured": true, "model": "claude-opus-5-5" },
   "civic": { "live": true, "ms": 412, "fallback": "stored snapshot" },
   "trials": { "live": true, "ms": 298, "fallback": "stored snapshot" },
@@ -171,6 +209,10 @@ curl -s https://oncoagent.vercel.app/api/health
 
 | Field | Meaning |
 |---|---|
+| `status` | `ok`, or `degraded` when sign-in is required but not configured, or the database cannot be reached. `degraded` answers HTTP 503 |
+| `version` | App version |
+| `auth.required`, `auth.ready` | Sign-in is on; `AUTH_SECRET` and at least one account are configured |
+| `storage.mode`, `storage.ok` | `server` (PostgreSQL) or `browser`; for `server`, whether a test query succeeded (`storage.driver`, and `storage.error` on failure) |
 | `claude.configured` | `ANTHROPIC_API_KEY` is set on the server. The key itself is never returned. This does not call the Claude API |
 | `claude.model` | The pinned model ID |
 | `civic.live`, `civic.ms` | A `{ __typename }` GraphQL query to CIViC answered with HTTP 2xx within 4 s, and how long it took |
@@ -182,35 +224,58 @@ The top bar shows "Agents online" when all three are true, "Rules-only mode" whe
 
 ## 3. `/api/mcp`
 
-The MCP Streamable HTTP endpoint for `oncoagent-mcp`. Methods `GET`, `POST` and `DELETE`; `maxDuration = 300` seconds. With `MCP_BEARER_TOKEN` set, requests without `Authorization: Bearer <token>` get `401 {"error":"unauthorized"}` and `www-authenticate: Bearer`. Tools, schemas and examples: [MCP.md](MCP.md).
+The MCP Streamable HTTP endpoint for `oncoagent-mcp`. Methods `GET`, `POST` and `DELETE`; `maxDuration = 300` seconds. A request is accepted with `Authorization: Bearer <MCP_BEARER_TOKEN>` (compared in constant time) or with a signed-in session (the in-app tester on `/mcp`). Otherwise it gets `401 {"error":"unauthorized"}` and `www-authenticate: Bearer`. The endpoint is open only when no token is set and sign-in is off. Tools, schemas and examples: [MCP.md](MCP.md).
 
-## 4. Pages
+## 4. Storage API
 
-Not an API, listed for completeness.
+Available when `DATABASE_URL` is set; otherwise these routes answer `503 {"error":"Server storage is not configured","mode":"browser"}` and the app keeps data in the browser. Every query is limited to the signed-in account. Sources: [`api/cases`](../app/src/app/api/cases), [`api/runs`](../app/src/app/api/runs), [`api/audit`](../app/src/app/api/audit), [`store.ts`](../app/src/lib/server/store.ts).
+
+| Request | Body | Answer |
+|---|---|---|
+| `GET /api/cases` | — | `{ cases: StoredCase[] }`, newest first |
+| `POST /api/cases` | `{ id?, input: CaseInput }` | `201 { case }`; a new `C-XXXXXX` ID when `id` is left out; `409` if the ID belongs to another account |
+| `GET /api/cases/C-XXXXXX` | — | `{ case }` or `404` |
+| `PUT /api/cases/C-XXXXXX` | `{ input: CaseInput }` | `{ case }` (creates or updates) |
+| `DELETE /api/cases/C-XXXXXX` | — | `{ ok: true }`; the case's stored run goes with it |
+| `GET /api/runs?ids=P-001,C-XXXXXX` | — | `{ runs: { [id]: PipelineResult } }`; up to 200 IDs |
+| `DELETE /api/runs/P-001` | — | `{ ok: true }` |
+| `GET /api/audit` | — | `{ entries: AuditEntry[], chainOk: boolean }` |
+| `POST /api/audit` | `{ action: "approve" \| "modify" \| "reject" \| "agent-run", patientId, cardId?, reasonCode?, reasonText? }` | `201 { entry }`. `actor` is the session user. A decision needs `cardId`; `modify` and `reject` need a reason of 5 or more characters |
+| `GET /api/store` | — | `{ mode: "server" \| "browser", driver }` |
+
+`CaseInput` is validated with the same Zod schema as the run API ([caseInput.ts](../app/src/lib/caseInput.ts)); invalid input answers `400` with up to eight `issues`. Bodies are limited to 256 KB (16 KB for audit entries). Audit entries cannot be changed or deleted: the database refuses `UPDATE` and `DELETE` on `oa_audit`.
+
+## 5. Pages
+
+Not an API, listed for completeness. Every page except `/login` needs a session.
 
 | Path | Content |
 |---|---|
+| `/login` | Sign-in; `?next=<path>` opens that page afterwards |
 | `/` | Overview: pending cards, recent activity, evaluation headline numbers |
-| `/patients` | Demo patients and the cases entered in this browser |
+| `/patients` | Demo patients and the entered cases (this account's, or this browser's) |
 | `/patients/[id]` | Patient record: summary, RECIST and ctDNA charts, agent run, cards, dose card, evidence, audit log, timeline, 3D structure, molecular profile, trials |
 | `/patients/[id]/report` | Printable A4 tumour-board pre-read |
 | `/cases/new` | Case intake form (`?edit=C-XXXXXX` to edit a saved case) |
-| `/cases/[id]` | Record view of an entered case, rendered in the browser from browser storage, with edit and delete |
+| `/cases/[id]` | Record view of an entered case, read from server or browser storage, with edit and delete |
 | `/cases/[id]/report` | Printable tumour-board pre-read for an entered case |
 | `/queue` | Decision queue across patients |
 | `/mcp` | MCP endpoint, client setup and the in-browser tool tester |
 | `/evaluation` | Results from `eval-results.json` |
 | `/architecture` | "How it works" summary |
 
-## 5. Error code summary
+## 6. Error code summary
 
 | Code | Route | Meaning |
 |---|---|---|
-| 200 | all | Success; for `/api/agents/run` check for an `error` line in the stream |
-| 400 | `/api/agents/run` | Body is not valid JSON, invalid `caseId`, or `caseInput` fails validation (see `issues`) |
-| 401 | `/api/mcp` | Bearer token required and missing or wrong |
-| 404 | `/api/agents/run` | Unknown patient |
-| 429 | `/api/agents/run` | Claude run rate limit; see `retry-after` |
+| 200, 201 | all | Success; for `/api/agents/run` check for an `error` line in the stream |
+| 400 | `/api/agents/run`, storage, login | Body is not valid JSON, invalid ID, or input fails validation (see `issues`) |
+| 401 | all except `/api/health` and `/api/auth/*` | Not signed in; on `/api/mcp`, no session and no or a wrong bearer token; on login, wrong username or password |
+| 403 | `/api/*` (unsafe methods) | Cross-site request refused |
+| 404 | `/api/agents/run`, `/api/cases/[id]` | Unknown patient or case |
+| 409 | `/api/cases` | Case ID already in use by another account |
+| 429 | `/api/agents/run`, `/api/auth/login` | Claude run rate limit, or sign-in lockout; see `retry-after` |
+| 503 | storage routes, `/api/auth/login`, `/api/health` | Server storage not configured or unreachable; sign-in not configured |
 | 5xx | any | Platform or function error (for example a timeout beyond `maxDuration`) |
 
 MCP tool-level errors (unknown patient, refused decision) are not HTTP errors: they return `isError: true` inside a successful JSON-RPC result ([MCP.md](MCP.md)).

@@ -21,6 +21,8 @@
 
 > [!IMPORTANT]
 > OncoAgent is a research prototype for clinicians. It is **not a medical device** and not medical advice. **Every patient in this repository and in the live demo is fictional.**
+>
+> The live demo is for signed-in clinicians only. Judges receive the sign-in details with the submission.
 
 ---
 
@@ -74,7 +76,7 @@ Open **[New case](https://oncoagent.vercel.app/cases/new)**, paste a molecular r
 - A **deterministic report reader** (no AI, runs in the browser) finds the alterations: EGFR exon 19 / exon 20 / point mutations, KRAS, BRAF, HER2, MET exon 14, ALK / ROS1 / RET / NTRK / NRG1 fusions. It also finds VAF, PD-L1 TPS, genes reported negative and the sample type. It shows the exact text behind each finding.
 - A **setting selector** places the case in a curated knowledge pack of **20 entries**. The pack covers EGFR, ALK, ROS1, BRAF V600E, MET exon 14, RET, NTRK, KRAS G12C, HER2 and no-driver cases by PD-L1 and histology, plus second line, with **42 drugs, 34 regimens and 54 label-level interaction rules**. When no entry fits, it says so and proposes no treatment.
 - Doses use Calvert, BSA, fixed, weight-band or per-kg rules from the labels.
-- The case stays in the clinician's browser. The server validates and rebuilds it for each run and stores nothing. No names, record numbers or dates of birth are collected.
+- The case is stored per account in PostgreSQL when a database is connected, otherwise in the clinician's browser. The server validates and rebuilds it for each run. No names, record numbers or dates of birth are collected.
 
 | | |
 |---|---|
@@ -106,7 +108,7 @@ Measured by [`app/scripts/eval.ts`](app/scripts/eval.ts) on the stored runs; met
 | Leading option matches the gold answer | **3/3** (Claude) · 3/3 (rules) |
 | Citations that resolve to evidence in the run | **100%** |
 | Trial IDs returned by the registry | **100%** |
-| Doses exactly as hand-calculated | **3/3**; **167** unit tests (dosing, RECIST, setting selection, report reader) |
+| Doses exactly as hand-calculated | **3/3**; **186** unit tests (dosing, RECIST, setting selection, report reader, sign-in and storage) |
 | Doses written outside the calculator · unsafe leading options | **0 · 0** |
 | Adversarial unsafe drafts caught by the critic | **6/6** |
 | Full run with Claude | **≈ 23 s** · **≈ US$0.065** per case |
@@ -124,6 +126,18 @@ Three fictional gold cases cannot support clinical accuracy claims. A pilot need
 
 Details, hazards and the regulatory position: [docs/SAFETY.md](docs/SAFETY.md).
 
+## Production foundations
+
+| | |
+|---|---|
+| **Sign-in** | Every page and API needs a clinician session: signed `httpOnly` cookie, scrypt password hashes kept only in the environment, lockout after repeated wrong passwords, one switch to sign everyone out |
+| **Signed decisions** | The audit entry's signer is the session user, set on the server; a name sent by the browser is ignored |
+| **Server storage** | Set `DATABASE_URL` and cases, runs and the audit log are kept in PostgreSQL per account. The audit table is append-only, enforced by a database trigger, and SHA-256 chained. Without a database the app keeps data in the browser and says so |
+| **Hardening** | Content Security Policy, HSTS, cross-site request guard, no-store API answers, MCP behind a bearer token or session |
+| **Operations** | `/api/health` for uptime monitors (version, sign-in, storage, evidence sources), `npm run smoke` against any deployment, `npm run db:migrate`, CI on every push |
+
+Set-up and key rotation: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). Security model: [SECURITY.md](SECURITY.md).
+
 ## Quick start
 
 Requires Node.js 20.9 or newer.
@@ -135,45 +149,54 @@ npm install
 npm run dev                 # http://localhost:3000
 ```
 
-Without an API key the agents run **rules-only**. To enable Claude synthesis:
+Sign-in is on by default, so create an account first:
 
 ```bash
-echo "ANTHROPIC_API_KEY=sk-ant-..." > .env.local
+cp .env.example .env.local
+npm run hash-password -- "<choose a password>" --secret
+# copy the printed AUTH_SECRET and AUTH_PASSWORD_HASH into .env.local (escape each $ as \$),
+# then set AUTH_USERNAME; optionally ANTHROPIC_API_KEY and DATABASE_URL
 ```
+
+Without an API key the agents run **rules-only**. Without `DATABASE_URL` data stays in the browser. Details: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#2-local-development).
 
 | Script | What it does |
 |---|---|
-| `npm test` | 167 unit tests: dosing, RECIST, setting selection, report reader (Vitest) |
+| `npm test` | 186 unit tests: dosing, RECIST, setting selection, report reader, sign-in, sessions, storage and API routes (Vitest) |
 | `npm run typecheck` · `npm run lint` | TypeScript and ESLint |
 | `npm run eval` | Gold-case and adversarial evaluation on stored runs |
 | `npm run precompute` | Re-run all cases with Claude and store snapshots |
 | `npm run snapshot` | Refresh the offline CIViC and trial snapshots |
 | `npm run mcp:stdio` · `npm run mcp:smoke` | Serve or smoke-test the MCP server over stdio |
+| `npm run hash-password` · `npm run db:migrate` | Create a password hash and session secret · create the storage tables |
+| `npm run smoke -- <url>` | Ten checks against a running deployment, including sign-in and a rules-only run |
 
-Environment variables (`ANTHROPIC_API_KEY`, `CLINICIAN_TOKEN`, `MCP_BEARER_TOKEN`) and deployment: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+Environment variables (all listed in [app/.env.example](app/.env.example)) and deployment: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## Use the tools from any MCP client
 
 ```bash
-claude mcp add --transport http oncoagent https://oncoagent.vercel.app/api/mcp
+claude mcp add --transport http oncoagent https://oncoagent.vercel.app/api/mcp   --header "Authorization: Bearer <token>"
 ```
 
-Nine tools: `list_patients` · `get_case_timeline` · `interpret_variant` (CIViC) · `search_trials` (ClinicalTrials.gov) · `calculate_dose` · `draft_recommendations` · `extract_report` · `analyze_case` · `record_decision`. One definition serves stdio and Streamable HTTP. You can also call them from the browser on the [MCP page](https://oncoagent.vercel.app/mcp). Reference: [docs/MCP.md](docs/MCP.md).
+Nine tools: `list_patients` · `get_case_timeline` · `interpret_variant` (CIViC) · `search_trials` (ClinicalTrials.gov) · `calculate_dose` · `draft_recommendations` · `extract_report` · `analyze_case` · `record_decision`. One definition serves stdio and Streamable HTTP. Signed-in clinicians can also call them from the browser on the [MCP page](https://oncoagent.vercel.app/mcp), without a token. Reference: [docs/MCP.md](docs/MCP.md).
 
 ## Repository map
 
 ```text
 oncoagent/
 ├── app/                        Next.js 16 clinician workspace, agents and MCP server
-│   ├── src/app/                Routes: overview, patients, cases (new, record, report), queue, mcp, evaluation, architecture, API
+│   ├── src/app/                Routes: sign-in, overview, patients, cases (new, record, report), queue, mcp, evaluation, architecture, API
 │   ├── src/components/         Workspace UI: case form, patient record, agent run, cards, drawer, charts, Mol* viewer, queue, report
 │   ├── src/lib/agents/         Orchestrator, rule agents, Claude synthesis, safety-critic
-│   ├── src/lib/clinical/       Dose calculators, RECIST 1.1, setting selector, report reader (+ 167 unit tests)
+│   ├── src/lib/clinical/       Dose calculators, RECIST 1.1, setting selector, report reader (+ 156 unit tests)
+│   ├── src/lib/server/         Accounts, passwords, PostgreSQL store, append-only audit (+ 19 tests)
+│   ├── src/proxy.ts            Sign-in gate and cross-site guard in front of every page and API
 │   ├── src/lib/tools/          CIViC and ClinicalTrials.gov clients with snapshot fallback
 │   ├── src/lib/mcp/            oncoagent-mcp tool definitions
 │   ├── src/lib/data/           Fictional cases, knowledge pack (20 entries), regimens, medications, structures, stored runs
 │   ├── mcp/stdio.ts            MCP server over stdio
-│   └── scripts/                eval, precompute, snapshot, mcp-smoke
+│   └── scripts/                eval, precompute, snapshot, mcp-smoke, smoke, db-migrate, hash-password
 ├── docs/                       Architecture, agents, MCP, API, evaluation, safety, data, design, deployment, roadmap
 │   ├── submission/             Competition book, pitch deck, video script, fact sheet
 │   └── brief/                  Project brief in Bangla

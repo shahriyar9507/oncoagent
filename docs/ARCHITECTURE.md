@@ -290,15 +290,19 @@ flowchart LR
 
 ### 2.6 State: where data lives
 
+Since v0.4 the app has two storage modes, chosen at build time by `DATABASE_URL`. **Server mode** keeps entered cases, live runs and the audit log in PostgreSQL, one set of rows per signed-in account ([store.ts](../app/src/lib/server/store.ts), tables `oa_cases`, `oa_runs`, `oa_audit`, `oa_meta`). **Browser mode** keeps them in `localStorage`, as before. The same client modules ([cases.ts](../app/src/lib/cases.ts), [runs.ts](../app/src/lib/runs.ts), [audit.ts](../app/src/lib/audit.ts)) serve both modes; the account menu shows which one is active. The public demo currently runs in browser mode.
+
 | Data | MVP location | Lifetime | Production (planned) |
 |---|---|---|---|
+| Accounts | Environment variables (`AUTH_USERNAME` + `AUTH_PASSWORD_HASH`, or `AUTH_USERS`), scrypt hashes only ([users.ts](../app/src/lib/server/users.ts)) | Until the variables change | Hospital SSO (OIDC, MFA) |
+| Sessions | Signed `oa_session` cookie (HS256, 12 h) in the clinician's browser ([session.ts](../app/src/lib/session.ts)) | 12 hours, sign-out, or a change of `AUTH_SECRET` / `AUTH_SESSION_VERSION` | SSO session |
 | Demo patient records | [patients.ts](../app/src/lib/data/patients.ts), in the bundle | Until the code changes | FHIR server (mCODE) |
-| Clinician-entered cases | Browser `localStorage`, key `oncoagent.cases.v1` ([cases.ts](../app/src/lib/cases.ts)); rebuilt in server memory for each run and then discarded | Until deleted or browser storage is cleared | The hospital's own database inside its network |
+| Clinician-entered cases | Server mode: `oa_cases`, per account. Browser mode: `localStorage`, key `oncoagent.cases.v1`. Either way rebuilt in server memory for each run | Until deleted (or browser storage is cleared) | The hospital's own PostgreSQL inside its network |
 | Knowledge pack, regimens, structures | [lib/data/](../app/src/lib/data), version `nsclc-pack 2026-11-20` | Until the code changes | Versioned knowledge service with review workflow |
 | CIViC and trial snapshots | [lib/tools/cache/](../app/src/lib/tools/cache), written by `npm run snapshot` | Until refreshed and committed | Scheduled refresh with a stored fetch date |
 | Stored agent runs | [lib/data/snapshots/P-00x.json](../app/src/lib/data/snapshots), written by `npm run precompute` | Until regenerated | Server-side run store |
-| Live agent run (latest per patient or case) | Browser `localStorage`, key `oncoagent.run.v1.<id>` ([runs.ts](../app/src/lib/runs.ts)) | Until the browser storage is cleared, "Stored run" is pressed or the case is deleted | Server-side run store linked to the audit log |
-| Audit log (decisions and live runs) | Browser `localStorage`, key `oncoagent.audit.v1` ([audit.ts](../app/src/lib/audit.ts)) | Until the browser storage is cleared | Append-only, hash-chained database table |
+| Live agent run (latest per patient or case) | Server mode: `oa_runs`, written by `/api/agents/run` itself. Browser mode: `localStorage`, key `oncoagent.run.v1.<id>` | Until replaced, "Stored run" is pressed or the case is deleted | Run store linked to the audit log, with retention rules |
+| Audit log (decisions and live runs) | Server mode: `oa_audit`, append-only (a trigger refuses `UPDATE` and `DELETE`), SHA-256 chained per account under an advisory lock; signer taken from the session. Browser mode: `localStorage`, key `oncoagent.audit.v1` | Permanent (server) · until storage is cleared (browser) | Same table, plus backups and signed exports |
 | MCP `record_decision` chain | Server memory, per function instance ([tools.ts](../app/src/lib/mcp/tools.ts)) | Until the instance is recycled | Same append-only table as the web app |
 | Rate-limit counters | Server memory, per function instance ([ratelimit.ts](../app/src/lib/ratelimit.ts)) | Until the instance is recycled | Shared store with per-clinician quotas |
 
@@ -310,17 +314,19 @@ For the demo patients the UI shows the stored run first, so every page renders i
 flowchart LR
   repo["GitHub repository"] --> build["Vercel build<br/>project root: app"]
   build --> static["Vercel CDN<br/>pre-rendered pages and assets"]
-  build --> fns["Vercel Functions (Node.js)<br/>/api/agents/run, /api/mcp, /api/health"]
-  envs[("Encrypted environment variables<br/>ANTHROPIC_API_KEY<br/>CLINICIAN_TOKEN<br/>MCP_BEARER_TOKEN")] -.-> fns
+  build --> gate["proxy.ts<br/>sign-in gate · cross-site guard"]
+  gate --> fns["Vercel Functions (Node.js)<br/>/api/agents/run, /api/cases, /api/runs, /api/audit,<br/>/api/auth/*, /api/mcp, /api/health"]
+  envs[("Encrypted environment variables<br/>AUTH_SECRET · AUTH_PASSWORD_HASH<br/>DATABASE_URL · ANTHROPIC_API_KEY<br/>CLINICIAN_TOKEN · MCP_BEARER_TOKEN")] -.-> fns
+  fns -.->|"when DATABASE_URL is set"| pg[("PostgreSQL 13+<br/>oa_cases · oa_runs · oa_audit")]
   fns --> claude["Claude API"]
   fns --> civic["CIViC"]
   fns --> ctgov["ClinicalTrials.gov"]
 ```
 
-- One Next.js 16 app serves the pages and the API routes. Patient pages are pre-rendered for the three fictional records (`generateStaticParams`); `/mcp` renders per request because it reads the host header to show the endpoint URL; `/cases/*` pages render in the browser because the case lives in browser storage (`ClientOnly`, `useCase`).
+- One Next.js 16 app serves the pages and the API routes. Patient pages are pre-rendered for the three fictional records (`generateStaticParams`); `/mcp` renders per request because it reads the host header to show the endpoint URL; `/cases/*` pages render in the browser because the case comes from the storage API or browser storage (`ClientOnly`, `useCase`). [proxy.ts](../app/src/proxy.ts) runs before every page and API route: without a valid session, pages redirect to `/login` and API routes answer 401; route handlers verify the session again before touching data.
 - `/api/agents/run` and `/api/mcp` set `maxDuration = 300` seconds. A run with Claude takes about 23 s ([EVALUATION.md](EVALUATION.md)).
-- [next.config.ts](../app/next.config.ts) removes the `X-Powered-By` header and adds `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin` and `X-Frame-Options: SAMEORIGIN` to every response.
-- All three environment variables are optional. Without `ANTHROPIC_API_KEY` the agents run rules-only and the top bar says so. Setup, scripts and key rotation: [DEPLOYMENT.md](DEPLOYMENT.md).
+- [next.config.ts](../app/next.config.ts) removes the `X-Powered-By` header and adds a Content Security Policy, `Strict-Transport-Security`, `Cross-Origin-Opener-Policy`, `Permissions-Policy`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin` and `X-Frame-Options: SAMEORIGIN` to every response, and `Cache-Control: no-store` to API answers.
+- Sign-in needs `AUTH_SECRET` and one account. Everything else is optional: without `ANTHROPIC_API_KEY` the agents run rules-only and the top bar says so; without `DATABASE_URL` data stays in the browser. Setup, scripts and key rotation: [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ### 2.8 Key decisions
 
@@ -332,7 +338,7 @@ flowchart LR
 | 4 | Structured output validated against a Zod schema (`messages.parse`) | No free-text parsing; the model cannot emit `dose`, `trial` or `summary` cards | Schema changes need a code change and a re-run of the evaluation |
 | 5 | Live CIViC and ClinicalTrials.gov with committed snapshots as fallback | A source outage never leaves a card empty; the evaluation is reproducible | Snapshots age; the cache files do not record their fetch date |
 | 6 | Stored runs shown first, live runs on demand | Instant pages, controlled model cost, same data for judges and the evaluation | The run on screen can be older than the live sources |
-| 7 | Audit log and live runs kept in the browser in the MVP | No database and no server-side clinical data in a public demo | Not shared between users, lost when storage is cleared; the hash chain detects edits but the browser owner could rebuild it |
+| 7 | Audit log and live runs in PostgreSQL when `DATABASE_URL` is set, else in the browser | One code path for a zero-operations demo and a real deployment; the database enforces append-only | Browser mode is not shared and can be rebuilt by the browser owner; the mode is fixed at build time, so changing it needs a redeploy |
 | 8 | NDJSON stream over one POST | Per-agent progress with plain `fetch`; works in serverless functions | No resume after a dropped connection |
 | 9 | One MCP tool definition for stdio and Streamable HTTP | The two transports cannot drift apart | Decision chain and rate limits are per process or instance |
 | 10 | One Next.js app, plain CSS, hand-built SVG charts | One deployable; full control of accessibility and of the visual system | Heavy services (FHIR, workflows, imaging) move out in production |
@@ -342,7 +348,9 @@ flowchart LR
 | 14 | One Zod schema for entered cases in the browser, the API and MCP; the server rebuilds the record | One definition of a valid case; a client cannot inject a crafted record | Schema changes touch all three surfaces at once |
 | 15 | Deterministic report reader with regular expressions, run in the browser | No report text leaves the browser; every finding shows its source text; testable (81 tests) | Unusual phrasing is missed or becomes a warning; no PDF or image input yet |
 | 16 | Deterministic setting selector; uncovered settings return no entry | The agents never guess a treatment outside the curated pack, and the reason is shown | Many real settings (later lines, uncommon mutations) end in "discuss at tumour board" until the pack grows |
-| 17 | Entered cases stored in the browser in the MVP | No server-side clinical data on a public demo; zero operations | A case exists only in one browser; not shared with colleagues; lost when storage is cleared |
+| 17 | Entered cases stored per account (server mode) or per browser | Rows are filtered by owner in every query; the same Zod schema validates both paths | Cases are not shared between accounts yet; team sharing needs roles |
+| 18 | Accounts and passwords from the environment, signed cookie sessions (no session table) | No credential in the repository; works on serverless with no extra service | No self-service password change; revoking one session needs a global sign-out (`AUTH_SESSION_VERSION`); SSO replaces it |
+| 19 | One gate (`proxy.ts`) plus a session check in each route handler | A missed matcher cannot expose data; pages and APIs share one rule | Two places to keep in step; tests cover both |
 
 ## 3. Target (production)
 
@@ -469,14 +477,14 @@ The MVP types in [types.ts](../app/src/lib/types.ts) already follow this shape f
 | Visual | Mol* (proteins), igv.js (genome), Cornerstone3D/OHIF (DICOM), D3 | Domain-standard viewers | Mol* 4.18, hand-built SVG charts |
 | Backend | Python 3.12 FastAPI, Pydantic v2 | Bio and ML ecosystem | Next.js route handlers |
 | Workflows | Temporal (durable) with agents inside activities | Retries, state, auditability | In-process `runPipeline()` |
-| Clinical data | HAPI FHIR (mCODE), PostgreSQL 16 + pgvector | Standards and retrieval | TypeScript records |
+| Clinical data | HAPI FHIR (mCODE), PostgreSQL 16 + pgvector | Standards and retrieval | TypeScript records; PostgreSQL 13+ for cases, runs and the audit log |
 | Imaging | Orthanc (DICOMweb) | Open source | — |
 | Files | MinIO or S3 | BAM, VCF, WSI | — |
 | Events | NATS JetStream (or Kafka at scale) | Real-time monitoring | — |
 | Bio pipelines | Nextflow + nf-core (sarek, rnaseq, rnafusion), VEP | Reproducible | — |
 | ML | PyTorch, MONAI, scikit-learn, lifelines | Clinical ML | — |
 | LLMs | Claude (Opus for case synthesis; smaller models for extraction steps) behind a de-identification gateway; pinned IDs; evaluation-gated changes | Quality and control | Claude Opus 5.5, pinned, synthesis only |
-| Auth | Keycloak (OIDC, MFA), RBAC + ABAC | Hospital SSO | Demo identity "Dr. Demo"; tokens for MCP |
+| Auth | Keycloak (OIDC, MFA), RBAC + ABAC | Hospital SSO | Environment accounts, scrypt hashes, signed session cookie; bearer token for MCP |
 | Infra | Docker Compose (dev), Kubernetes + OpenTofu (prod), in-country hosting | Data residency | Vercel |
 | Observability | OpenTelemetry, Prometheus/Grafana, self-hosted LLM tracing | Traces with PHI controls | Step timings and token usage in each run |
 

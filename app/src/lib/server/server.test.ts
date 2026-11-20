@@ -12,6 +12,7 @@ import { GET as listCasesRoute, POST as createCaseRoute } from "../../app/api/ca
 import { GET as getCaseRoute, DELETE as deleteCaseRoute } from "../../app/api/cases/[id]/route";
 import { GET as auditRoute, POST as appendAuditRoute } from "../../app/api/audit/route";
 import { GET as runsRoute } from "../../app/api/runs/route";
+import { POST as mcpRoute } from "../../app/api/mcp/route";
 
 const SECRET = "test-secret-0123456789-abcdefghijklmnopqrstuvwxyz";
 const CASE: CaseInput = {
@@ -185,10 +186,26 @@ describe("storage API routes", () => {
     expect(last).toBe(429);
   });
 
-  it("requires a session for every storage route", async () => {
+  it("requires a session for every storage route, and a token, session or MCP_PUBLIC for MCP", async () => {
     expect((await listCasesRoute(req("/api/cases"))).status).toBe(401);
     expect((await auditRoute(req("/api/audit"))).status).toBe(401);
     expect((await session(req("/api/auth/session"))).status).toBe(401);
+    env({ MCP_BEARER_TOKEN: "mcp-test-token-123", MCP_PUBLIC: undefined });
+    const call = (headers: Record<string, string> = {}) =>
+      mcpRoute(new Request("http://localhost/api/mcp", { method: "POST", headers: { "content-type": "application/json", accept: "application/json, text/event-stream", ...headers }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list" }) }));
+    try {
+      const anon = await call();
+      expect(anon.status).toBe(401);
+      expect(anon.headers.get("www-authenticate")).toBe("Bearer");
+      expect((await call({ authorization: "Bearer wrong-token-000000" })).status).toBe(401);
+      expect((await call({ authorization: "Bearer mcp-test-token-123" })).status).toBe(200);
+      await signIn();
+      expect((await call({ cookie })).status).toBe(200);
+      env({ MCP_PUBLIC: "true" });
+      expect((await call()).status).toBe(200);
+    } finally {
+      env({ MCP_BEARER_TOKEN: undefined, MCP_PUBLIC: undefined });
+    }
   });
 
   it("round-trips a case, a decision and the audit chain for the signed-in user", async () => {

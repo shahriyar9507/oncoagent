@@ -2,7 +2,7 @@
 
 One source of truth for every number and claim used in the submission book, pitch deck, video and README. If a number is not on this sheet (or in `docs/RESEARCH.md` with a source), it does not go into a public document.
 
-Last checked: 20 November 2026 (v0.3).
+Last checked: 20 November 2026 (v0.4).
 
 ## Identity
 
@@ -62,8 +62,17 @@ Use these carefully: say "about", keep the source next to the number, and never 
   2. Personalise: dose and regimen for this patient. Built.
   3. Research: modified or new molecules with licensed partners. Vision only; never given to a patient outside a regulated trial.
 
-## The MVP, as built (v0.3, 20 Nov 2026)
+## The MVP, as built (v0.4, 20 Nov 2026)
 
+- **Clinician sign-in**: every page and API route needs a signed-in clinician.
+  - Signed, httpOnly session cookie that lasts 12 hours; passwords are stored only as scrypt hashes.
+  - Repeated wrong passwords pause sign-in for 15 minutes.
+  - The account menu shows who is signed in and where data is stored, with a sign-out button.
+  - The signer of every decision is set by the server from the session, never taken from the browser.
+  - Sign-in details for judges are provided in the submission form.
+- **Storage**:
+  - Live demo: no database is connected, so cases, live runs and the audit log stay in the clinician's browser.
+  - With `DATABASE_URL` set: cases, runs and the audit log are stored per account in PostgreSQL. A database trigger refuses any edit or delete of the audit log, and each account's log is SHA-256 hash-chained.
 - **Workspace screens**:
   - Overview
   - Patients
@@ -81,7 +90,7 @@ Use these carefully: say "about", keep the source next to the number, and never 
     - co-mutations, VAF, PD-L1 TPS, genes reported negative and the sample type
     - It shows the exact text behind each finding, plus warnings.
   - **Before saving**: a live preview shows BSA, CrCl and the knowledge-pack setting with its options.
-  - **Saving and running**: the case is saved in the browser. On each run the server validates it (Zod) and rebuilds the record, and stores nothing. The full nine-agent run follows, then the decision queue and the printable report. The case can be edited or deleted.
+  - **Saving and running**: the case is saved in the browser in the live demo, or per account in PostgreSQL when a database is connected. On each run the server validates it (Zod) and rebuilds the record. The full nine-agent run follows, then the decision queue and the printable report. The case can be edited or deleted.
   - Four example cases are included: EGFR exon 19, KRAS G12C after chemo-immunotherapy, ROS1 with phenytoin, and no driver with PD-L1 80%.
 - **Knowledge pack: 20 entries.** Three back the demo cases; 17 are generic settings:
   - EGFR: common mutations first line, exon 20 insertion, progression on osimertinib
@@ -104,11 +113,14 @@ Use these carefully: say "about", keep the source next to the number, and never 
   - 1M17 (EGFR + erlotinib): L858, C797, T790
   - 6OIM (KRAS G12C + sotorasib): C12
   - 2XP2 (ALK + crizotinib): L1196, G1202
-- **MCP server `oncoagent-mcp` v0.2.0**:
+- **MCP server `oncoagent-mcp` v0.4.0**:
   - Nine tools: `list_patients`, `get_case_timeline`, `interpret_variant`, `search_trials`, `calculate_dose`, `draft_recommendations`, `extract_report`, `analyze_case`, `record_decision`. `record_decision` refuses without a clinician token.
   - One definition serves stdio and Streamable HTTP. Both were tested with an MCP client.
-- **Live status**: when a page loads, the top bar checks that Claude is configured and that CIViC and ClinicalTrials.gov answer. The agents fall back to dated snapshots, never to empty data.
+  - The HTTP endpoint answers only a bearer token (`MCP_BEARER_TOKEN`) or a signed-in session.
+- **Live status**: when a page loads, the top bar checks that Claude is configured and that CIViC and ClinicalTrials.gov answer. `/api/health` also reports the version, sign-in and storage. The agents fall back to dated snapshots, never to empty data.
 - **Cost guardrails**: live Claude runs are limited to 6 per 10 minutes per visitor, and to 10 per hour through MCP. Rules-only runs are free.
+- **Hardening**: Content-Security-Policy, HSTS and other security headers; cross-site POSTs to the API are refused; 404, error and loading screens.
+- **Operations**: `npm run smoke` checks a deployment end to end (health, gating, sign-in, a rules-only run, sign-out) and runs in CI; `npm run db:migrate` prepares the database; `npm run hash-password` makes a password hash.
 
 ## Measured results (scripts/eval.ts, stored runs, 20 Nov 2026)
 
@@ -118,7 +130,7 @@ Use these carefully: say "about", keep the source next to the number, and never 
 | Leading option matches the gold answer | 3/3 (Claude) · 3/3 (rules) |
 | Citations that resolve to evidence in the run | 100% |
 | Trial IDs returned by the registry | 100% |
-| Doses exactly as hand-calculated | 3/3; 167 unit tests in total (dose and RECIST, knowledge-pack selection and dosing, report reader) |
+| Doses exactly as hand-calculated | 3/3; 186 unit tests in total (dose and RECIST, knowledge-pack selection and dosing, report reader, sign-in and storage) |
 | Doses written outside the calculator | 0 |
 | Unsafe leading recommendations | 0 |
 | Adversarial unsafe drafts caught by the critic | 6/6 (invented trial number, model-written dose, unknown evidence ID, later-line drug first, contraindicated drug without warning, drug outside the pack) |
@@ -127,7 +139,7 @@ Use these carefully: say "about", keep the source next to the number, and never 
 
 **A real catch, unscripted.** In P-003 the rules-only Guideline card listed lorlatinib without noting it is contraindicated with carbamazepine. The safety-critic flagged the card; the Claude card had noted the interaction.
 
-**Limits, said plainly.** Three fictional gold cases cannot support clinical accuracy claims. A pilot needs hundreds of de-identified cases with tumour-board answers, reviewed under ethics approval. In the demo the audit log and live runs are stored in the browser; production stores them server-side.
+**Limits, said plainly.** Three fictional gold cases cannot support clinical accuracy claims. A pilot needs hundreds of de-identified cases with tumour-board answers, reviewed under ethics approval. In the live demo the audit log and live runs are stored in the browser; server storage in PostgreSQL is built and turns on when a database is connected.
 
 ## Example numbers on screen (P-001)
 
@@ -141,7 +153,7 @@ Use these carefully: say "about", keep the source next to the number, and never 
 
 ## Safety rules (hold everywhere)
 
-1. AI proposes, a clinician decides. No agent can sign, prescribe or contact a patient.
+1. AI proposes, a clinician decides. No agent can sign, prescribe or contact a patient. Only a signed-in clinician can sign a decision.
 2. No drug, dose, trial number or citation may come from model memory. The critic flags anything not in the evidence registry.
 3. Doses come only from unit-tested calculators. A stale creatinine or low clearance blocks the dose card.
 4. The model sees a pseudonymous ID and an age band, never a name or address.
@@ -154,7 +166,9 @@ Use these carefully: say "about", keep the source next to the number, and never 
 - Anthropic TypeScript SDK with structured outputs (`claude-opus-5-5`, prompt caching)
 - MCP SDK v2 and `mcp-handler`
 - Mol* 4.18 with MolViewSpec scenes
-- Vitest; tsx scripts for evaluation and snapshots
+- Sign-in: `jose` signed sessions, scrypt password hashes (Node crypto)
+- PostgreSQL via `postgres` (PGlite for local development and tests)
+- Vitest (186 unit tests); tsx scripts for evaluation, snapshots and smoke tests
 - Vercel; GitHub
 
 Built with Claude Code, 25 project sub-agents and 13 project skills (`.claude/`).

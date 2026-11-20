@@ -2,6 +2,40 @@
 
 All notable changes to OncoAgent. Dates are in Asia/Dhaka time.
 
+## [0.4.0] · 2026-11-20 · Sign-in and server storage
+
+### Added
+- **Clinician sign-in** (`/login`, `/api/auth/login`, `/api/auth/logout`, `/api/auth/session`):
+  - Signed session in an httpOnly, SameSite=Lax cookie (HS256, 12 hours; `Secure` in production).
+  - Passwords are stored only as scrypt hashes in the environment (`AUTH_USERNAME` + `AUTH_PASSWORD_HASH`, or `AUTH_USERS` for several accounts). No credential is in the repository.
+  - Repeated wrong passwords are refused for 15 minutes (10 per IP, 20 per username). Unknown usernames take the same time to check as known ones.
+  - `AUTH_SESSION_VERSION` signs every clinician out when it changes.
+  - Every page and API route is gated by `src/proxy.ts`. Route handlers check the session again before reading or writing data.
+  - Account menu in the top bar with the signed-in name, role, storage mode and sign-out.
+- **Server storage** (`/api/cases`, `/api/cases/[id]`, `/api/runs`, `/api/runs/[id]`, `/api/audit`, `/api/store`):
+  - When `DATABASE_URL` points at PostgreSQL 13+, cases, agent runs and the audit log are kept on the server, separately for each account.
+  - The audit table is append-only: a database trigger refuses updates and deletes. Each account's entries form a SHA-256 chain, appended under an advisory lock.
+  - The schema is created on first use or with `npm run db:migrate`. The migration is idempotent and safe to run from several instances at once.
+  - Without `DATABASE_URL` the app keeps data in the clinician's browser, as before, and says so in the account menu.
+- **Scripts**: `npm run hash-password` (scrypt hash and a fresh `AUTH_SECRET`), `npm run db:migrate`, `npm run smoke` (ten checks against any deployment: health, gating, wrong password, sign-in, session, a rules-only run, sign-out).
+- **Screens**: 404, error (with retry and a reference code) and loading screens.
+- **`.env.example`** documenting every variable.
+- **CI**: a smoke-test step builds the app, signs in with a CI-only account and runs `npm run smoke`.
+
+### Changed
+- **Signer of decisions**: the audit entry's actor is taken from the session on the server, never from the request body.
+- **MCP endpoint**: `/api/mcp` accepts `Authorization: Bearer <MCP_BEARER_TOKEN>` (compared in constant time) or a signed-in session. It is open only with `MCP_PUBLIC=true`, or when no token is set and sign-in is off. `record_decision` compares `CLINICIAN_TOKEN` in constant time.
+- **Health endpoint**: now reports `status`, `version`, sign-in readiness and storage. It answers HTTP 503 when sign-in or storage is misconfigured.
+- **Security headers**: Content Security Policy (only the Mol* build on jsDelivr and RCSB are allowed as outside origins), `Strict-Transport-Security`, `Cross-Origin-Opener-Policy` and `Permissions-Policy`. API answers are `Cache-Control: no-store`.
+- **Cross-site guard**: state-changing API calls with a foreign `Origin` are refused with 403.
+- **Wording**: queue, activity and case screens say whether data is kept per account or in this browser.
+- **Model**: `ANTHROPIC_MODEL` can override the default `claude-opus-5-5`.
+- **Tests**: 186 unit tests (19 new for passwords, sessions, the store, the append-only trigger and the API routes).
+
+### Fixed
+- `/cases` now redirects to `/patients` instead of showing a 404.
+- Unknown pages no longer cause a hydration error (React #418) in the breadcrumb.
+
 ## [0.3.0] · 2026-11-20 · Real cases
 
 ### Added

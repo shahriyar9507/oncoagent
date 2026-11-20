@@ -6,7 +6,9 @@ import { authRequired } from "@/lib/session";
 
 // Streamable HTTP endpoint for oncoagent-mcp.
 // Access: a valid "Authorization: Bearer <MCP_BEARER_TOKEN>" header (for external MCP clients), or a signed-in
-// session cookie (for the in-app tester). With AUTH_MODE=off and no token set, the endpoint is open.
+// session cookie (for the in-app tester). The endpoint is open when MCP_PUBLIC=true (e.g. for a public review of the
+// read-only tools; record_decision still needs CLINICIAN_TOKEN and Claude runs stay rate-limited), or when
+// AUTH_MODE=off and no token is set.
 export const maxDuration = 300;
 
 const handler = createMcpHandler(
@@ -25,7 +27,7 @@ function bearerOk(req: Request, token: string): boolean {
 async function guarded(req: Request): Promise<Response> {
   const token = process.env.MCP_BEARER_TOKEN;
   const byToken = !!token && bearerOk(req, token);
-  const open = !token && !authRequired();
+  const open = process.env.MCP_PUBLIC === "true" || (!token && !authRequired());
   if (!byToken && !open && !(await getUser(req))) {
     return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { "content-type": "application/json", "www-authenticate": "Bearer" } });
   }
