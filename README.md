@@ -181,6 +181,17 @@ oncoagent/
 └── .github/                    CI, issue forms, PR template
 ```
 
+## Submission materials
+
+| Material | Interactive | PDF |
+|---|---|---|
+| Submission book (54 pages, copy-ready portal answers) | [book.html](docs/submission/book.html) | [PDF](docs/submission/pdf/OncoAgent-Submission-Book.pdf) |
+| Pitch deck (20 slides, animated, speaker notes on **N**) | [deck.html](docs/submission/deck.html) | [PDF](docs/submission/pdf/OncoAgent-Pitch-Deck.pdf) |
+| Project brief in Bangla | [index.html](docs/brief/index.html) | [PDF](docs/submission/pdf/OncoAgent-Brief-Bangla.pdf) |
+| Tumour-board reports (fictional P-001 to P-003) | [live](https://oncoagent.vercel.app/patients/P-001/report) | [P-001](docs/submission/pdf/OncoAgent-Tumour-Board-Report-P-001.pdf) · [P-002](docs/submission/pdf/OncoAgent-Tumour-Board-Report-P-002.pdf) · [P-003](docs/submission/pdf/OncoAgent-Tumour-Board-Report-P-003.pdf) |
+| Video script and production plan | [video-script.md](docs/submission/video-script.md) | — |
+| Fact sheet (every public number and its source) | [fact-sheet.md](docs/submission/fact-sheet.md) | — |
+
 ## Documentation
 
 | Read | For |

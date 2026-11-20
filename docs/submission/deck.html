@@ -28,7 +28,7 @@ body { background: var(--letterbox); color: var(--ink); font-family: var(--sans)
 .slide.on { visibility: visible; }
 .anim .slide.on .rv { animation: rise .6s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--d, 0) * 80ms); }
 @keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .anim .slide.on .rv { animation: none; } }
+
 .slide.ink { background: var(--ink); color: var(--white); }
 .slide.ink { background-image: radial-gradient(1100px 680px at 92% -12%, rgba(23,255,136,.16), transparent 60%), radial-gradient(800px 560px at -8% 112%, rgba(23,255,136,.08), transparent 60%); }
 
@@ -278,7 +278,10 @@ h2.m { font-size: 62px; }
 .pipe .n.k i { color: var(--mint); }
 .pipe .n.k span { color: rgba(255,255,255,.75); }
 .pipe .ar { display: flex; align-items: center; justify-content: center; }
-.pipe .ar::before { content: ""; width: 22px; height: 22px; border-top: 4px solid var(--deep); border-right: 4px solid var(--deep); transform: translateX(-3px) rotate(45deg); }
+.pipe { position: relative; }
+.pipe .ar svg { width: 34px; height: 24px; overflow: visible; }
+.pipe .ar path { fill: none; stroke: var(--deep); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.runner { position: absolute; left: 0; bottom: -30px; width: 14px; height: 14px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 3px var(--deep), 0 0 18px rgba(23,255,136,.9); opacity: 0; }
 .mini { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
 .nw { white-space: nowrap; }
 .pipe .n .nw { font: inherit; color: inherit; }
@@ -422,6 +425,152 @@ h2.m { font-size: 62px; }
 .endline .l1 span { background: var(--mint); padding: 0 .14em .06em; }
 .endline .l2 { margin-top: 24px; font-size: 42px; line-height: 1.2; color: var(--grey); }
 
+
+/* 3 · gene map */
+.gm { display: block; width: 1712px; height: 440px; overflow: visible; }
+.gm text { font-family: var(--sans); }
+.gm-lab text { font-size: 17px; font-weight: 600; fill: var(--grey); }
+.gm-lab text.k { fill: var(--deep); font-weight: 800; }
+.gm-in { font-size: 14px; font-weight: 600; fill: var(--grey-2); }
+.gm-ex text { font-size: 17px; font-weight: 700; fill: var(--ink); }
+.gcard rect:first-child { fill: #fff; stroke: var(--ink); stroke-width: 2; }
+.gcard .t { font-family: var(--brand); font-size: 27px; font-weight: 700; fill: var(--ink); letter-spacing: -.01em; }
+.gcard .s { font-size: 17px; font-weight: 500; fill: var(--grey); }
+.c-sen rect:first-child { fill: var(--mint-3); stroke: var(--mint-3); }
+.c-sen .s { fill: #24432f; }
+.c-ins rect:first-child { fill: #fff; stroke: #9aa7b8; stroke-dasharray: 7 6; }
+.c-her.k rect:first-child { fill: var(--ink); stroke: var(--ink); }
+.c-her.k .t { fill: #fff; } .c-her.k .s { fill: rgba(255,255,255,.75); }
+.c-her.k .tag { fill: var(--mint); } .c-her.k .tagt { fill: var(--ink); }
+.c-her.m rect:first-child { fill: var(--mint); stroke: var(--mint); }
+.c-her.m .s { fill: #24432f; } .c-her.m .tag { fill: var(--ink); } .c-her.m .tagt { fill: var(--mint); }
+.tagt { font-size: 15px; font-weight: 700; letter-spacing: .06em; }
+.say2 { margin-top: 26px; font: 600 28px/1.35 var(--sans); color: var(--ink); max-width: 1500px; }
+.say2 b { background: var(--mint-3); padding: 0 .15em; font-weight: 700; }
+
+/* 10 · world map */
+.geo { display: grid; grid-template-columns: 1130px minmax(0,1fr); column-gap: 48px; margin-top: 28px; align-items: start; }
+.wmap { position: relative; width: 1130px; height: 530px; }
+.wm { display: block; width: 1130px; height: 530px; overflow: visible; }
+.wm-base { fill: #d9e6df; stroke: #f6fffa; stroke-width: .7; }
+.wm-trial path { fill: var(--mint-2); stroke: var(--deep); stroke-width: .9; }
+.wm-bd { fill: var(--ink); stroke: var(--ink); stroke-width: 1.5; }
+.wm-arc { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; }
+.wm-lead { fill: none; stroke: var(--ink); stroke-width: 1.5; }
+.wm-dot { fill: var(--mint-2); stroke: var(--deep); stroke-width: 2; }
+.wm-end { fill: var(--ink); stroke: #fff; stroke-width: 2; }
+.callout { position: absolute; background: #fff; border: 2px solid var(--ink); padding: 14px 18px 16px; font: 700 15px/1.2 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--grey); box-shadow: 0 16px 30px -18px rgba(21,25,35,.45); }
+.callout b { display: block; margin-top: 8px; font: 600 46px/1 var(--brand); letter-spacing: -.02em; color: var(--ink); text-transform: none; }
+.callout .sub { display: block; margin-top: 6px; font: 500 16px/1.3 var(--sans); letter-spacing: 0; text-transform: none; color: var(--grey); }
+.callout.k { background: var(--ink); border-color: var(--ink); color: var(--mint); }
+.callout.k b { color: #fff; } .callout.k .sub { color: rgba(255,255,255,.75); }
+.trials h3 { font: 700 17px/1.2 var(--sans); letter-spacing: .18em; text-transform: uppercase; color: var(--ink); padding-bottom: 12px; border-bottom: 3px solid var(--ink); }
+.wleg { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px 18px; font: 500 16px/1.3 var(--sans); color: var(--grey); }
+.wleg span { display: inline-flex; align-items: center; gap: 8px; }
+.wleg i { width: 16px; height: 16px; flex: none; }
+.wleg i.m { background: var(--mint-2); box-shadow: inset 0 0 0 1.5px var(--deep); }
+.wleg i.d { border-radius: 50%; background: var(--mint-2); box-shadow: inset 0 0 0 2px var(--deep); }
+.wleg i.k { background: var(--ink); }
+.tl { margin-top: 8px; }
+.tl > div { padding: 8px 0; border-bottom: 1.5px solid var(--line); }
+.tl code { display: block; font: 600 19px/1.2 var(--mono); color: var(--ink); }
+.tl span { display: block; margin-top: 4px; font: 500 18px/1.35 var(--sans); color: var(--grey); }
+.none { margin-top: 16px; display: flex; align-items: center; gap: 18px; background: var(--ink); padding: 12px 22px; }
+.none b { font: 600 56px/1 var(--brand); color: var(--mint); }
+.none span { font: 600 21px/1.3 var(--sans); color: #fff; }
+.tm { margin-top: 12px; font: 500 17px/1.4 var(--sans); color: var(--grey-2); }
+
+/* 12 · sankey */
+.skw { position: relative; }
+.skh { display: grid; grid-template-columns: 194px 246px 390px 256px 1fr; align-items: center; margin-bottom: 10px; font: 700 15px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--grey); }
+.skh span:nth-child(1) { text-align: right; }
+.skh span:nth-child(3), .skh span:nth-child(5) { padding-left: 0; }
+.sk { display: block; width: 1712px; overflow: visible; }
+.sk text { font-family: var(--sans); }
+.sk .fl { fill: none; stroke: var(--mint-2); stroke-width: 14; stroke-opacity: .6; }
+.sk .fl.her { stroke: var(--deep); stroke-opacity: .95; }
+.sk .dn { fill: var(--ink); }
+.sk .onode { fill: var(--deep); }
+.sk .onode.her { fill: var(--ink); }
+.sk .sn rect { fill: #fff; stroke: var(--line); stroke-width: 1.5; }
+.sk .sn.her rect { fill: var(--mint); stroke: var(--mint); }
+.sk .sn text { font-size: 17px; font-weight: 500; fill: var(--ink); }
+.sk .sn.her text { font-weight: 700; }
+.sk .sn .ht { font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; fill: var(--deep); }
+.sk .dl { font-size: 19px; font-weight: 700; fill: var(--ink); }
+.sk .ol { font-size: 18px; font-weight: 600; fill: var(--ink); }
+.sk .ol.her { font-weight: 800; }
+.notprev { display: inline-block; padding: 10px 16px; border: 2px dashed var(--deep); color: var(--deep); font: 700 15px/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+
+/* ===== motion (presentation mode only; static styles are the final state) ===== */
+.slide.leave { visibility: visible; z-index: 1; pointer-events: none; }
+.slide.on { z-index: 2; }
+.anim .slide.on.in-f { animation: inF .56s cubic-bezier(.22,.7,.2,1) both; }
+.anim .slide.on.in-b { animation: inB .56s cubic-bezier(.22,.7,.2,1) both; }
+.slide.leave.out-f { animation: outF .5s cubic-bezier(.4,0,.6,1) both; }
+.slide.leave.out-b { animation: outB .5s cubic-bezier(.4,0,.6,1) both; }
+@keyframes inF { from { opacity: 0; translate: 90px 0; } to { opacity: 1; translate: 0 0; } }
+@keyframes inB { from { opacity: 0; translate: -90px 0; } to { opacity: 1; translate: 0 0; } }
+@keyframes outF { from { opacity: 1; translate: 0 0; } to { opacity: 0; translate: -90px 0; } }
+@keyframes outB { from { opacity: 1; translate: 0 0; } to { opacity: 0; translate: 90px 0; } }
+
+/* staggered children */
+.stg > :nth-child(2) { --k: 1; } .stg > :nth-child(3) { --k: 2; } .stg > :nth-child(4) { --k: 3; }
+.stg > :nth-child(5) { --k: 4; } .stg > :nth-child(6) { --k: 5; } .stg > :nth-child(7) { --k: 6; }
+.stg > :nth-child(8) { --k: 7; } .stg > :nth-child(9) { --k: 8; } .stg > :nth-child(10) { --k: 9; }
+.stg > :nth-child(11) { --k: 10; } .stg > :nth-child(12) { --k: 11; }
+.anim .slide.on .stg > :not(.runner) { animation: rise .6s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--d, 0) * 80ms + var(--k, 0) * 75ms + 60ms); }
+
+/* bars, cells, tumour */
+@keyframes barX { from { transform: scaleX(0); } }
+.anim .slide.on .res .bar { transform-origin: left center; animation: barX 1.1s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--d, 0) * 80ms + 350ms); }
+@keyframes fillCell { from { background: #fff; box-shadow: inset 0 0 0 2px #c9d3df; } }
+.anim .slide.on .waffle i.on { animation: fillCell .4s ease both; animation-delay: calc(500ms + var(--i, 0) * 24ms); }
+@keyframes tumourGrow { from { transform: translate(-50%, -50%) scale(.711); } to { transform: translate(-50%, -50%) scale(1); } }
+.anim .slide.on .rings .now { animation: tumourGrow 1.4s cubic-bezier(.3,.6,.2,1) both; animation-delay: .8s; }
+
+/* svg drawing */
+.draw { stroke-dasharray: 1; stroke-dashoffset: 0; }
+@keyframes drawOn { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.anim .slide.on .draw { animation: drawOn var(--dur, 1s) cubic-bezier(.4,0,.2,1) both; animation-delay: calc(var(--d, 0) * 80ms + var(--dd, 0ms)); }
+.pipe .ar .draw { --dd: calc(var(--k, 0) * 75ms + 260ms); --dur: .45s; }
+.pop { transform-box: fill-box; transform-origin: center; }
+@keyframes popIn { from { transform: scale(0); } }
+.anim .slide.on .pop { animation: popIn .5s cubic-bezier(.3,1.5,.5,1) both; animation-delay: calc(var(--d, 0) * 80ms + var(--dd, 0ms)); }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } }
+@keyframes fadeIn { from { opacity: 0; } }
+.anim .slide.on :is(.gcard, .sk .dn, .sk .dl, .sk .sn, .sk .onode, .sk .ol, .fu) { animation: fadeUp .55s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--d, 0) * 80ms + var(--dd, 0ms)); }
+.gm-top, .gm-ex { transform-box: fill-box; transform-origin: left center; }
+.anim .slide.on .gm-top { animation: fadeIn .6s ease both; animation-delay: calc(var(--d, 0) * 80ms + 150ms); }
+.anim .slide.on .gm-lab, .anim .slide.on .gm-win { animation: fadeIn .5s ease both; animation-delay: calc(var(--d, 0) * 80ms + 600ms); }
+.anim .slide.on .gm-fun { animation: fadeIn .6s ease both; animation-delay: calc(var(--d, 0) * 80ms + 800ms); }
+.anim .slide.on .gm-ex { animation: fadeIn .6s ease both; animation-delay: calc(var(--d, 0) * 80ms + 900ms); }
+.anim .slide.on .wm-base { animation: fadeIn .7s ease both; animation-delay: calc(var(--d, 0) * 80ms + 100ms); }
+.anim .slide.on .wm-trial path { animation: fadeIn .5s ease both; animation-delay: calc(var(--d, 0) * 80ms + var(--dd, 0ms)); }
+.anim .slide.on .callout { animation: rise .6s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--d, 0) * 80ms + var(--dd, 0ms)); }
+@keyframes run { 0% { left: 0; opacity: 0; } 6% { opacity: 1; } 92% { opacity: 1; } 100% { left: calc(100% - 14px); opacity: 0; } }
+.anim .slide.on .runner { animation: run 2.8s cubic-bezier(.45,0,.55,1) 1.3s both; }
+
+/* pulses (decorative; nothing visible in the static state) */
+@keyframes glow { 0% { box-shadow: 0 0 0 0 rgba(23,255,136,.8); } 70% { box-shadow: 0 0 0 22px rgba(23,255,136,0); } 100% { box-shadow: 0 0 0 0 rgba(23,255,136,0); } }
+.anim .slide.on .pulse { animation: glow 1.8s ease-out var(--pd, 1.6s) 2 forwards; }
+.lead-opt { position: relative; }
+.lead-opt::after { content: ""; position: absolute; inset: 0 -14px; pointer-events: none; }
+.anim .slide.on .lead-opt::after { animation: glow 1.8s ease-out 1.6s 2 forwards; }
+.pring { opacity: 0; transform-box: fill-box; transform-origin: center; }
+@keyframes ring { from { opacity: .85; transform: scale(1); } to { opacity: 0; transform: scale(2.6); } }
+.anim .slide.on .pring { animation: ring 1.8s ease-out var(--pd, 1.6s) 2 forwards; }
+
+/* count-up: the real number stays in the DOM; an overlay animates on top */
+.slide .cnt { position: relative; display: inline-block !important; margin: 0 !important; font: inherit !important; color: inherit !important; letter-spacing: inherit !important; text-transform: inherit !important; }
+.cnt.counting { -webkit-text-fill-color: transparent; }
+.cnt.counting::after { content: attr(data-show); position: absolute; left: 0; right: 0; top: 0; white-space: nowrap; -webkit-text-fill-color: currentColor; font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) {
+  .anim .slide, .anim .slide *, .anim .slide *::after, .slide.leave { animation: none !important; }
+  .slide.leave { visibility: hidden; }
+}
+
 /* speaker notes: hidden in slides, shown in an overlay with N */
 .notes { display: none; }
 #notes-panel { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); width: min(1000px, calc(100vw - 110px)); max-height: 46vh; overflow: auto;
@@ -432,6 +581,30 @@ body.show-notes #notes-panel { display: block; }
 #notes-panel .nh span:last-child { color: rgba(255,255,255,.55); }
 #notes-panel p + p { margin-top: 8px; }
 #notes-panel b { color: var(--mint-2); font-weight: 700; }
+
+/* ===== print and PDF: every slide is one page, at its final state ===== */
+@page { size: 1920px 1080px; margin: 0; }
+@media print {
+  html, body { width: 1920px !important; height: auto !important; margin: 0 !important; overflow: visible !important; background: #fff !important; }
+  body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  #deck { position: static !important; }
+  .slide { position: relative !important; left: auto !important; top: auto !important; margin: 0 !important; transform: none !important; translate: none !important; visibility: visible !important; opacity: 1 !important; break-after: page !important; page-break-after: always !important; break-inside: avoid !important; }
+  .slide:last-child { break-after: auto !important; page-break-after: auto !important; }
+  #nav, #progress, #notes-panel, .runner { display: none !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .cnt { -webkit-text-fill-color: currentColor !important; }
+  .cnt::after { content: none !important; display: none !important; }
+}
+/* ?print=1 gives the same static layout on screen */
+html.print, html.print body { width: 1920px !important; height: auto !important; margin: 0 !important; overflow: visible !important; background: #fff !important; }
+html.print body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+html.print #deck { position: static !important; }
+html.print .slide { position: relative !important; left: auto !important; top: auto !important; margin: 0 !important; transform: none !important; translate: none !important; visibility: visible !important; opacity: 1 !important; break-after: page !important; page-break-after: always !important; break-inside: avoid !important; }
+html.print .slide:last-child { break-after: auto !important; page-break-after: auto !important; }
+html.print #nav, html.print #progress, html.print #notes-panel, html.print .runner { display: none !important; }
+html.print *, html.print *::before, html.print *::after { animation: none !important; transition: none !important; }
+html.print .cnt { -webkit-text-fill-color: currentColor !important; }
+html.print .cnt::after { content: none !important; display: none !important; }
 </style>
 
 <div id="deck">
@@ -462,7 +635,7 @@ body.show-notes #notes-panel { display: block; }
       <h2 class="rv" style="--d:2;font-size:88px">Rahela, 55.<br>Never smoked.</h2>
       <p class="lead rv" style="--d:3;font-size:29px;max-width:800px;text-wrap:pretty">Lung adenocarcinoma with an EGFR L858R mutation. A targeted pill, osimertinib, held the cancer back for 14 months.</p>
       <p class="fill"></p>
-      <p class="punch rv" style="--d:6">Her cancer learned<br>to <mark>escape her drug.</mark></p>
+      <p class="punch rv" style="--d:6">Her cancer learned<br>to <mark class="pulse" style="--pd:1.4s">escape her drug.</mark></p>
     </div>
     <div class="col grow mid">
       <div class="scan rv" style="--d:4">
@@ -471,7 +644,7 @@ body.show-notes #notes-panel { display: block; }
         <div class="tumour">
           <div class="rings" aria-hidden="true"><span class="now"></span><span class="low"></span></div>
           <ul class="leg">
-            <li><span class="ic now"></span><span><b>45 mm</b>now</span></li>
+            <li><span class="ic now"></span><span><b><span class="cnt" data-from="32" data-delay="800" data-dur="1400">45</span> mm</b>now</span></li>
             <li><span class="ic low"></span><span><b>32 mm</b>at its smallest</span></li>
             <li><span class="ic liv"></span><span><b>New</b>lesion in the liver</span></li>
           </ul>
@@ -480,14 +653,53 @@ body.show-notes #notes-panel { display: block; }
       </div>
     </div>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX · all patient data fictional</span><span class="pg">02 / 17</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX · all patient data fictional</span><span class="pg">02 / 20</span></div>
   <aside class="notes">
     <p><b>Say:</b> "Meet Rahela. She is 55 and never smoked. She is fictional; we built her case to test the product. A targeted pill held her lung cancer back for 14 months. Now the tumour has grown from 32 to 45 millimetres, there is a new spot in her liver, and her blood shows a mutation called C797S." Pause. "Her cancer learned to escape her drug."</p>
     <p><b>Why:</b> One identifiable person before any statistic. The judges should care about her before they hear about the market.</p>
   </aside>
 </section>
 
-<!-- 3 TONIGHT'S QUESTION -->
+<!-- 3 WHERE THE MUTATIONS SIT -->
+<section class="slide" data-title="Where the mutations sit">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">The biology</span></div>
+  <div class="body">
+    <p class="kicker rv">Where the mutations sit · EGFR</p>
+    <h2 class="rv" style="--d:1">Her drug holds on at C797.<br><span class="g">C797S breaks that hold.</span></h2>
+    <div class="rv" style="--d:2;margin-top:34px"><svg class="gm" viewBox="0 0 1712 440" role="img" aria-label="EGFR protein map with the kinase domain, exons 18 to 21 and the main mutations. Rahela's L858R and C797S are highlighted.">
+<defs><pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#fff"/><line x1="0" y1="0" x2="0" y2="8" stroke="#9aa7b8" stroke-width="3"/></pattern></defs>
+<g class="gm-top">
+<rect x="0" y="36" width="34" height="24" fill="#c9d3df"/>
+<rect x="34" y="36" width="879.3" height="24" fill="#fff" stroke="#b7e9cd" stroke-width="2"/>
+<rect x="913.3" y="30" width="32.6" height="36" fill="#151923"/>
+<rect x="945.9" y="36" width="766.1" height="24" fill="#e2fff0" stroke="#b7e9cd" stroke-width="2"/>
+<rect x="1006.8" y="36" width="379.5" height="24" fill="#17ff88"/>
+<text class="gm-in" x="50" y="53">EGFR protein · 1,210 amino acids</text>
+</g>
+<g class="gm-lab">
+<text x="0" y="20">Signal 1–24</text>
+<text x="473.7" y="20" text-anchor="middle">Extracellular 25–645</text>
+<text x="929.6" y="20" text-anchor="middle">TM 646–668</text>
+<text class="k" x="1196.6" y="20" text-anchor="middle">Kinase domain 712–979</text>
+<text x="1712" y="20" text-anchor="end">Intracellular 669–1210</text>
+</g>
+<rect class="gm-win" x="972.8" y="31" width="266.2" height="34" fill="none" stroke="#151923" stroke-width="2.5"/>
+<path class="gm-fun" d="M972.8 65L1239 65L1712 152L0 152Z" fill="#b4ffd6" opacity=".45"/>
+<g class="gm-ex"><rect x="2" y="152" width="369.4" height="48" fill="#fff" stroke="#151923" stroke-width="2"/><text x="186.7" y="140" text-anchor="middle">Exon 18 · 688–728</text><rect x="375.4" y="152" width="296.5" height="48" fill="#fff" stroke="#151923" stroke-width="2"/><text x="523.7" y="140" text-anchor="middle">Exon 19 · 729–761</text><rect x="675.9" y="152" width="560.6" height="48" fill="#fff" stroke="#151923" stroke-width="2"/><text x="956.2" y="140" text-anchor="middle">Exon 20 · 762–823</text><rect x="1240.5" y="152" width="469.5" height="48" fill="#fff" stroke="#151923" stroke-width="2"/><text x="1475.3" y="140" text-anchor="middle">Exon 21 · 824–875</text></g>
+<rect x="528.2" y="152" width="45.5" height="48" fill="#17ff88" stroke="#0a7a42" stroke-width="2"/>
+<rect x="675.9" y="152" width="125.5" height="48" fill="url(#hatch)" stroke="#151923" stroke-width="2"/><line x1="933.4" y1="152" x2="933.4" y2="200" stroke="#151923" stroke-width="4"/><line x1="997.1" y1="152" x2="997.1" y2="200" stroke="#151923" stroke-width="4"/><line x1="1552.6" y1="152" x2="1552.6" y2="200" stroke="#0a7a42" stroke-width="4"/><g class="gm-links"><path class="draw" pathLength="1" style="--dd:700ms" d="M551 200V218M551 242V264L158 286V312" fill="none" stroke="#151923" stroke-width="2"/><path class="draw" pathLength="1" style="--dd:810ms" d="M737.7 200V218M737.7 242V264L507 286V312" fill="none" stroke="#151923" stroke-width="2"/><path class="draw" pathLength="1" style="--dd:920ms" d="M933.4 200V218M933.4 242V264L856 286V312" fill="none" stroke="#151923" stroke-width="2"/><path class="draw" pathLength="1" style="--dd:1030ms" d="M997.1 200V218M997.1 242V264L1205 286V312" fill="none" stroke="#151923" stroke-width="2"/><path class="draw" pathLength="1" style="--dd:1140ms" d="M1552.6 200V218M1552.6 242V264L1554 286V312" fill="none" stroke="#151923" stroke-width="2"/></g><g class="gm-heads"><circle class="pop" style="--dd:600ms" cx="551" cy="230" r="11" fill="#b4ffd6" stroke="#0a7a42" stroke-width="3"/><circle class="pop" style="--dd:710ms" cx="737.7" cy="230" r="11" fill="#fff" stroke="#151923" stroke-width="3"/><circle class="pop" style="--dd:820ms" cx="933.4" cy="230" r="11" fill="#fff" stroke="#151923" stroke-width="3"/><circle class="pring" style="--pd:2260ms" cx="997.1" cy="230" r="12" fill="none" stroke="#0a7a42" stroke-width="3"/><circle cx="997.1" cy="230" r="18" fill="none" stroke="#0a7a42" stroke-width="3"/><circle class="pop" style="--dd:930ms" cx="997.1" cy="230" r="11" fill="#151923" stroke="#151923" stroke-width="3"/><circle class="pring" style="--pd:2380ms" cx="1552.6" cy="230" r="12" fill="none" stroke="#0a7a42" stroke-width="3"/><circle cx="1552.6" cy="230" r="18" fill="none" stroke="#0a7a42" stroke-width="3"/><circle class="pop" style="--dd:1040ms" cx="1552.6" cy="230" r="11" fill="#17ff88" stroke="#0a7a42" stroke-width="3"/></g><g class="gm-cards"><g class="c-sen gcard" style="--dd:900ms"><rect x="0" y="312" width="316" height="112"/><text class="t" x="22" y="358">Exon 19 deletions</text><text class="s" x="22" y="394">746–750 · sensitising driver</text></g><g class="c-ins gcard" style="--dd:1010ms"><rect x="349" y="312" width="316" height="112"/><text class="t" x="371" y="358">Exon 20 insertions</text><text class="s" x="371" y="394">762–775 · insertion region</text></g><g class="c-res gcard" style="--dd:1120ms"><rect x="698" y="312" width="316" height="112"/><text class="t" x="720" y="358">T790M</text><text class="s" x="720" y="394">Exon 20 · earlier resistance route</text></g><g class="c-her k gcard" style="--dd:1230ms"><rect x="1047" y="312" width="316" height="112"/><text class="t" x="1069" y="358">C797S</text><text class="s" x="1069" y="394">Exon 20 · resistance to osimertinib</text><rect class="tag" x="1257" y="330" width="88" height="30" rx="15"/><text class="tagt" x="1301" y="350" text-anchor="middle">Rahela</text></g><g class="c-her m gcard" style="--dd:1340ms"><rect x="1396" y="312" width="316" height="112"/><text class="t" x="1418" y="358">L858R</text><text class="s" x="1418" y="394">Exon 21 · sensitising driver</text><rect class="tag" x="1606" y="330" width="88" height="30" rx="15"/><text class="tagt" x="1650" y="350" text-anchor="middle">Rahela</text></g></g></svg></div>
+    <p class="say2 rv" style="--d:4">Osimertinib binds in the ATP pocket of the kinase, where it bonds to <b>C797</b>; <b>C797S</b> removes that bond.</p>
+    <p class="fill"></p>
+    <p class="src">EGFR, UniProt P00533 (1,210 amino acids). Exon boundaries approximate. Each track is drawn to scale. Mint: sensitising driver · ink: resistance · ring: Rahela, a fictional patient.</p>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX · all patient data fictional</span><span class="pg">03 / 20</span></div>
+  <aside class="notes">
+    <p><b>Say:</b> "Here is how her cancer escaped. EGFR is the protein that drives it. Her original mutation, L858R, is what made the drug work. Osimertinib sits in the kinase pocket and bonds to one spot, C797. The new mutation, C797S, changes that one letter, and the bond can no longer form."</p>
+    <p><b>Why:</b> A clear mechanism makes the problem concrete and shows the team understands the biology, without asking the audience to read a paper.</p>
+  </aside>
+</section>
+
+<!-- 4 TONIGHT'S QUESTION -->
 <section class="slide" data-title="Tonight's question">
   <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">The question</span></div>
   <div class="body">
@@ -504,40 +716,40 @@ body.show-notes #notes-panel { display: block; }
     <p class="fill"></p>
     <p class="cap">All by hand, from memory and open tabs. Then the next patient's file opens.</p>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">03 / 17</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">04 / 20</span></div>
   <aside class="notes">
     <p><b>Say:</b> "Tonight her oncologist has to answer six questions, and each answer lives somewhere else: the chart, the guideline, the drug label, the trial registry, a dose formula, the pathology lab. Miss one, and the plan can be wrong."</p>
     <p><b>Why:</b> Make the cognitive load visible. The problem is a real person's workload, not an abstract market.</p>
   </aside>
 </section>
 
-<!-- 4 SCALE -->
+<!-- 5 SCALE -->
 <section class="slide" data-title="Scale">
   <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Bangladesh</span></div>
   <div class="body">
     <p class="kicker rv">Now multiply her</p>
     <h2 class="rv" style="--d:1">One medical oncologist.<br><span class="g">About 7,603 new patients a year.</span></h2>
     <div class="res big mt rv" style="--d:2">
-      <div class="r hl"><span>Bangladesh<small>new cases per medical oncologist</small></span><span class="tr"><span class="bar k" style="width:100%"></span></span><span class="v">≈ 7,603</span></div>
-      <div class="r"><span>United States<small>per haematology / medical oncologist</small></span><span class="tr"><span class="bar m" style="width:1.8%;min-width:12px"></span></span><span class="v">≈ 137</span></div>
+      <div class="r hl"><span>Bangladesh<small>new cases per medical oncologist</small></span><span class="tr"><span class="bar k" style="width:100%"></span></span><span class="v"><span class="cnt">≈ 7,603</span></span></div>
+      <div class="r"><span>United States<small>per haematology / medical oncologist</small></span><span class="tr"><span class="bar m" style="width:1.8%;min-width:12px"></span></span><span class="v"><span class="cnt">≈ 137</span></span></div>
     </div>
-    <div class="groups c4 rv" style="--d:3;margin-top:48px;gap:22px">
-      <div class="grp sm"><em>167,256</em><b>New cancer cases</b><span>Bangladesh, 2022</span></div>
-      <div class="grp sm m"><em>22</em><b>Medical oncologists</b><span>for the whole of Bangladesh</span></div>
-      <div class="grp sm"><em>20 M</em><b>New cases worldwide</b><span>2022</span></div>
-      <div class="grp sm k"><em>1.82 M</em><b>Lung cancer deaths</b><span>18.7% of all cancer deaths, the most of any cancer</span></div>
+    <div class="groups c4 stg" style="--d:3;margin-top:48px;gap:22px">
+      <div class="grp sm"><em><span class="cnt">167,256</span></em><b>New cancer cases</b><span>Bangladesh, 2022</span></div>
+      <div class="grp sm m"><em><span class="cnt">22</span></em><b>Medical oncologists</b><span>for the whole of Bangladesh</span></div>
+      <div class="grp sm"><em><span class="cnt">20 M</span></em><b>New cases worldwide</b><span>2022</span></div>
+      <div class="grp sm k"><em><span class="cnt">1.82 M</span></em><b>Lung cancer deaths</b><span>18.7% of all cancer deaths, the most of any cancer</span></div>
     </div>
     <p class="fill"></p>
     <p class="src">Our calculation. Bangladesh: 167,256 new cases (GLOBOCAN 2022) ÷ 22 medical oncologists (Financial Express, Feb 2026). US: &gt; 2 M new cases (ACS 2026) ÷ 14,547 haematology/medical oncologists (ASCO, JCO OP 2025). Definitions differ, so this is a rough comparison. Global figures: GLOBOCAN 2022, IARC.</p>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">04 / 17</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">05 / 20</span></div>
   <aside class="notes">
     <p><b>Say:</b> "Now multiply Rahela. Bangladesh had 167,256 new cancer cases in 2022 and about 22 medical oncologists. That is roughly 7,600 new patients for each one. In the US the figure is about 137. The definitions differ, so treat it as a rough comparison."</p>
     <p><b>Why:</b> Anchoring. The US number makes the Bangladesh number feel as heavy as it is. Leave the bars on screen for a beat.</p>
   </aside>
 </section>
 
-<!-- 5 COST OF THE GAP -->
+<!-- 6 COST OF THE GAP -->
 <section class="slide" data-title="The cost of the gap">
   <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">The gap</span></div>
   <div class="body">
@@ -557,7 +769,7 @@ body.show-notes #notes-panel { display: block; }
         <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
       </div>
       <div class="gapx">
-        <p class="big">≈ 45%</p>
+        <p class="big"><span class="cnt">≈ 45%</span></p>
         <p class="say">of US lung cancer (NSCLC) patients show evidence of biomarker testing before first-line therapy. <span class="g">More than half do not.</span></p>
         <div class="legend"><span><i class="on"></i>Tested before first-line therapy</span><span><i></i>No evidence of testing</span></div>
         <p class="so">Without a biomarker result, a matched drug cannot be chosen. <span>Rahela was tested. Many patients are not.</span></p>
@@ -566,21 +778,21 @@ body.show-notes #notes-panel { display: block; }
     <p class="fill"></p>
     <p class="src">Source: JAMA Network Open 2025;8(7):e2519963, US patients with NSCLC, via Targeted Oncology. Each square is one patient in 100.</p>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">05 / 17</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">06 / 20</span></div>
   <aside class="notes">
     <p><b>Say:</b> "Here is what the gap costs. Even in the United States, only about 45 in 100 lung cancer patients show a biomarker test before their first treatment. Without that result, a matched drug cannot be chosen. The drugs exist. Patients lose them at the steps in between."</p>
     <p><b>Why:</b> Loss framing. The loss is a missed step, and a missed step is something an assistant can check.</p>
   </aside>
 </section>
 
-<!-- 6 REVEAL -->
+<!-- 7 REVEAL -->
 <section class="slide" data-title="Meet OncoAgent">
   <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">OncoAgent</span></div>
   <div class="body cols">
     <div class="col" style="flex:0 0 700px">
       <p class="kicker rv">Meet OncoAgent</p>
       <h2 class="rv m" style="--d:1">An assistant team for the oncologist.</h2>
-      <div class="pillars rv" style="--d:2">
+      <div class="pillars stg" style="--d:2">
         <div><i>01</i><span style="margin:0"><b>Reads everything</b><span>Scans, pathology, gene and plasma reports on one timeline, with live CIViC and ClinicalTrials.gov.</span></span></div>
         <div><i>02</i><span style="margin:0"><b>Proposes with evidence</b><span>Next test, treatment, dose and trial. Every claim links to its source.</span></span></div>
         <div><i>03</i><span style="margin:0"><b>The doctor decides</b><span>Approve, modify or reject. Every decision is signed and logged.</span></span></div>
@@ -596,35 +808,36 @@ body.show-notes #notes-panel { display: block; }
       <p class="shot-cap" style="margin-left:200px;margin-top:22px">Live product, oncoagent.vercel.app · desktop and phone · fictional patients</p>
     </div>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">06 / 17</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">07 / 20</span></div>
   <aside class="notes">
     <p><b>Say:</b> "This is OncoAgent: an assistant team that works for the oncologist. It reads the whole record, proposes the next step with the source attached, and then waits for the doctor." Point at the screen: "This is the live product, running now."</p>
     <p><b>Why:</b> The reveal comes after the tension, so the solution lands as relief. Three pillars are easy to remember.</p>
   </aside>
 </section>
 
-<!-- 7 HOW IT WORKS -->
+<!-- 8 HOW IT WORKS -->
 <section class="slide" data-title="How it works">
   <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">How it works</span></div>
   <div class="body">
     <p class="kicker rv">How it works</p>
     <h2 class="rv" style="--d:1">Nine agents.<br><span class="g">The model writes language, never numbers.</span></h2>
-    <div class="pipe rv" style="--d:2;margin-top:40px">
+    <div class="pipe stg" style="--d:2;margin-top:40px">
       <div class="n"><i>Agents 1–7 · code</i><b>Seven specialist agents</b>
         <div class="mini"><em>Sentinel</em><em>Genomic-interpreter</em><em>Test-advisor</em><em>Guideline</em><em>Pharmacology-safety</em><em>Trial-matcher</em><em>Dose-optimizer</em></div>
         <span style="margin-top:4px">Plain, testable code</span></div>
-      <div class="ar"></div>
+      <div class="ar"><svg viewBox="0 0 34 24" aria-hidden="true"><path class="draw" pathLength="1" d="M2 12H29"/><path class="draw" pathLength="1" d="M22 5l7.5 7-7.5 7"/></svg></div>
       <div class="n m3"><i>Agent 8</i><b>Claude synthesis</b><span>Writes the <span class="nw">pre-read</span> and cards from a <span class="nw">de-identified</span> summary</span></div>
-      <div class="ar"></div>
+      <div class="ar"><svg viewBox="0 0 34 24" aria-hidden="true"><path class="draw" pathLength="1" d="M2 12H29"/><path class="draw" pathLength="1" d="M22 5l7.5 7-7.5 7"/></svg></div>
       <div class="n k"><i>Agent 9 · code</i><b><span class="nw">Safety-critic</span></b><span>Deterministic checks on every claim</span></div>
-      <div class="ar"></div>
+      <div class="ar"><svg viewBox="0 0 34 24" aria-hidden="true"><path class="draw" pathLength="1" d="M2 12H29"/><path class="draw" pathLength="1" d="M22 5l7.5 7-7.5 7"/></svg></div>
       <div class="n"><i>Output</i><b>Recommendation card</b><span>Proposal, evidence IDs, confidence, what is uncertain, alternatives</span></div>
-      <div class="ar"></div>
+      <div class="ar"><svg viewBox="0 0 34 24" aria-hidden="true"><path class="draw" pathLength="1" d="M2 12H29"/><path class="draw" pathLength="1" d="M22 5l7.5 7-7.5 7"/></svg></div>
       <div class="n m"><i>Human</i><b>Clinician decides</b><span>Approve, modify or reject, with a reason</span></div>
-      <div class="ar"></div>
+      <div class="ar"><svg viewBox="0 0 34 24" aria-hidden="true"><path class="draw" pathLength="1" d="M2 12H29"/><path class="draw" pathLength="1" d="M22 5l7.5 7-7.5 7"/></svg></div>
       <div class="n"><i>Record</i><b><span class="nw">Hash-chained</span> log</b><span>Every decision chained with SHA-256</span></div>
+      <span class="runner" aria-hidden="true"></span>
     </div>
-    <div class="rule3 rv" style="--d:3;margin-top:40px">
+    <div class="rule3 stg" style="--d:6;margin-top:40px">
       <div><b>Doses</b><span>come only from unit-tested calculators</span></div>
       <div><b>Trial IDs</b><span>come only from the ClinicalTrials.gov registry</span></div>
       <div><b>Evidence</b><span>comes from CIViC and a versioned knowledge pack</span></div>
@@ -632,25 +845,25 @@ body.show-notes #notes-panel { display: block; }
     <p class="fill"></p>
     <p class="cap">Eight of the nine agents are plain, testable code; only the synthesis step uses a model (Claude Opus 5.5, structured output). It sees a pseudonymous ID and an age band, never a name or address.</p>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">07 / 17</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">08 / 20</span></div>
   <aside class="notes">
     <p><b>Say:</b> "Nine agents work on each case. Seven specialists are ordinary code you can unit-test, and so is the safety-critic: eight of nine agents are plain code. Claude only writes the language, and the critic checks every claim before a doctor sees it. Doses come from calculators and trial numbers from the registry, never from the model."</p>
     <p><b>Why:</b> Answer the hallucination objection with architecture before a judge raises it.</p>
   </aside>
 </section>
 
-<!-- 8 RAHELA'S CASE IN ONCOAGENT -->
+<!-- 9 RAHELA'S CASE IN ONCOAGENT -->
 <section class="slide" data-title="Rahela's case in OncoAgent">
   <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Rahela's case</span></div>
   <div class="body cols">
     <div class="col" style="flex:0 0 820px">
       <p class="kicker rv">Rahela's case · fictional patient</p>
       <h2 class="rv m" style="--d:1">About 23 seconds later: a draft plan with sources.</h2>
-      <div class="outs rv" style="--d:2;margin-top:36px">
+      <div class="outs stg" style="--d:2;margin-top:36px">
         <div><span class="tg">Test first</span><p>Re-biopsy the new liver lesion before choosing a regimen.</p></div>
         <div><span class="tg">Safety</span><p>QT warning: citalopram prolongs QT. Repeat the ECG before the next line.</p></div>
         <div class="lead-opt"><span class="tg">Leading option</span><p>Amivantamab + carboplatin + pemetrexed, with C797S trials screened in parallel.</p></div>
-        <div><span class="tg">Dose</span><p>Carboplatin 460 mg · pemetrexed 750 mg</p><code>AUC 5 × (CrCl 67.7 + 25) = 463.7 → 460 mg<br>500 mg/m² × BSA 1.51 m² = 755 → 750 mg</code></div>
+        <div><span class="tg">Dose</span><p>Carboplatin <span class="cnt">460</span> mg · pemetrexed <span class="cnt">750</span> mg</p><code>AUC 5 × (CrCl 67.7 + 25) = 463.7 → 460 mg<br>500 mg/m² × BSA 1.51 m² = 755 → 750 mg</code></div>
       </div>
       <p class="fill"></p>
       <p class="src">Mean full run with Claude: 23.4 s (stored evaluation runs). A pharmacist verifies doses before prescribing.</p>
@@ -659,14 +872,48 @@ body.show-notes #notes-panel { display: block; }
       <div class="shot rv" style="--d:3;width:100%;height:770px"><img src="../assets/screenshots/04-recommendations.webp" alt="Rahela's recommendation cards: leading option approved by the doctor, re-biopsy, ECG safety card, and the dose card with formulas"></div>
     </div>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">08 / 17</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">09 / 20</span></div>
   <aside class="notes">
     <p><b>Say:</b> "Back to Rahela. In about 23 seconds the agents return a draft: re-biopsy the liver lesion first, watch the QT interaction with her citalopram, and the leading option, amivantamab with carboplatin and pemetrexed, with C797S trials screened in parallel. The doses come from the formulas on the right, not from the model."</p>
     <p><b>Why:</b> Show, don't tell. The judges see the exact output for the patient they already care about.</p>
   </aside>
 </section>
 
-<!-- 9 CLINICIAN CASE INTAKE -->
+<!-- 10 GEOGRAPHY OF THE GAP -->
+<section class="slide" data-title="Geography of the gap">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Geography of the gap</span></div>
+  <div class="body">
+    <p class="kicker rv">Geography of the gap</p>
+    <h2 class="rv" style="--d:1">Her trials exist.<br><span class="g">None of them is in Bangladesh.</span></h2>
+    <div class="geo rv" style="--d:2">
+      <div class="wmap"><svg class="wm" viewBox="0 0 1130 530" role="img" aria-label="World map. Bangladesh and the United States are linked by an arc. Countries with a recruiting site in the four trials found for Rahela: United States, Canada, China, France, Australia, Hong Kong, Malaysia, Singapore. None in Bangladesh."><path class="wm-base" d="M1119,371L1120,370L1121,372L1120,373L1118,374L1116,373L1116,372L1118,371ZM1126,368L1123,368L1121,369L1121,368L1123,367L1124,367L1126,366L1126,366L1126,368ZM4,366L4,366L4,366L5,366L5,367L4,368L4,368L4,366ZM672,311L672,311L684,318L684,321L689,324L687,329L687,331L689,332L689,333L688,335L688,336L688,338L689,340L690,344L692,345L689,347L686,348L684,348L682,349L680,349L679,350L676,349L673,349L673,344L672,342L671,341L668,341L666,340L664,339L663,338L662,338L660,333L658,331L658,329L658,327L657,324L659,323L660,322L661,320L662,319L662,318L661,317L661,316L662,315L662,313L661,311L662,311L666,311ZM539,206L539,206L539,207L538,212L528,212L528,222L525,222L525,224L525,229L513,229L512,230L512,229L513,229L519,228L520,227L521,226L522,220L527,216L528,212L529,212L530,209L533,208L534,209L535,209L536,208L538,208L538,206ZM808,127L806,130L804,130L805,134L804,135L798,134L799,141L797,141L792,143L797,149L795,150L796,152L794,152L792,150L788,150L783,150L782,150L778,149L776,149L776,152L771,150L770,151L769,152L768,153L765,156L764,158L763,158L762,156L758,156L757,153L755,153L755,150L751,147L746,147L743,148L739,145L736,143L731,141L731,140L724,142L727,156L725,156L723,153L721,152L718,153L717,154L716,153L717,152L716,150L712,149L710,146L709,145L708,144L711,144L711,142L713,141L716,142L715,138L714,136L711,136L709,135L706,137L704,137L702,137L702,135L700,133L698,133L695,130L696,128L695,127L696,123L699,125L699,122L704,119L708,119L715,121L718,122L721,121L725,121L729,123L730,122L734,122L734,120L729,118L731,116L730,115L732,114L730,112L731,111L740,109L741,109L748,107L749,106L755,107L757,110L759,109L763,111L764,112L766,112L772,109L771,110L776,113L785,122L786,120L790,122L794,121L796,121L798,124L800,124L802,126L805,125ZM727,156L724,142L731,140L731,141L736,143L739,145L743,148L746,147L751,147L755,150L755,153L757,153L758,156L762,156L763,158L764,158L765,156L768,153L769,152L770,153L769,155L771,156L773,156L777,157L774,160L771,160L770,160L770,159L770,157L766,158L766,160L765,162L762,162L762,164L764,165L766,167L765,171L762,170L761,170L760,168L756,166L753,165L750,163L746,160L744,157L743,156L740,156L739,155L738,153L733,151L732,153L729,154L730,156ZM1010,317L1015,319L1021,321L1023,323L1025,325L1025,327L1030,329L1031,331L1028,332L1028,334L1031,336L1032,340L1034,340L1034,342L1036,342L1035,343L1038,345L1038,346L1036,346L1035,345L1032,345L1029,344L1027,342L1026,340L1024,337L1020,335L1018,336L1016,337L1016,340L1013,341L1011,341L1008,340L1009,328ZM1046,320L1047,322L1048,324L1047,324L1046,322L1045,321L1044,320L1042,318L1040,317L1041,316L1043,317L1044,318L1045,319ZM1042,328L1040,329L1038,330L1036,330L1034,329L1032,328L1033,327L1035,327L1037,327L1038,325L1038,325L1038,327L1040,327L1041,326L1043,324L1043,322L1045,322L1045,323L1045,325L1044,327L1042,327ZM1053,327L1053,327L1055,330L1056,331L1056,332L1055,332L1054,331L1052,329L1052,326L1052,326ZM1010,317L1009,328L1008,340L1006,337L1003,337L1002,338L998,338L999,335L1001,334L1001,330L1000,327L994,324L991,323L986,320L985,322L984,322L984,321L984,319L981,317L985,316L987,316L987,315L982,315L981,313L978,312L977,311L981,310L983,308L988,310L988,311L989,317L992,319L995,316L999,313L1001,313L1004,315L1006,316ZM958,340L958,340L958,341L956,344L953,345L953,344L953,343L955,341ZM987,332L987,330L988,328L989,327L989,328L989,330ZM937,292L935,295L937,299L937,300L940,304L937,304L936,307L936,310L933,313L933,316L931,322L931,320L927,322L926,320L924,320L922,318L918,320L917,318L915,318L913,318L912,313L911,312L909,309L909,306L909,302L911,300L911,302L914,304L916,304L918,304L919,302L921,302L924,303L927,302L928,297L929,296L930,291L934,291ZM973,317L976,318L977,321L975,320L972,319L970,320L968,319L969,317ZM965,321L963,320L962,319L965,319L966,320ZM968,299L969,301L971,301L971,303L971,306L969,306L969,308L970,310L969,310L968,308L967,303L967,300ZM953,304L956,304L959,301L960,302L958,306L955,306L952,306L947,306L944,306L944,309L946,312L948,311L954,309L954,311L952,310L951,313L948,314L951,319L950,320L953,324L953,327L951,328L950,326L952,323L949,325L948,324L948,322L946,320L946,317L944,318L944,322L944,327L942,328L941,327L942,323L942,320L940,320L940,317L941,315L941,312L943,307L944,305L946,302L949,303ZM943,345L939,342L942,341L943,342L944,343L944,344ZM946,338L949,338L952,337L951,339L946,340L942,339L942,338L945,337ZM937,338L939,337L939,339L936,340L934,340L932,340L933,338L935,338L936,337ZM907,331L907,332L913,332L914,331L919,332L920,335L925,335L929,338L925,339L922,338L919,338L916,337L913,337L909,335L907,335L906,335L900,334L900,332L897,332L899,329L903,329L905,330ZM894,311L895,314L896,316L898,316L900,318L899,323L898,328L895,329L892,325L888,323L887,320L885,317L883,315L881,309L878,306L877,303L876,300L873,298L871,295L869,293L866,289L865,287L867,287L872,288L875,292L878,294L879,296L882,299L886,299L888,302L890,305L893,307L891,310L893,311ZM378,499L380,500L382,503L386,505L390,506L390,508L387,508L386,507L384,507L381,507ZM391,418L391,421L391,424L391,428L391,429L391,431L391,433L395,436L395,439L397,440L398,442L396,447L392,449L386,450L383,449L384,451L384,454L385,456L383,457L380,458L377,457L376,457L378,461L380,462L381,461L382,463L380,464L378,466L379,470L379,472L376,472L374,474L374,476L378,479L381,480L381,483L378,485L377,489L375,491L375,492L377,496L379,498L378,498L375,497L369,497L367,495L366,492L364,492L363,491L361,487L363,486L363,483L362,482L363,478L362,474L361,472L362,471L362,470L360,469L361,467L359,466L357,462L358,461L356,457L356,453L356,450L358,448L356,445L355,441L357,439L356,436L357,432L356,429L356,428L353,422L354,418L353,415L354,411L355,408L357,406L356,404L356,403L355,397L358,395L359,391L358,390L361,387L365,388L367,390L368,388L371,388L372,388L378,394L381,395L385,398L388,399L389,401L387,406L390,407L393,408L396,407L398,405L398,401L400,401L401,403L402,406L399,408L397,409L394,413ZM378,499L381,507L384,507L386,507L385,508L383,509L382,509L380,509L378,508L375,507L371,505L367,503L362,500L365,500L369,503L373,504L374,502L374,500L376,498ZM349,371L350,374L351,376L353,378L352,382L354,386L356,391L358,390L359,391L358,395L355,397L356,403L356,404L357,406L355,408L354,411L353,415L354,418L353,422L356,428L356,429L357,432L356,436L357,439L355,441L356,445L358,448L356,450L356,453L356,457L358,461L357,462L359,466L361,467L360,469L362,470L362,471L361,472L362,474L363,478L362,482L363,483L363,486L361,487L363,491L364,492L366,492L367,495L369,497L375,497L378,498L376,498L375,498L373,500L373,503L372,503L369,502L365,500L361,498L359,495L359,493L357,491L354,485L354,481L357,479L352,478L354,474L353,468L356,470L356,462L353,461L354,466L352,465L351,460L351,453L351,451L350,447L348,443L350,443L350,437L351,431L351,426L349,420L350,417L348,413L349,408L349,401L349,394L349,385L348,379L346,374L348,373ZM657,324L658,327L658,329L658,331L660,333L662,338L660,337L656,338L655,338L654,341L655,342L654,346L654,350L655,351L657,352L658,352L658,356L656,355L654,353L653,352L651,351L650,349L648,351L646,350L645,348L643,348L641,348L641,347L640,347L639,347L637,347L635,347L634,348L635,343L634,342L634,340L634,337L633,336L633,334L630,334L630,332L628,332L628,333L626,333L625,335L625,336L623,336L622,336L620,337L619,335L618,333L617,331L616,329L607,329L606,329L605,329L604,329L603,328L604,328L604,326L605,325L606,325L607,325L608,324L610,324L610,325L611,325L613,323L615,321L615,320L615,317L617,313L618,312L620,310L621,309L621,307L621,306L621,304L621,301L622,298L623,297L623,294L623,292L625,290L626,289L629,290L631,291L633,292L636,292L637,290L637,290L638,290L642,288L643,289L644,289L645,288L646,288L648,288L650,288L651,288L653,291L655,291L655,291L657,291L659,290L659,292L662,294L662,299L663,299L662,300L661,301L660,303L659,305L659,308L658,309L658,312L657,313L657,315L657,315L657,317L657,319ZM696,313L694,310L694,297L697,293L698,292L700,292L703,289L707,289L715,278L717,275L719,273L719,271L719,267L718,265L718,265L719,265L721,265L723,264L724,263L725,263L725,264L725,266L725,268L725,270L724,274L722,278L721,282L718,288L715,292L712,297L709,300L704,303L701,306L698,310L697,312ZM689,324L684,321L684,318L672,311L672,311L672,307L673,305L674,303L676,300L674,296L674,294L672,292L674,289L676,287L678,288L678,290L679,291L681,291L685,294L686,294L687,294L688,294L690,295L691,293L693,292L695,293L697,293L694,297L694,310L696,313L694,315L693,316L692,316L692,319L690,321L690,323ZM642,277L640,275L639,274L639,273L639,272L639,270L637,268L637,266L637,266L636,264L635,262L635,261L634,261L634,260L635,258L634,257L635,256L635,255L635,253L637,250L640,250L639,236L639,234L642,234L642,227L654,227L666,227L679,227L680,230L679,231L680,235L681,239L683,240L684,241L683,243L681,244L680,245L680,248L678,253L679,254L678,258L677,261L675,263L674,266L674,267L672,268L672,272L672,275L672,273L671,272L671,271L671,269L669,268L669,265L669,263L668,262L667,263L666,263L666,264L667,267L665,269L663,271L662,272L659,270L658,270L658,271L656,272L656,273L653,273L652,272L650,272L649,273L648,272L647,270L646,269L644,270L643,271L642,275L641,275L640,276ZM639,236L640,250L637,250L635,253L635,255L635,256L634,257L635,258L634,260L634,261L635,261L635,262L636,264L637,266L637,266L635,267L633,269L631,273L628,274L625,274L624,274L624,276L623,277L622,278L618,280L617,279L616,279L616,280L613,280L614,279L613,277L612,275L611,274L609,272L609,271L611,271L612,271L614,271L612,267L612,265L612,262L610,260L611,258L609,258L609,256L607,255L609,250L612,246L613,242L614,234L614,233L613,231L613,230L612,229L611,223L614,221L626,229ZM343,235L343,237L343,238L342,239L342,240L342,241L340,241L339,241L337,241L335,241L334,240L334,239L337,239L339,240L341,239L339,237L339,236L338,235L338,234L340,234ZM342,241L342,240L342,239L343,238L343,237L343,235L343,234L346,234L347,235L348,235L349,237L350,237L350,238L352,238L353,239L352,241L350,240L349,240L348,240L347,240L346,241L346,240L345,240L343,243L342,242ZM762,27L766,26L772,28L779,30L781,32L777,33L770,32L766,31L762,29L759,29ZM786,31L793,33L794,34L783,35L783,32L785,31ZM875,40L881,40L891,42L892,44L883,44L880,44L874,43L873,41ZM899,42L905,43L904,44L900,44L895,43L894,42ZM887,48L887,47L890,47L895,48L896,49L892,49L887,48ZM660,28L664,28L667,28L668,28L669,28L670,27L674,28L673,28L671,28L669,29L669,29L667,30L664,29L665,28ZM626,110L621,110L618,109L618,108L622,107L625,107L626,108L626,109ZM688,47L692,44L691,43L695,42L701,40L709,39L712,38L716,38L718,39L717,40L710,41L704,43L698,45L696,48L694,51L695,54L701,56L699,56L692,56L690,55L686,54L685,52L687,51L686,50L690,47ZM951,112L954,115L957,118L960,122L967,128L962,127L964,132L969,136L970,138L967,136L967,139L964,136L963,133L960,129L959,126L956,121L952,118L949,113L950,111L948,110L949,109ZM133,61L133,61L136,64L139,67L136,69L137,70L139,67L145,68L147,71L143,72L138,73L135,76L133,76L131,76L130,75L128,74L129,73L127,72L124,73L124,72L126,70L122,71L121,73L118,74L118,74L133,61ZM1012,74L1012,74L1010,75L1007,75L1011,77L1016,80L1018,80L1019,82L1020,83L1014,82L1010,84L1008,85L1006,87L1005,89L1005,91L999,88L995,91L993,90L992,91L988,91L989,93L989,96L990,98L994,98L998,103L996,103L997,106L1000,108L996,109L999,113L995,114L997,118L996,121L993,119L988,114L980,106L977,101L978,99L977,98L980,97L981,93L982,89L984,86L982,82L979,82L980,85L977,88L971,84L965,86L964,91L968,93L963,94L959,94L957,92L953,91L951,93L943,92L935,93L932,100L927,108L932,109L935,111L938,111L939,110L942,110L948,114L950,117L951,120L953,124L956,130L955,135L955,138L954,142L952,146L951,148L949,150L947,150L944,149L942,151L942,153L942,153L941,152L940,150L942,150L940,146L937,143L939,141L943,142L943,138L942,135L942,133L942,130L938,131L936,132L932,132L929,129L924,127L918,125L915,122L913,120L911,118L907,115L904,114L899,113L896,113L893,113L892,115L894,116L895,118L894,119L894,123L894,124L892,126L888,125L885,125L882,124L881,124L878,126L875,127L872,128L869,127L866,127L864,125L860,124L857,123L854,124L851,124L847,123L845,120L841,119L839,119L835,117L834,121L836,123L834,126L830,125L827,125L824,123L822,123L819,122L815,123L811,127L809,127L808,127L805,125L802,126L800,124L798,124L796,121L794,121L790,122L786,120L785,122L776,113L771,110L772,109L766,112L764,112L763,111L759,109L757,110L755,107L749,106L748,107L741,109L740,109L731,111L730,112L732,114L730,115L731,116L729,118L734,120L734,122L730,122L729,123L725,121L721,121L718,122L715,121L708,119L704,119L699,122L699,125L696,123L695,127L696,128L695,130L698,133L700,133L702,135L702,137L704,137L703,140L700,140L698,144L701,147L701,150L705,154L704,155L703,156L702,156L700,154L699,154L697,153L696,151L693,151L691,151L691,151L687,149L682,148L680,148L679,148L675,145L672,144L669,142L671,141L673,138L671,137L675,135L675,134L672,135L672,133L674,132L676,132L676,131L675,129L676,127L676,126L672,125L670,125L668,123L666,124L662,123L662,122L661,120L659,120L658,119L659,118L657,116L654,117L653,117L653,117L652,117L651,115L650,114L650,114L653,114L654,113L653,112L651,111L651,111L650,110L647,108L648,107L647,105L645,104L643,105L643,104L640,103L639,101L638,100L637,99L638,98L637,95L638,93L638,92L640,90L637,89L642,84L644,82L645,81L640,79L641,76L638,74L639,71L636,68L638,65L634,63L633,61L635,61L639,60L641,59L646,60L652,61L663,65L665,66L666,68L663,70L659,71L648,68L646,69L651,71L651,73L652,76L656,77L658,78L658,76L656,75L657,73L664,75L666,75L663,72L668,69L670,69L673,71L674,68L671,66L672,65L670,63L677,64L679,65L676,66L676,68L678,69L682,68L682,66L686,64L694,62L696,62L694,64L697,64L699,63L703,63L706,62L710,64L711,61L708,60L709,59L716,60L720,61L731,64L731,62L728,61L728,60L725,60L725,58L722,56L722,55L725,52L725,50L726,49L733,50L734,51L733,54L735,55L737,57L739,61L743,63L743,65L740,70L743,70L743,69L746,68L746,67L747,65L745,63L745,61L742,61L740,59L741,56L736,54L739,52L738,50L739,50L741,51L742,54L744,55L742,53L745,51L750,51L755,53L752,50L750,47L753,47L759,47L763,46L761,45L762,43L764,43L768,41L773,41L773,40L779,40L781,41L785,39L789,39L789,38L790,37L794,36L799,37L796,37L802,38L804,39L805,38L812,38L818,40L821,41L822,42L820,43L815,45L814,46L818,46L822,47L823,46L826,48L826,47L830,47L837,47L839,49L849,49L847,47L853,47L856,47L862,49L865,51L864,52L870,55L875,56L874,53L879,54L882,53L887,54L888,53L893,54L888,51L890,50L913,52L917,53L925,56L934,55L940,56L943,57L945,59L949,60L952,59L956,59L961,60L965,60L973,62L974,61L970,59L969,58L978,59L983,59L992,60L997,61L1012,74ZM989,56L987,56L985,55L986,54L989,56ZM144,54L144,54L144,54L144,53L146,53L148,54L148,55L144,55L141,56L141,56L144,54ZM660,139L660,138L662,139L663,139L664,140L664,140L664,140L666,141L669,141L668,142L665,143L662,145L660,144L660,142L657,141L657,141L660,139ZM324,209L326,209L328,209L328,210L324,210ZM328,208L330,210L329,212L329,212L329,210L328,209ZM326,215L327,215L327,218L327,220L326,220L326,218L325,217ZM398,496L400,494L403,495L404,493L407,495L406,496L403,497L401,496L400,498ZM597,30L598,30L601,29L604,30L612,32L606,33L605,35L604,36L603,38L600,38L595,37L597,36L594,35L589,33L587,30L593,30L594,30ZM639,60L635,61L633,61L634,59L631,58L627,59L627,61L624,62L622,62L619,62L616,60L614,61L613,61L613,63L608,63L608,64L606,64L604,67L602,70L599,75L600,76L599,77L596,77L595,80L596,84L597,86L597,90L595,92L594,94L592,92L587,96L583,97L580,95L579,91L578,84L580,82L586,79L591,76L595,71L601,65L605,63L611,59L616,57L620,58L623,55L627,55L631,55L639,57L636,58ZM623,29L621,31L615,31L608,31L608,30L604,30L602,29L608,28L612,29L613,28L619,29ZM619,35L615,36L610,36L612,35L610,34L615,34L616,35ZM469,23L477,22L484,22L487,21L494,21L510,21L522,23L518,24L510,24L499,24L500,25L507,24L513,25L518,24L519,25L516,27L522,26L532,25L538,25L539,26L531,28L529,29L522,29L527,29L524,31L522,33L522,36L524,38L521,38L517,39L521,40L521,43L518,43L521,45L516,46L518,47L517,48L514,48L511,48L513,50L513,52L509,50L507,51L510,52L513,54L514,56L509,57L508,56L505,54L506,56L503,58L509,58L512,58L505,61L498,63L491,64L488,64L485,65L481,69L476,71L474,71L470,72L467,72L464,74L463,77L461,79L457,81L457,84L455,87L453,90L449,90L446,87L441,87L439,86L438,82L435,78L435,76L435,73L433,70L435,68L434,67L437,63L441,62L443,61L444,58L441,60L440,60L437,60L435,59L435,57L437,56L439,56L444,56L440,55L439,54L436,54L434,53L438,50L437,49L436,47L435,44L433,43L433,42L428,40L423,40L417,40L412,40L410,39L407,38L413,37L418,37L409,36L405,35L406,34L415,32L424,31L425,30L420,29L423,28L431,26L435,26L435,25L440,25L447,24L453,24L455,25L461,24L465,24L468,25L472,25L468,24ZM757,485L759,486L761,486L761,487L760,489L755,489L756,487L757,485ZM958,340L958,339L961,338L963,338L964,337L965,338L964,339L961,340L958,341L958,340ZM615,412L616,410L617,411L618,412L619,413L621,413L623,413L625,411L626,398L627,398L628,402L628,404L629,405L631,405L632,403L634,402L635,400L636,400L638,400L639,401L641,401L643,400L644,399L644,397L646,397L647,396L648,393L651,391L656,388L657,388L658,389L659,388L661,388L662,394L663,396L662,400L662,402L661,401L660,401L660,402L659,404L659,405L660,407L662,407L663,405L665,405L664,408L664,411L663,412L660,414L660,415L658,417L657,418L655,421L652,425L649,427L647,429L644,430L642,430L642,431L640,431L639,432L635,431L634,431L632,431L629,433L627,433L625,435L623,435L622,433L621,433L620,432L620,432L619,431L620,429L619,427L620,426L620,423L618,420L617,416L617,416ZM653,413L652,412L650,413L648,414L647,416L649,419L650,419L650,418L652,417L653,416L654,414ZM653,413L654,414L653,416L652,417L650,418L650,419L649,419L647,416L648,414L650,413L652,412ZM214,188L218,188L222,187L221,188L225,190L231,192L237,192L240,192L240,191L245,191L246,192L247,193L248,195L249,197L249,199L250,200L253,201L255,198L258,198L260,200L260,202L261,204L262,206L262,209L263,211L265,212L267,213L268,212L266,216L265,218L264,223L264,225L264,227L264,229L265,232L266,234L267,236L267,238L271,239L272,241L275,240L277,239L279,239L281,238L284,237L285,234L285,231L286,230L288,229L292,229L294,229L296,228L297,229L297,231L295,233L294,235L294,236L293,238L292,240L292,239L291,239L290,240L289,242L288,241L288,241L288,242L285,242L282,242L282,244L281,244L282,245L283,246L283,247L283,247L283,248L279,248L277,251L278,252L277,253L277,254L274,250L272,249L270,248L268,248L265,250L264,250L262,249L260,248L257,247L255,246L251,244L249,243L248,242L247,241L244,240L243,239L240,236L238,234L238,232L239,232L239,231L240,230L240,229L239,227L239,226L239,224L237,220L234,217L233,215L231,214L231,213L232,210L230,209L229,208L229,205L227,205L226,203L225,201L225,200L224,197L224,194L225,193L223,191L222,192L220,191L219,192L219,194L219,197L219,198L221,201L221,202L222,202L222,203L222,203L222,205L223,206L223,208L225,210L225,213L225,215L226,216L226,218L227,218L228,220L229,222L229,222L227,224L226,224L226,221L224,219L223,218L221,217L222,214L222,212L221,211L219,209L219,210L218,209L216,208L215,206L216,205L217,206L218,204L219,203L217,200L216,199L215,197L215,194L214,191ZM391,418L393,417L396,420L398,420L401,422L404,424L406,427L405,429L406,431L405,433L402,435L400,434L398,435L395,433L393,433L391,431L391,429L391,428L391,424L391,421ZM406,431L405,429L406,427L404,424L401,422L398,420L396,420L393,417L391,418L394,413L397,409L399,408L402,406L401,403L400,401L398,401L398,399L399,397L398,395L397,394L396,395L395,395L394,393L394,390L393,389L391,388L390,389L386,388L386,383L385,381L386,380L385,378L386,376L386,374L385,371L384,370L383,369L384,367L378,366L376,362L377,362L377,361L376,360L376,357L374,356L372,356L371,355L368,355L367,353L364,353L360,349L360,347L360,345L360,343L356,343L354,345L351,346L351,347L349,347L347,347L345,348L344,347L344,342L341,344L338,344L337,342L335,342L336,340L334,338L332,335L333,334L333,332L335,331L334,329L335,328L335,326L339,324L341,323L342,323L345,323L346,313L346,311L346,309L344,308L344,305L346,305L347,305L347,304L345,303L345,301L351,301L352,300L353,301L353,303L354,303L356,304L358,304L359,303L361,302L363,302L363,300L365,299L365,298L362,298L362,296L362,293L361,292L361,292L364,292L366,293L367,292L369,292L373,291L374,289L374,288L375,288L376,289L376,290L377,291L377,293L376,294L376,297L377,299L377,301L379,302L380,302L381,302L382,302L383,301L384,300L386,300L387,300L388,300L389,300L388,299L388,298L390,298L391,298L393,299L394,299L395,298L396,299L397,300L398,299L399,298L400,295L402,292L403,292L404,294L406,300L407,301L407,303L405,306L406,307L412,308L412,312L414,309L418,311L423,313L425,315L424,317L428,316L434,318L439,318L444,321L448,325L450,326L453,326L454,327L455,332L456,334L455,340L453,342L449,347L447,352L445,355L444,355L443,357L444,364L443,370L443,372L442,374L442,379L439,384L439,387L436,389L436,391L432,391L428,393L426,394L422,395L419,398L417,402L417,405L417,407L417,410L417,412L415,414L412,421L410,423L408,425L407,429ZM347,347L349,347L351,347L351,346L354,345L356,343L360,343L360,345L360,347L360,349L364,353L367,353L368,355L371,355L372,356L374,356L376,357L376,360L377,361L377,362L376,362L378,366L384,367L383,369L384,370L385,371L386,374L386,376L385,378L386,380L385,381L385,380L382,378L379,378L374,379L372,382L373,384L372,388L371,388L368,388L367,390L365,388L361,387L358,390L356,391L354,386L352,382L353,378L351,376L350,374L349,371L350,367L349,364L349,363L349,362L350,360L349,357L349,354L350,353ZM345,323L342,323L341,323L339,324L335,326L335,328L334,329L335,331L333,332L333,334L332,335L334,338L336,340L335,342L337,342L338,344L341,344L344,342L344,347L345,348L347,347L350,353L349,354L349,357L350,360L349,362L349,363L349,364L350,367L349,371L348,373L346,374L343,372L343,371L336,367L330,363L328,361L326,358L326,357L323,352L320,345L316,338L315,336L314,333L311,331L309,329L310,328L308,324L309,322L312,320L312,321L311,322L311,323L313,323L314,323L315,325L317,324L318,321L320,318L323,317L327,313L328,310L327,308L328,307L330,309L331,311L333,312L335,316L337,316L339,315L340,316L342,315L344,317L342,321L343,321ZM354,303L353,303L353,301L352,300L351,301L345,301L345,303L347,304L347,305L346,305L344,305L344,308L346,309L346,311L346,313L345,323L343,321L342,321L344,317L342,315L340,316L339,315L337,316L335,316L333,312L331,311L330,309L328,307L327,308L326,307L324,306L323,306L321,306L320,304L319,304L316,302L316,301L317,301L317,299L318,298L319,297L321,295L322,293L321,292L321,290L321,287L321,286L321,283L320,281L320,279L321,279L322,278L321,276L322,275L323,276L326,273L327,273L327,271L328,268L330,267L332,267L332,266L335,266L337,264L339,263L340,262L341,262L342,263L341,264L339,265L338,267L337,268L336,269L336,272L335,274L336,274L337,276L337,276L337,278L337,279L337,280L338,280L339,282L343,281L344,282L346,285L348,284L350,285L352,284L353,285L352,287L352,288L351,291L352,293L353,294L353,295L351,297L352,298L353,299ZM322,275L321,276L322,278L321,279L320,279L320,281L319,280L318,278L319,277L318,276L318,275L316,274L315,274L314,276L313,277L312,277L312,278L313,280L312,280L312,281L310,281L310,279L310,279L309,279L308,277L307,277L306,277L305,277L304,278L304,277L304,276L305,276L305,275L305,275L304,274L304,272L306,272L307,273L307,274L308,274L308,274L309,275L311,275L312,274L314,273L315,272L317,272L317,273L318,273L320,273L321,274ZM306,272L304,272L304,274L305,275L305,275L305,276L304,276L304,277L302,276L302,275L302,275L302,274L301,273L300,272L299,272L299,271L298,270L298,271L298,272L297,271L296,271L296,270L296,269L296,268L295,267L296,267L297,266L299,267L299,267L300,267L301,268L302,268L303,267L303,269L304,271ZM303,267L302,268L301,268L300,267L299,267L299,267L297,266L296,267L295,265L294,264L293,263L292,262L291,260L291,259L291,260L292,260L293,260L293,259L294,259L294,257L294,257L295,257L296,256L297,257L297,256L298,256L299,255L299,254L299,254L300,253L300,253L301,254L301,254L302,253L303,253L304,253L304,252L305,252L305,253L305,253L305,255L304,256L304,258L304,259L304,260L304,262L303,262L303,264L303,265L302,266L302,267ZM305,252L304,252L304,253L303,253L302,253L301,254L301,254L300,253L300,253L299,254L299,254L299,255L298,256L297,256L297,257L296,256L295,257L294,257L294,257L294,259L293,259L293,260L292,260L291,259L290,258L291,257L290,256L290,256L288,257L288,256L287,255L287,255L286,254L287,253L286,253L287,252L288,251L290,250L290,250L291,249L292,249L292,249L293,249L294,250L295,249L297,249L297,249L298,249L299,249L299,249L300,249L301,249L302,249L303,250L304,251L305,251ZM286,254L287,255L287,255L288,256L288,257L290,256L290,256L291,257L290,258L290,259L288,259L287,259L286,258L284,258L283,257L283,256L285,255L285,255L285,255ZM277,254L277,253L278,252L277,251L279,248L283,248L283,247L283,247L283,246L282,245L281,244L282,244L282,242L285,242L288,242L288,245L287,249L288,249L289,250L289,249L290,250L288,251L287,252L286,253L287,253L286,254L285,255L285,255L285,255L283,256L283,257L282,256L280,256L278,256ZM288,242L288,241L288,241L289,242L290,240L291,239L291,240L291,240L291,241L291,243L291,243L290,245L290,245L290,247L289,248L289,248L288,249L287,249L288,245ZM374,288L374,289L373,291L369,292L367,292L366,293L364,292L361,292L361,292L362,293L362,296L362,298L365,298L365,299L363,300L363,302L361,302L359,303L358,304L356,304L354,303L353,299L352,298L351,297L353,295L353,294L352,293L351,291L352,288L352,287L353,285L352,284L350,285L348,284L346,285L344,282L343,281L339,282L338,280L337,280L337,279L337,278L337,276L337,276L336,274L335,274L336,272L336,269L337,268L338,267L339,265L341,264L341,265L339,265L340,267L340,269L339,271L340,274L341,274L342,271L341,270L341,267L345,266L345,264L346,263L347,265L349,265L351,267L351,269L354,269L357,268L359,270L361,270L363,269L363,268L367,268L371,268L368,269L369,271L372,271L374,273L374,276L376,276L377,277L375,279L374,280L375,281L374,282L372,283L372,284L372,285ZM387,300L386,300L384,300L383,301L382,302L381,302L380,302L379,302L377,301L377,299L376,297L376,294L377,293L377,291L376,290L376,289L375,288L374,288L372,285L372,284L372,283L374,282L375,281L374,280L375,279L377,277L379,278L381,280L381,282L382,282L384,284L385,285L384,289L382,290L383,290L382,292L383,295L384,295L385,297ZM393,299L391,298L390,298L388,298L388,299L389,300L388,300L387,300L385,297L384,295L383,295L382,292L383,290L382,290L384,289L385,285L389,286L389,285L392,285L395,286L393,289L394,292L395,294L394,295L394,297ZM327,308L328,310L327,313L323,317L320,318L318,321L317,324L315,325L314,323L313,323L311,323L311,322L312,321L312,320L313,317L313,315L312,317L310,315L310,314L310,311L311,310L311,308L313,306L312,304L314,304L316,302L319,304L320,304L321,306L323,306L324,306L326,307ZM359,239L361,240L361,240L360,241L358,241L356,242L356,240L357,239ZM324,240L326,240L328,241L328,242L326,242L325,242L323,242L322,240L322,240L324,239ZM312,222L315,223L317,223L320,224L321,225L324,225L325,226L327,228L329,230L330,230L331,230L331,231L333,231L336,233L335,234L333,234L331,234L329,234L324,235L327,232L325,232L323,231L323,230L322,228L320,228L318,227L317,227L313,226L312,225L313,224L310,224L308,226L306,226L306,227L304,227L303,227L305,226L306,225L307,224L309,223L311,223ZM661,388L659,388L658,389L657,388L656,388L654,386L651,386L651,383L651,382L649,382L646,378L645,375L645,375L644,372L647,372L648,373L649,373L651,370L654,367L655,367L655,366L657,364L659,364L660,365L662,365L664,366L664,367L666,367L667,368L667,373L666,375L666,378L667,379L666,381L666,382L665,384ZM656,388L651,391L648,393L647,396L646,397L644,397L644,399L643,400L641,401L639,401L638,400L636,400L635,400L634,402L632,403L631,405L629,405L628,404L628,402L627,398L626,398L626,387L629,387L630,374L632,374L637,372L638,374L640,372L641,372L643,372L644,372L645,375L645,375L646,378L649,382L651,382L651,383L651,386L654,386ZM626,398L625,411L623,413L621,413L619,413L618,412L617,411L616,410L615,412L612,409L611,406L611,403L610,400L609,394L609,390L609,388L608,386L606,383L605,379L604,377L602,373L602,370L603,370L605,369L607,369L609,371L609,371L622,370L624,372L631,373L637,371L640,370L642,371L643,371L643,372L641,372L640,372L638,374L637,372L632,374L630,374L629,387L626,387ZM513,257L511,255L510,253L511,253L513,250L514,248L515,247L516,247L518,246L520,246L521,248L523,249L525,251L527,254L527,256L528,258L529,259L529,261L529,262L528,262L527,262L527,262L526,262L524,261L522,261L516,261L515,261L514,261L513,262L512,259L515,259L516,259L516,259L518,258L519,259L520,259L522,258L521,257L520,257L519,257L518,256L517,256L516,257ZM529,262L529,261L529,259L528,258L527,256L527,254L528,253L529,251L530,251L532,252L534,251L535,251L535,251L548,250L548,248L548,247L547,232L545,216L550,216L560,224L571,232L571,233L573,235L575,235L575,237L578,237L578,246L577,248L576,250L574,251L569,251L568,252L566,253L564,253L563,252L562,252L559,254L558,255L556,257L555,258L554,258L552,258L552,259L551,261L549,264L549,266L548,267L548,269L547,270L546,270L546,269L545,269L544,269L543,270L541,270L540,270L540,270L539,269L539,268L539,267L538,268L538,266L539,265L537,264L537,263L536,262L536,262L535,263L534,263L533,264L532,264L531,263L530,263L530,263L529,263ZM512,230L513,229L525,229L525,224L525,222L528,222L528,212L538,212L539,207L550,216L545,216L547,232L548,247L548,248L548,250L535,251L535,251L534,251L532,252L530,251L529,251L528,253L527,254L525,251L523,249L521,248L520,246L518,246L516,247L515,247L514,248L513,246L514,244L515,241L515,237L514,235L515,234L514,232ZM573,284L571,285L570,282L570,274L570,273L569,271L568,270L567,269L568,267L569,267L570,265L571,265L572,263L573,262L574,262L576,265L576,266L577,268L576,269L577,270L575,273L574,274L574,276L574,278ZM611,223L612,229L613,230L613,231L614,233L614,234L613,242L612,246L609,250L607,255L609,256L609,258L611,258L610,260L610,260L609,262L609,262L607,258L606,257L604,259L601,258L599,258L598,259L597,259L595,260L593,260L589,258L588,259L586,259L585,258L582,256L579,257L578,258L577,260L577,261L576,265L574,262L573,262L572,263L572,261L568,260L568,258L566,256L566,254L566,253L568,252L569,251L574,251L576,250L577,248L578,246L578,237L583,235L591,228L602,221L607,223L609,225ZM573,284L574,278L574,276L574,274L575,273L577,270L576,269L577,268L576,266L576,265L577,261L577,260L578,258L579,257L582,256L585,258L586,259L588,259L589,258L593,260L595,260L597,259L598,259L599,258L601,258L604,259L606,257L607,258L609,262L609,262L611,263L610,264L610,265L608,268L607,270L606,272L606,273L605,275L603,277L603,279L602,280L602,282L600,283L598,281L597,281L595,284L594,284L593,287L592,290L589,291L587,291L586,292L584,292L582,289L581,287L579,284L576,284ZM610,260L612,262L612,265L612,267L614,271L612,271L611,271L609,271L609,272L611,274L612,275L613,277L614,279L613,280L612,284L611,284L611,287L611,289L611,290L612,292L612,293L614,295L615,296L615,298L615,299L615,301L613,300L610,299L606,299L606,299L604,299L602,299L601,299L595,299L596,296L595,293L593,293L593,291L592,291L592,290L593,287L594,284L595,284L597,281L598,281L600,283L602,282L602,280L603,279L603,277L605,275L606,273L606,272L607,270L608,268L610,265L610,264L611,263L609,262L610,260ZM568,267L567,269L568,270L569,271L570,273L570,274L570,282L571,285L568,285L568,284L567,282L567,280L567,277L566,275L566,273L566,270L565,268L565,267ZM565,267L565,268L566,270L566,273L566,275L567,277L567,280L567,282L568,284L568,285L563,288L562,289L559,290L556,289L556,287L555,284L556,280L557,277L556,272L556,269L556,267L561,267L563,267L564,267ZM540,270L540,270L541,270L543,270L544,269L545,269L546,269L546,270L547,270L548,269L549,270L550,271L551,272L553,271L554,271L556,272L557,277L556,280L555,284L556,287L556,289L555,289L552,288L550,288L547,289L544,290L541,291L541,291L541,288L541,288L541,286L540,285L539,284L538,283L539,282L538,280L538,279L539,279L539,277L539,277L539,276L540,276L540,273L539,271L539,270ZM522,261L524,261L526,262L527,262L527,262L528,262L529,262L529,263L530,263L530,263L531,263L532,264L533,264L534,263L535,263L536,262L536,262L537,263L537,264L539,265L538,266L538,268L539,267L539,268L539,269L540,270L539,270L539,271L540,273L540,276L539,276L539,277L539,277L539,279L538,279L538,279L537,280L536,280L535,280L536,278L534,276L534,276L533,276L532,277L532,275L532,274L532,273L531,272L530,270L528,270L527,271L526,271L525,272L525,273L523,275L522,272L521,271L520,271L519,270L519,268L518,267L518,267L519,265L520,265L521,264L521,264L522,264L522,263L522,262ZM513,262L514,261L515,261L516,261L522,261L522,262L522,263L522,264L521,264L521,264L520,265L519,265L518,267L516,265L515,265L514,264L514,263L513,263ZM538,279L538,280L539,282L538,283L539,284L540,285L541,286L541,288L541,288L541,291L540,291L537,289L534,287L531,285L529,282L530,281L530,280L531,278L533,276L534,276L534,276L536,278L535,280L536,280L537,280L538,279ZM523,275L525,273L525,272L526,271L527,271L528,270L530,270L531,272L532,273L532,274L532,275L532,277L533,276L531,278L530,280L530,281L529,282L528,282L526,281L524,279L524,277ZM548,269L548,267L549,266L549,264L551,261L552,259L552,258L554,258L555,258L556,257L558,255L559,254L562,252L563,252L564,253L566,253L566,254L566,256L568,258L568,260L572,261L572,263L571,265L570,265L569,267L568,267L565,267L564,267L563,267L561,267L556,267L556,269L556,272L554,271L553,271L551,272L550,271L549,270ZM651,288L650,288L648,288L646,288L645,288L644,289L643,289L642,288L638,290L637,290L637,290L636,292L633,292L631,291L629,290L626,289L625,290L623,292L623,294L621,294L619,293L617,295L615,299L615,298L615,296L614,295L612,293L612,292L611,290L611,289L611,287L611,284L612,284L613,280L616,280L616,279L617,279L618,280L622,278L623,277L624,276L624,274L625,274L628,274L631,273L633,269L635,267L637,266L637,268L639,270L639,272L639,273L639,274L640,275L642,277L644,279L644,280L646,282L648,283L648,285L651,287ZM623,294L623,297L622,298L621,301L621,304L621,306L621,307L621,309L620,310L618,312L617,313L615,317L615,320L615,321L613,323L611,325L610,325L610,324L608,324L607,325L606,325L605,323L604,324L603,325L600,322L602,320L601,317L602,316L604,316L605,314L606,316L609,316L610,314L611,312L610,309L609,307L610,303L609,302L607,302L606,300L606,299L610,299L613,300L615,301L615,299L617,295L619,293L621,294ZM601,299L602,299L604,299L606,299L606,299L606,300L607,302L609,302L610,303L609,307L610,309L611,312L610,314L609,316L606,316L605,314L604,316L602,316L601,317L602,320L600,322L597,318L595,315L593,311L593,310L594,309L594,306L595,303L596,303L601,303ZM595,299L601,299L601,303L596,303L595,303L594,303ZM662,338L663,338L664,339L666,340L668,341L669,342L670,346L670,347L669,349L669,353L668,354L667,357L669,358L659,361L659,364L657,364L655,366L655,367L654,367L651,370L649,373L648,373L647,372L644,372L643,372L643,371L642,371L640,370L637,371L635,369L633,366L634,354L640,354L640,353L640,352L640,350L640,348L640,347L641,347L641,348L643,348L645,348L646,350L648,351L650,349L651,351L653,352L654,353L656,355L658,356L658,352L657,352L655,351L654,350L654,346L655,342L654,341L655,338L656,338L660,337ZM668,341L671,341L672,342L673,344L673,349L672,352L673,357L674,357L675,358L676,360L677,365L675,366L674,368L672,366L672,364L673,362L673,360L671,360L671,360L669,358L667,357L668,354L669,353L669,349L670,347L670,346L669,342ZM673,349L676,349L679,350L680,349L682,349L684,348L686,348L689,347L692,345L692,346L692,350L692,353L692,359L692,361L691,363L690,366L688,368L685,370L681,371L678,375L676,376L674,379L673,379L672,382L674,385L674,387L674,388L675,388L674,391L674,393L674,394L674,395L672,397L670,398L666,400L665,401L665,403L665,403L665,405L663,405L663,403L662,402L662,400L663,396L662,394L661,388L665,384L666,382L666,381L667,379L666,378L666,375L667,373L667,368L666,367L664,367L664,366L662,365L660,365L659,364L659,361L669,358L671,360L671,360L673,360L673,362L672,364L672,366L674,368L675,366L677,365L676,360L675,358L674,357L673,357L672,352ZM663,405L662,407L660,407L659,405L659,404L660,402L660,401L661,401L662,402L663,403ZM606,325L605,325L604,326L604,328L603,328L603,325L604,324L605,323ZM604,329L605,329L606,329L607,329L616,329L617,331L618,333L619,335L620,337L622,336L623,336L625,336L625,335L626,333L628,333L628,332L630,332L630,334L633,334L633,336L634,337L634,340L634,342L635,343L634,348L635,347L637,347L639,347L640,347L640,348L640,350L640,352L640,353L640,354L634,354L633,366L635,369L637,371L631,373L624,372L622,370L609,371L609,371L607,369L605,369L603,370L602,370L601,368L602,365L603,361L603,360L604,357L605,355L607,353L608,351L608,348L608,346L607,345L606,343L605,341L606,340L607,338L606,335L605,332L604,330ZM661,316L661,317L662,318L662,319L661,320L660,322L659,323L657,324L657,319L657,317L658,318L659,316ZM672,187L672,188L670,188L670,190L671,191L670,191L670,192L671,192L672,193L671,199L670,198L668,193L669,192L669,191L669,190L670,187L670,186L670,186L671,186L671,185L672,185L672,187L672,187ZM672,185L671,185L671,186L670,186L671,183L672,180L672,180L673,180L674,182L673,183ZM720,353L721,354L722,357L722,361L723,363L722,364L721,366L721,363L720,364L720,367L720,369L719,370L719,373L717,377L715,382L713,389L711,394L709,398L707,399L704,401L702,400L700,399L699,397L699,393L698,390L698,388L699,385L701,384L701,383L702,380L703,378L702,376L702,374L702,371L703,369L703,366L705,366L707,365L708,365L709,365L711,363L714,360L715,359L715,357L716,357L718,355L718,353L719,351ZM671,192L670,192L670,191L671,191L670,190L670,188L672,188L672,191ZM513,257L516,257L517,256L518,256L519,257L520,257L521,257L522,258L520,259L519,259L518,258L516,259L516,259L515,259L512,259ZM594,196L592,190L590,188L590,187L588,185L587,182L589,180L590,177L589,174L590,172L593,170L595,171L595,173L597,171L598,172L596,174L596,175L597,176L597,180L595,181L596,183L597,183L598,185L599,186L599,189L598,190L597,191L595,192L595,194L595,195ZM539,207L539,206L539,206L539,202L544,199L547,198L549,197L550,195L554,194L554,191L556,191L557,190L561,189L562,188L561,187L560,183L560,181L559,178L561,176L565,176L566,174L569,173L574,172L579,172L581,173L583,171L587,171L588,172L590,172L589,174L590,177L589,180L587,182L588,185L590,187L590,188L592,190L594,196L595,199L595,201L594,204L595,206L594,208L595,210L593,212L595,214L595,216L597,218L598,217L600,219L602,221L591,228L583,235L578,237L575,237L575,235L573,235L571,233L571,232L560,224L550,216ZM672,188L672,187L675,189L681,185L683,189L682,190L676,192L680,195L679,196L678,197L676,198L675,199L674,200L671,200L671,199L672,193L671,192L672,191ZM723,218L724,218L724,219L726,219L729,219L731,219L733,216L735,214L736,212L737,213L738,216L736,216L736,218L737,219L735,220L736,221L735,223L735,224L734,225L725,223L723,219ZM721,217L720,214L721,212L722,212L723,213L723,215L722,217L722,217ZM710,197L711,199L711,200L712,203L710,203L709,201L706,201L708,197ZM683,189L681,185L687,181L688,177L687,174L688,173L690,171L691,170L694,171L696,172L697,171L699,175L701,176L702,179L701,180L700,183L703,186L707,188L709,191L709,194L710,194L710,196L712,198L710,197L708,197L706,201L700,200L691,193L686,190ZM735,224L735,223L736,221L735,220L737,219L736,218L736,216L738,216L739,218L741,220L744,220L745,221L747,223L748,224L749,225L749,226L748,228L748,229L747,230L746,232L744,232L744,233L744,235L744,237L744,238L743,238L741,239L741,241L740,242L738,242L737,243L737,244L736,245L734,245L732,246L730,246L729,244L726,238L735,234L737,227ZM737,213L736,212L737,211L737,211L737,212ZM1086,365L1088,367L1087,368L1086,366ZM1085,364L1085,363L1085,361L1087,362L1087,365L1086,364ZM886,263L885,258L887,255L891,254L894,255L897,256L898,254L901,255L902,258L902,262L897,265L898,267L895,267L892,269L890,268L888,266ZM894,255L891,254L887,255L885,258L886,263L883,261L881,261L881,258L878,258L878,262L877,267L876,271L877,273L879,273L880,277L881,280L883,282L885,282L887,284L886,286L884,286L883,284L881,283L880,284L879,282L878,280L876,278L875,277L874,279L874,277L874,274L874,271L876,267L877,264L876,260L875,259L875,257L872,254L871,252L872,251L873,248L872,246L869,243L867,240L869,239L869,235L871,235L873,233L875,232L876,234L877,236L879,236L879,240L879,243L882,241L883,242L885,241L885,240L888,240L891,243L891,247L894,250L895,253ZM901,255L898,254L897,256L894,255L895,253L894,250L891,247L891,243L888,240L885,240L885,241L883,242L882,241L879,243L879,240L879,236L877,236L876,234L875,232L875,231L877,229L878,230L879,230L878,225L880,225L882,228L884,231L888,231L890,234L888,235L887,237L891,239L894,243L897,246L900,249L901,252ZM875,232L873,233L871,235L869,235L869,239L867,240L869,243L872,246L873,248L872,251L871,252L872,254L875,257L875,259L876,260L877,264L876,267L874,271L874,268L875,265L873,263L873,259L872,257L870,253L869,248L867,245L866,247L862,250L861,249L859,249L859,244L858,241L855,236L855,235L853,235L851,232L850,229L851,229L851,226L852,226L851,224L852,223L851,219L854,220L855,217L855,215L856,212L855,210L858,207L861,208L860,206L861,205L860,204L862,203L864,206L865,206L866,209L866,212L864,215L865,220L868,219L869,222L871,223L871,226L873,228L875,228L877,227L877,229L875,231ZM892,269L895,267L898,267L897,265L902,262L902,258L901,255L901,252L900,249L897,246L894,243L891,239L887,237L888,235L890,234L888,231L884,231L882,228L880,225L881,224L884,224L887,224L889,222L891,223L893,224L893,226L895,227L898,228L895,231L893,235L893,237L896,241L899,246L902,248L905,251L907,258L907,264L905,267L902,269L899,272L896,276L894,273L895,271ZM942,153L942,153L942,153ZM941,152L942,153L941,152L940,154L940,155L941,157L940,158L940,159L939,160L937,161L937,161L937,163L937,163L938,164L941,166L941,167L940,167L938,167L937,169L936,168L936,169L934,168L934,169L933,169L933,168L932,168L931,168L931,166L931,165L931,165L931,163L930,162L929,162L927,161L928,159L930,157L931,154L933,155L936,155L934,153L938,152L938,150ZM936,169L936,168L937,169L938,167L940,167L941,167L941,166L945,170L947,172L949,177L948,179L946,179L944,181L941,181L940,179L940,176L937,173L939,172ZM809,127L811,127L815,123L819,122L822,123L824,123L827,125L830,125L834,126L836,123L834,121L835,117L839,119L841,119L845,120L847,123L851,124L854,124L857,123L860,124L864,125L866,127L869,127L872,128L875,127L878,126L881,124L882,124L885,125L888,125L888,128L888,131L889,133L890,132L894,133L895,131L898,133L902,135L902,136L900,136L896,136L894,137L893,140L890,141L888,143L884,142L883,142L882,144L884,146L885,147L883,148L882,150L879,151L875,152L871,153L868,155L867,154L863,154L858,151L855,151L851,151L845,151L842,151L839,149L837,145L835,145L831,143L827,142L823,141L821,140L821,136L818,133L813,131L810,130ZM860,204L861,205L860,206L861,208L858,207L855,210L856,212L855,215L855,217L854,220L851,219L852,223L851,224L852,226L851,226L848,221L847,221L847,223L845,221L846,219L847,219L848,216L846,215L843,215L840,215L839,212L838,212L835,210L835,213L837,215L835,216L835,217L837,218L837,221L838,223L839,226L839,228L837,228L833,228L834,231L833,233L829,236L826,240L824,243L821,245L821,247L820,248L817,249L815,249L815,252L816,257L816,260L815,263L816,269L814,269L813,272L814,273L811,274L810,277L809,278L806,275L804,269L803,266L801,264L799,261L798,256L798,254L794,249L792,242L791,237L790,232L789,229L785,231L783,231L778,226L780,225L778,224L774,220L776,218L783,218L782,215L780,213L779,210L777,208L780,205L783,205L786,201L787,197L789,194L788,191L791,189L788,187L786,185L785,181L786,180L790,181L794,180L796,177L800,181L800,184L802,186L802,188L800,188L802,192L805,194L810,197L808,198L808,202L811,203L814,205L818,207L823,207L825,209L827,210L831,210L834,210L834,209L833,207L833,205L834,204L835,207L836,208L839,209L840,209L843,209L845,209L845,207L844,205L846,205L848,202L851,200L854,201L856,199L858,202L857,203ZM844,205L845,207L845,209L843,209L840,209L839,209L836,208L835,207L837,204L838,204L841,204L842,204ZM833,205L833,207L834,209L834,210L831,210L827,210L825,209L823,207L818,207L814,205L811,203L808,202L808,198L810,197L811,196L814,197L817,199L819,200L820,202L823,202L826,204L829,205ZM796,177L794,180L790,181L786,180L785,181L786,185L788,187L791,189L788,191L789,194L787,197L786,201L783,205L780,205L777,208L779,210L780,213L782,215L783,218L776,218L774,220L772,220L771,217L768,214L762,215L757,215L753,215L754,211L758,209L757,207L756,207L755,204L752,202L751,200L749,198L754,200L757,199L759,200L760,199L762,199L765,198L765,195L766,192L769,192L769,191L771,191L772,191L773,190L772,188L773,186L775,185L773,182L776,183L777,181L776,180L778,178L777,177L776,175L777,173L780,173L783,172L785,171L786,171L789,173L790,176ZM761,170L762,170L765,171L766,171L768,170L769,171L769,169L771,169L771,169L771,167L772,166L774,167L774,168L775,168L775,171L777,173L778,172L779,171L780,170L783,170L786,170L786,171L785,171L783,172L780,173L777,173L776,175L777,177L778,178L776,180L777,181L776,183L773,182L775,185L773,186L772,188L773,190L772,191L771,191L769,191L769,192L766,192L765,195L765,198L762,199L760,199L759,200L757,199L754,200L749,198L751,195L751,192L748,192L748,189L746,186L747,184L746,184L746,181L746,177L750,178L752,177L752,176L754,175L756,174L756,171L758,170L758,169L760,170ZM765,171L766,167L764,165L762,164L762,162L765,162L766,160L766,158L770,157L770,159L770,160L771,160L771,161L767,160L768,162L771,162L775,163L780,163L782,166L782,166L784,167L785,168L786,170L783,170L780,170L779,171L778,172L777,173L775,171L775,168L774,168L774,167L772,166L771,167L771,169L771,169L769,169L769,171L768,170L766,171ZM769,152L770,151L771,150L776,152L776,149L778,149L782,150L783,150L788,150L792,150L794,152L796,152L796,153L792,155L791,156L788,157L787,159L784,159L782,159L780,161L781,162L780,163L775,163L771,162L768,162L767,160L771,161L771,160L774,160L777,157L773,156L771,156L769,155L770,153ZM717,154L718,153L721,152L723,153L725,156L727,156L730,156L729,154L732,153L733,151L738,153L739,155L740,156L743,156L744,157L746,160L750,163L753,165L756,166L760,168L761,170L760,170L758,169L758,170L756,171L756,174L754,175L752,176L752,177L750,178L746,177L745,173L743,173L739,170L737,170L733,168L731,167L730,168L728,168L726,170L724,171L723,168L722,164L720,163L720,161L718,160L718,157L721,158L724,157L721,155L720,153L718,154L718,156ZM712,198L710,196L710,194L709,194L709,191L707,188L703,186L700,183L701,180L702,179L701,176L699,175L697,171L695,168L695,167L694,163L696,162L696,163L698,165L700,165L701,165L704,162L705,162L706,163L705,165L708,167L708,167L710,169L713,170L715,172L719,173L724,172L724,171L726,170L728,168L730,168L731,167L733,168L737,170L739,170L743,173L745,173L746,177L746,181L746,184L747,184L746,186L748,189L748,192L751,192L751,195L749,198L751,200L752,202L755,204L756,207L757,207L758,209L754,211L753,215L747,214L744,213L740,213L739,208L737,208L735,208L732,210L728,209L725,206L722,205L719,202L716,197L715,197L713,196ZM672,187L672,187L672,187L672,185L673,183L674,182L673,180L672,180L671,177L672,176L673,175L673,174L673,172L674,173L678,172L679,173L682,173L685,171L686,171L690,171L688,173L687,174L688,177L687,181L681,185L675,189ZM701,165L700,165L698,163L698,163L697,163L696,162L696,162L694,161L692,160L692,158L691,157L695,156L696,157L697,158L697,159L698,160L698,161L699,162L701,163ZM594,94L595,92L597,90L597,86L596,84L595,80L596,77L599,77L600,76L599,75L602,70L604,67L606,64L608,64L608,63L613,63L613,61L614,61L618,62L622,65L623,69L624,71L620,72L618,74L618,76L615,78L610,81L609,86L611,88L614,90L612,94L609,95L608,100L607,103L604,103L603,106L600,106L598,103L596,99ZM640,103L643,104L643,105L645,104L647,105L648,107L647,108L650,110L651,111L651,111L653,112L654,113L653,114L650,114L650,114L651,115L652,117L649,117L649,118L649,120L648,120L645,120L644,119L643,120L642,119L640,119L637,118L634,118L632,118L631,119L629,119L629,118L628,116L630,115L630,114L629,112L628,111L631,111L634,110L634,108L636,107L636,105L637,105ZM652,117L653,117L653,117L654,117L657,116L659,118L658,119L659,120L661,120L662,122L662,123L666,124L668,123L670,125L672,125L676,126L676,127L675,129L676,131L676,132L674,132L672,133L672,135L670,135L669,136L666,137L664,138L664,140L664,140L663,139L662,139L660,138L660,139L659,139L655,138L654,136L652,137L651,139L649,141L648,141L646,141L645,141L646,140L646,139L647,138L646,137L647,137L647,138L649,138L650,137L649,137L649,136L648,136L648,134L646,133L646,132L645,131L644,131L642,130L640,130L639,131L638,131L638,132L636,132L635,133L633,132L631,132L630,131L629,132L628,131L627,130L627,129L628,128L628,128L627,126L630,124L631,123L631,122L629,119L631,119L632,118L634,118L637,118L640,119L642,119L643,120L644,119L645,120L648,120L649,120L649,118L649,117ZM628,111L629,112L630,114L630,115L628,116L629,118L629,119L631,122L631,123L630,124L627,126L628,128L628,128L625,127L623,127L622,127L620,127L619,126L617,127L617,126L616,125L614,124L613,123L611,123L611,124L610,123L610,122L608,122L606,121L605,118L605,117L604,115L603,114L604,113L603,111L605,110L609,109L612,108L615,108L615,109L618,109L621,110L626,110L628,110ZM612,131L612,133L611,133L611,134L611,136L610,136L608,137L606,137L604,137L600,136L599,135L596,136L596,136L594,136L593,136L592,135L592,134L592,133L593,133L594,134L595,133L597,133L599,133L600,133L601,134L601,133L601,131L602,130L603,129L605,130L606,128L607,128L610,129L611,129L612,130L612,130ZM627,130L628,131L629,132L627,133L626,135L624,138L622,138L620,138L618,139L617,140L615,139L613,138L612,137L611,136L611,136L611,134L611,133L612,133L612,131L614,132L615,133L617,132L617,131L619,131L620,131L620,131L621,131L622,130L623,130L626,131ZM639,131L640,130L642,130L644,131L645,131L646,132L646,133L648,134L648,136L649,136L649,137L650,137L649,138L647,138L647,137L646,137L647,138L646,139L646,140L645,141L644,139L644,138L644,136L642,134L641,132L640,131ZM645,141L646,141L648,141L649,141L649,142L648,143L647,143L647,147L645,147L643,145L639,146L638,147L634,147L632,146L631,147L630,145L629,145L630,144L629,144L628,144L626,143L626,142L624,141L624,140L622,138L624,138L626,135L627,133L629,132L630,131L631,132L633,132L635,133L636,132L638,132L638,131L639,131L640,131L641,132L642,134L644,136L644,138L644,139ZM636,105L636,107L634,108L634,110L631,111L628,111L628,110L626,110L626,109L626,108L625,107L622,107L621,104L624,103L628,103L631,102L631,103L633,103ZM637,99L638,100L639,101L640,103L637,105L636,105L633,103L631,103L631,102L628,103L624,103L621,104L621,101L622,99L624,98L627,100L629,100L629,98L631,97L632,97L635,99ZM638,92L638,93L637,95L638,98L637,99L635,99L632,97L631,97L629,98L629,96L628,96L626,95L626,93L629,92L632,92L635,92ZM603,111L604,113L603,114L604,115L605,117L605,118L606,121L605,121L604,121L604,121L602,122L601,123L599,124L599,125L600,126L601,127L603,129L602,130L601,131L601,133L601,134L600,133L599,133L597,133L595,133L594,134L593,133L592,133L589,132L588,133L586,133L586,131L588,128L583,127L582,127L582,125L582,124L582,122L581,118L583,118L584,117L584,114L584,112L584,112L586,112L587,112L589,111L588,109L588,107L590,108L592,107L592,109L594,109L594,111L597,110L599,109L602,110ZM630,145L631,147L632,146L634,147L638,147L639,146L643,145L645,147L647,147L645,149L645,151L646,153L643,153L640,154L641,156L638,156L636,155L634,156L631,156L631,153L629,152L630,152L630,151L630,150L631,149L629,147L629,146ZM643,178L643,179L638,179L638,179L635,178L635,176L637,178L639,177L641,178L641,178ZM631,156L634,156L636,155L638,156L641,156L640,154L642,155L641,157L641,158L639,157L637,157L634,158L636,160L635,161L633,161L631,159L631,160L632,162L633,164L632,164L634,166L635,167L636,169L633,168L634,170L632,170L633,174L631,174L629,172L628,169L627,167L626,165L624,163L624,162L625,160L625,159L626,158L626,158L628,157L629,156L630,156L631,156ZM697,171L696,172L694,171L691,170L690,171L686,171L685,171L682,173L679,173L678,172L674,173L673,172L673,174L673,175L672,176L671,174L672,173L670,173L667,172L666,174L661,175L659,173L655,173L655,174L653,175L650,173L647,173L644,169L642,167L643,164L641,163L644,159L649,159L650,156L655,157L658,154L662,153L666,153L672,156L676,157L679,157L682,157L685,155L688,155L691,157L692,158L692,160L694,161L696,162L694,163L695,167L695,168ZM640,154L643,153L646,153L646,155L649,156L648,157L645,157L644,158L642,160L641,158L641,158L641,157L642,155ZM626,158L626,158L625,159L625,160L624,162L623,162L623,161L621,160L621,158L621,155L621,154L621,154L621,153L622,151L622,152L623,151L623,152L624,153L624,154L624,155L625,157ZM612,137L613,138L615,139L617,140L618,139L619,141L620,142L619,143L618,142L616,142L613,142L612,142L611,142L610,142L610,143L611,145L612,146L613,147L615,148L616,150L618,151L618,152L615,150L614,149L611,148L608,145L609,145L607,143L607,142L605,142L605,143L604,142L604,141L604,141L606,141L606,140L607,141L608,141L608,140L609,139L610,138ZM592,133L592,134L592,135L593,136L594,136L594,137L593,138L591,137L590,139L589,139L588,138L587,140L586,140L584,139L583,137L582,138L582,136L584,134L584,133L585,134L586,133L588,133L589,132ZM582,124L582,125L582,127L581,127L581,126L581,124ZM582,122L582,124L581,124L581,126L578,125L577,125L575,123L574,122L572,122L572,121L574,120L576,120L579,119L580,121ZM584,112L584,114L584,117L583,118L581,118L582,122L580,121L579,119L576,120L574,120L575,119L578,114L581,112ZM539,154L540,153L541,152L542,154L544,154L544,154L546,154L547,156L545,157L545,159L545,160L544,162L543,162L544,164L543,167L544,168L544,169L543,170L543,171L542,172L540,172L539,172L539,169L539,167L538,167L537,165L537,163L539,161L539,160L540,158L540,156L539,155ZM543,171L543,170L544,169L544,168L543,167L544,164L543,162L544,162L545,160L545,159L545,157L547,156L546,154L544,154L544,154L542,154L541,152L540,153L539,154L539,151L538,150L542,147L546,148L550,148L553,148L555,148L560,148L561,150L566,151L567,150L570,152L574,152L574,154L571,156L567,157L567,158L565,160L564,163L565,165L564,167L563,169L561,170L559,173L555,173L552,173L550,174L549,175L548,175L547,174L546,172ZM548,111L549,114L546,117L542,119L538,118L540,115L539,111L543,108L545,107L545,109L545,110L546,110ZM1077,384L1079,386L1080,388L1079,389L1077,388L1076,386L1074,384L1073,382L1073,381L1074,381L1075,382L1076,383ZM1074,345L1075,347L1072,347L1071,344L1073,345ZM1073,342L1072,343L1070,340L1070,337L1071,337L1072,340ZM1070,343L1069,343L1067,343L1066,342L1067,341L1069,341L1070,342ZM1067,336L1068,338L1068,338L1065,337L1064,335L1063,334L1063,334L1065,335ZM1060,333L1061,334L1060,334L1059,333L1058,332L1058,331ZM1080,454L1077,456L1074,458L1071,460L1071,459L1070,458L1074,455L1074,453L1072,452L1073,450L1076,449L1078,446L1079,444L1079,442L1080,441L1079,439L1078,436L1078,434L1080,433L1080,435L1082,436L1081,440L1081,443L1083,441L1083,442L1082,445L1084,446L1086,446L1088,445L1090,445L1087,448L1085,451L1083,450L1081,452L1080,453ZM1051,467L1054,465L1057,463L1060,460L1062,459L1064,457L1067,455L1066,457L1066,458L1069,457L1069,459L1068,460L1066,462L1062,464L1060,466L1060,468L1057,468L1054,469L1052,471L1048,475L1044,477L1042,478L1039,478L1039,476L1036,476L1036,475L1039,472L1045,469L1048,468ZM822,280L822,283L821,284L818,285L816,282L816,277L817,271L819,273L821,276ZM938,218L938,224L937,227L935,224L934,221L935,217L937,215L938,216ZM594,136L596,136L596,136L599,135L600,136L604,137L604,139L604,140L602,140L600,141L600,143L600,144L601,146L604,148L605,151L609,153L611,153L612,154L611,155L614,156L616,157L618,159L619,160L618,161L617,160L614,159L613,161L615,163L615,165L614,165L612,168L611,168L611,167L611,165L612,164L611,162L610,160L609,160L608,158L606,158L604,156L602,156L600,154L597,152L595,150L594,146L593,146L590,145L589,145L587,147L586,147L587,146L585,145L584,142L585,141L584,140L584,139L586,140L587,140L588,138L589,139L590,139L591,137L593,138L594,137ZM608,167L611,167L610,170L610,171L610,173L607,172L606,171L602,169L602,167L605,168ZM590,157L592,156L593,159L593,164L592,163L591,165L590,164L589,159L589,157ZM592,107L590,108L588,107L587,105L586,102L587,101L588,100L590,100L591,99L593,98L593,100L592,101L592,102L594,102L593,103L593,103L591,106ZM598,103L599,105L597,108L594,106L594,105ZM548,111L546,110L545,110L545,109L545,107L547,107L550,109ZM557,113L557,113L557,111L555,109L555,109L552,108L551,107L552,105L552,105L550,106L550,103L549,101L550,98L552,95L554,95L557,95L554,98L557,98L560,98L559,101L557,104L559,104L560,104L562,108L564,109L566,113L566,114L570,115L569,117L568,118L569,120L567,122L563,122L558,123L557,122L555,124L552,123L551,125L549,124L553,120L556,120L556,120L551,119L551,118L553,117L552,115L553,112ZM529,69L529,71L531,74L528,76L520,78L518,79L515,78L508,77L511,76L505,74L510,74L510,73L505,72L507,70L511,69L514,72L518,70L521,71L525,69ZM699,154L700,154L702,156L703,156L704,155L705,154L707,156L709,159L710,159L711,160L709,160L709,163L709,164L708,165L708,167L708,167L705,165L706,163L705,162L704,162L701,165L701,163L699,162L698,161L698,160L697,159L697,158L696,157L695,156L696,155L698,157L700,157L700,156L698,154ZM700,165L698,165L696,163L696,162L696,162L697,163L698,163L698,163ZM679,148L680,148L682,148L687,149L691,151L691,151L693,151L696,151L697,153L699,154L698,154L700,156L700,157L698,157L696,155L695,156L691,157L688,155L685,155L685,153L684,151L682,150L681,149ZM943,261L941,258L944,258L945,259L945,263ZM950,271L951,270L951,267L952,267L952,270L954,266L954,270L953,271L952,273L952,274L949,272ZM962,276L963,279L963,281L962,284L961,280L960,282L961,285L960,287L956,285L955,282L956,280L954,279L953,280L951,280L949,282L949,281L950,278L952,277L953,275L954,277L957,276L957,274L959,274L959,271L962,273L962,275ZM937,273L933,277L935,274L937,272L938,269L940,266L941,269L939,271ZM945,240L945,242L946,245L946,248L944,249L944,252L945,255L947,255L948,255L953,257L953,259L954,260L954,261L951,260L949,258L949,259L947,257L944,257L942,256L942,255L943,254L942,253L942,255L940,252L939,251L938,247L940,249L939,243L940,239L942,239L944,241L944,240ZM948,265L947,264L949,265L951,265L951,266L950,268L948,269L948,267ZM958,263L960,267L957,266L957,267L958,269L957,270L956,268L955,267L955,265L957,265L956,264L954,261L957,261ZM929,287L929,289L929,291L927,291L926,292L925,291L926,289ZM604,137L606,137L608,137L610,136L611,136L611,136L612,137L610,138L609,139L608,140L608,141L607,141L606,140L606,141L604,141L604,140L604,139ZM633,61L634,63L638,65L636,68L639,71L638,74L641,76L640,79L645,81L644,82L642,84L637,89L633,89L628,90L624,91L622,89L620,88L620,85L618,82L619,80L621,78L626,74L628,74L628,72L624,71L623,69L622,65L618,62L614,61L616,60L619,62L622,62L624,62L627,61L627,59L631,58L634,59ZM628,128L627,129L627,130L626,131L623,130L622,130L621,131L620,131L620,131L619,131L617,131L617,132L615,133L614,132L612,131L612,130L612,130L613,129L614,129L615,129L615,128L615,128L615,127L616,127L616,126L617,126L617,127L619,126L620,127L622,127L623,127L625,127ZM606,121L608,122L610,122L610,123L611,124L611,123L613,123L614,124L616,125L617,126L616,126L616,127L615,127L615,128L615,128L615,129L614,129L613,129L612,130L611,129L610,129L607,128L606,128L605,130L603,129L601,127L600,126L599,125L599,124L601,123L602,122L604,121L604,121L605,121ZM679,254L678,253L680,248L680,245L681,244L683,243L684,241L686,246L687,249L689,251L694,254L695,256L697,258L698,260L700,261L699,262L698,261L697,260L695,258L694,257L693,256L690,254L688,254L687,253L685,254L683,252L682,255ZM979,164L978,167L980,171L980,174L982,176L981,178L978,180L973,180L970,185L968,183L967,180L962,181L959,183L956,183L960,186L960,192L958,193L956,192L956,189L954,188L952,185L954,184L955,182L957,180L958,177L964,176L967,177L967,170L970,172L973,169L974,167L974,163L971,159L971,156L974,156L978,161ZM978,146L979,145L982,149L978,150L978,153L972,151L973,155L969,155L967,151L967,148L970,148L968,143L967,140L973,144L976,145ZM960,185L961,182L963,183L964,181L966,182L967,183L966,185L964,184L963,185L963,187L961,186ZM385,381L386,383L386,388L390,389L391,388L393,389L394,390L394,393L395,395L396,395L397,394L398,395L399,397L398,399L398,401L398,405L396,407L393,408L390,407L387,406L389,401L388,399L385,398L381,395L378,394L372,388L373,384L372,382L374,379L379,378L382,378L385,380ZM726,238L729,244L730,246L728,247L728,249L728,250L725,252L720,253L717,256L716,256L715,256L713,257L711,258L709,258L708,259L707,260L706,260L706,261L704,261L703,261L701,261L700,259L700,257L700,256L699,253L698,252L699,251L698,250L699,249L698,247L700,246L699,245L700,243L701,244L702,243L706,243L706,244L709,244L710,244L711,245L713,245L715,241L717,239ZM671,200L674,200L675,199L676,198L678,197L679,196L680,195L676,192L682,190L683,189L686,190L691,193L700,200L706,201L709,201L710,203L712,203L713,206L715,207L716,208L718,209L718,211L718,212L719,213L720,214L720,216L721,217L722,217L722,217L723,218L723,219L725,223L734,225L735,224L737,227L735,234L726,238L717,239L715,241L713,245L711,245L710,244L709,244L706,244L706,243L702,243L701,244L700,243L699,245L700,246L698,247L698,246L697,245L696,243L695,242L693,239L692,236L690,233L688,233L686,229L685,227L685,225L683,220L682,219L680,218L679,216L679,215L678,213L677,213L676,210L673,207L672,204L670,204L670,202L671,201ZM662,178L662,178L663,177L665,178L667,176L666,178L666,179L666,179L665,179L665,179L664,179L664,179L664,178L663,178L663,179ZM662,178L663,179L663,178L664,178L664,179L664,179L665,179L665,179L666,179L666,179L666,179L663,180L662,180L661,179ZM559,178L560,181L560,183L561,187L562,188L561,189L557,190L556,191L554,191L554,194L550,195L549,197L547,198L544,199L539,202L539,206L538,206L538,208L536,208L535,209L534,209L533,208L530,209L529,212L528,212L527,216L522,220L521,226L520,227L519,228L513,229L512,229L513,227L514,226L515,224L515,223L516,220L518,218L519,217L520,215L520,213L521,211L523,210L525,206L525,206L527,204L530,204L532,202L534,201L536,197L535,193L537,190L537,188L539,185L542,184L544,182L546,178L547,176L550,176L551,178L554,177L557,178ZM679,227L666,227L654,227L642,227L641,213L641,200L640,197L640,195L640,193L641,191L645,191L648,192L651,193L652,194L654,193L655,192L658,192L660,192L661,194L662,193L664,193L667,194L668,193L670,198L671,199L670,201L669,203L669,205L668,206L667,205L666,203L663,198L663,198L664,202L666,206L669,211L670,213L672,216L675,220L674,220L674,223L678,226ZM642,227L642,234L639,234L639,236L626,229L614,221L611,223L609,225L607,223L602,221L600,219L598,217L597,218L595,216L595,214L593,212L595,210L594,208L595,206L594,204L595,201L595,199L594,196L595,195L595,194L595,192L597,191L598,190L599,189L599,186L603,187L604,187L607,187L611,189L612,192L615,193L619,194L623,196L624,195L625,194L625,191L625,189L627,187L629,187L634,188L635,189L636,189L637,190L640,190L641,191L640,193L640,195L640,197L641,200L641,213ZM715,278L707,289L703,289L700,292L698,292L697,293L695,293L693,292L691,293L690,295L688,294L687,294L686,294L685,294L681,291L679,291L678,290L678,288L676,287L674,283L673,282L672,281L671,279L669,279L670,277L671,277L672,275L672,272L672,268L674,267L674,266L675,263L677,261L678,258L679,254L682,255L683,252L685,254L687,253L688,254L690,254L693,256L694,257L695,258L697,260L698,261L697,263L696,265L696,266L696,267L698,267L698,267L699,267L699,268L700,271L701,272L702,274L713,278ZM698,261L699,262L700,261L701,262L701,263L699,264L700,265L699,267L698,267L698,267L696,267L696,266L696,265L697,263ZM718,265L718,265L719,267L719,271L719,273L717,275L715,278L713,278L702,274L701,272L700,271L699,268L699,267L700,265L701,266L702,267L703,269L705,269L708,268L711,268L714,266L716,266L717,266ZM672,311L666,311L662,311L661,311L659,312L658,312L658,309L659,308L659,305L660,303L661,301L662,300L663,299L662,299L662,294L664,293L666,294L668,293L670,293L672,292L674,294L674,296L676,300L674,303L673,305L672,307ZM661,311L662,313L662,315L661,316L659,316L658,318L657,317L657,315L657,315L657,313L658,312L659,312ZM618,151L616,150L615,148L613,147L612,146L611,145L610,143L610,142L611,142L612,142L613,142L616,142L618,142L619,143L620,143L619,145L621,146L621,148L620,148L620,148L619,149ZM629,152L631,153L631,156L631,156L630,156L629,156L628,157L626,158L625,157L624,155L624,154L625,154L625,153L627,153L627,152L628,152ZM618,139L620,138L622,138L624,140L624,141L626,142L626,143L628,144L629,144L630,144L629,145L630,145L629,146L629,147L631,149L630,150L630,151L630,152L629,152L628,152L627,152L627,152L627,152L628,151L627,151L627,150L626,150L626,149L625,149L625,149L624,149L624,150L623,150L623,150L622,149L621,149L621,148L620,148L621,148L621,146L619,145L620,143L619,143L620,142L619,141ZM623,151L622,152L622,151L621,153L621,154L620,153L619,152L618,152L618,151L619,149L620,148L620,148L621,148L621,149L622,149L623,150L623,150ZM624,154L624,153L623,152L623,151L623,150L624,150L624,149L625,149L625,149L626,149L626,150L627,150L627,151L628,151L627,152L627,152L627,152L627,153L625,153L625,154ZM371,268L373,267L374,267L374,270L371,271L370,270L371,269ZM662,294L659,292L659,290L657,291L655,291L655,291L653,291L651,288L651,287L648,285L648,283L646,282L644,280L644,279L642,277L640,276L641,275L642,275L643,271L644,270L646,269L647,270L648,272L649,273L650,272L652,272L653,273L656,273L656,272L658,271L658,270L659,270L662,272L663,271L665,269L667,267L666,264L666,263L667,263L668,262L669,263L669,265L669,268L671,269L671,271L671,272L672,273L672,275L671,277L670,277L669,279L671,279L672,281L673,282L674,283L676,287L674,289L672,292L670,293L668,293L666,294L664,293ZM402,292L400,295L399,298L398,299L397,300L396,299L395,298L394,299L393,299L394,297L394,295L395,294L394,292L393,289L395,286L396,286L398,287L402,290Z"/><g class="wm-trial"><path style="--dd:700ms" d="M223,128L223,128L220,125L219,123L215,122L215,119L217,116L214,115L215,112L214,110L215,108L218,106L219,104L216,102L216,98L216,96L215,94L214,93L214,91L211,92L207,94L206,92L206,90L204,89L202,89L218,71L229,59L233,60L235,61L238,62L241,60L245,59L248,60L253,58L257,58L258,59L260,58L262,57L263,57L265,60L270,58L268,60L272,60L273,59L276,59L279,60L283,61L286,62L289,62L291,63L286,65L290,65L297,65L299,64L300,66L304,65L303,63L305,62L308,62L310,62L312,63L313,64L316,64L319,66L323,65L326,65L327,63L330,63L333,64L331,67L334,64L336,64L339,61L338,59L336,58L339,55L343,52L346,53L347,54L348,58L345,59L349,60L347,63L352,61L353,62L351,65L352,67L356,65L359,62L362,59L365,59L368,59L370,61L370,62L367,64L368,66L367,67L361,69L357,70L355,69L353,71L349,73L348,75L344,77L340,77L337,78L336,81L333,81L328,84L323,87L321,90L318,94L322,94L322,97L321,100L325,99L330,101L332,102L333,104L336,105L338,106L342,106L345,107L343,110L343,113L343,117L346,120L348,119L351,116L352,110L351,108L356,107L360,104L362,102L363,100L362,97L360,94L365,91L365,88L367,83L369,82L373,83L375,83L378,82L380,83L382,85L382,86L387,87L385,90L385,94L387,94L388,96L392,94L396,91L399,89L399,92L401,96L403,100L401,103L404,105L406,106L410,107L411,108L411,111L413,112L414,113L413,117L411,118L408,120L404,121L399,124L394,124L389,124L385,124L382,124L379,126L375,128L369,133L365,136L367,135L373,131L380,128L384,127L386,129L383,131L383,135L383,138L386,140L391,139L395,135L394,138L396,139L392,142L385,144L382,145L378,148L376,147L376,144L382,141L378,142L374,142L373,140L374,135L374,134L371,135L371,134L368,136L366,139L365,141L363,141L362,142L362,142L357,142L352,142L351,143L347,146L347,146L345,147L343,147L340,147L338,148L339,149L338,150L338,150L334,152L331,153L327,155L326,155L325,154L325,153L325,153L326,152L328,150L330,148L330,144L331,141L328,140L329,139L329,138L328,138L328,138L328,137L327,137L326,137L327,137L326,137L326,136L324,135L323,133L320,132L318,131L315,132L314,132L311,131L309,131L307,130L304,130L302,129L302,129L302,127L301,127L300,128L295,128L285,128L276,128L267,128L259,128L251,128L242,128L240,128L231,128ZM352,82L355,81L358,81L358,81L354,83L352,83ZM381,50L379,48L380,47L381,47L386,47L389,49L389,50L386,50L384,50L381,50ZM361,83L362,82L363,82L364,83L362,85L361,85L361,84ZM353,43L351,44L348,44L346,43L348,42L352,41L353,42ZM359,36L358,36L354,36L354,35L358,35L359,36ZM355,33L357,34L356,35L352,35L351,35L351,34L352,33L354,33ZM364,45L361,45L356,44L356,42L357,41L356,40L351,39L350,38L351,37L356,37L357,38L362,38L363,39L362,40L364,41L365,42L368,42L371,42L375,41L379,41L383,41L385,42L384,44L382,44L379,45L376,45L369,45ZM322,34L325,35L323,36L318,36L316,36L319,35ZM325,33L327,33L324,34L320,34L321,33L324,33ZM413,120L410,122L408,125L410,124L412,125L410,126L413,127L414,126L417,127L415,130L417,129L417,131L417,133L416,137L414,137L413,136L414,133L413,133L409,136L407,136L410,134L407,133L404,133L399,133L399,132L401,131L400,130L403,128L407,122L409,120L412,119L413,119ZM357,74L359,75L361,76L361,77L363,77L364,78L361,79L358,78L357,77L354,79L349,80L349,78L346,79L349,77L351,74L353,72L355,72L354,73L356,73ZM382,51L385,50L389,51L392,53L391,54L396,53L397,55L402,57L404,58L405,61L400,62L404,64L408,65L410,68L414,68L412,70L406,74L404,73L401,69L398,70L397,72L399,74L401,75L402,76L402,79L401,81L398,81L392,78L395,81L397,83L397,84L390,83L386,81L383,79L385,78L382,77L379,75L378,76L371,76L369,75L372,73L377,73L382,72L382,71L383,70L388,67L388,65L388,64L385,63L381,62L383,61L381,59L379,59L378,58L376,59L371,59L363,58L359,57L355,57L354,56L357,55L354,54L355,51L359,49L362,48L369,47L366,49L366,51L370,48L376,47L378,50L377,52ZM349,46L354,46L358,47L353,49L349,50L345,52L343,52L343,49L344,48L347,47ZM291,40L297,38L303,36L306,36L310,36L307,38L305,39L302,39L297,40L293,41ZM207,111L210,110L207,114L207,117L206,117L206,115L206,114L205,113L205,111L206,110ZM338,31L342,32L347,33L347,34L347,35L344,35L341,34L336,34L339,33L337,32ZM221,130L219,130L215,129L215,128L213,126L213,125L211,125L211,123L212,122L214,123L216,123L218,124L218,125L219,126L221,128ZM289,45L291,45L297,46L298,47L300,48L296,48L289,51L284,53L283,54L275,55L275,54L271,53L273,51L277,49L281,47L280,45ZM323,41L326,40L328,41L327,42L325,43L317,44L310,45L306,45L307,44L313,43L302,43L299,43L305,40L308,39L314,40L316,42L320,42L319,39L322,38L324,39L323,40ZM319,49L321,50L320,53L319,55L322,57L325,58L324,59L320,60L321,61L319,62L315,62L311,61L309,61L303,62L297,62L292,63L292,61L290,60L287,61L286,58L288,58L292,57L295,58L299,57L295,56L290,57L286,57L286,55L293,54L289,54L286,53L290,51L292,50L300,48L302,49L299,50L305,49L307,51L311,49L313,50L312,53L314,52L315,49L317,48ZM333,50L332,48L335,47L338,47L342,47L342,48L339,49L341,50L339,53L334,54L332,54L331,53L327,51L328,50ZM320,47L324,47L325,48L321,50L319,48ZM346,38L347,40L346,41L343,43L339,44L337,43L339,41L335,42L336,39L339,40L343,39L346,39ZM362,28L364,27L366,27L366,27L371,26L372,28L375,28L378,29L379,30L380,31L377,32L371,34L367,34L363,34L361,33L362,32L365,31L361,31L359,30L359,29ZM375,25L378,24L381,24L385,24L389,23L392,23L393,24L396,23L399,22L403,22L410,22L410,22L417,22L421,22L425,22L431,22L435,23L438,23L437,24L431,25L426,25L424,26L428,26L422,27L418,28L413,30L408,30L406,31L399,31L402,32L400,32L401,33L398,34L394,35L393,36L389,37L389,38L393,38L392,38L385,40L380,39L373,40L370,39L366,39L367,38L371,37L372,35L373,35L378,36L377,34L373,34L376,33L381,32L382,31L380,30L380,29L386,29L387,29L391,28L387,28L379,28L377,27L376,26L374,26ZM382,66L380,67L377,67L378,66L379,64L382,64L383,64L383,66ZM335,60L336,61L334,62L331,61L329,61L327,60L329,59L332,58L334,59L335,59ZM387,125L388,125L391,126L393,127L393,128L392,128L389,127ZM385,135L386,137L387,137L390,137L388,139L387,139L384,137L384,136Z"><title>Canada</title></path><path style="--dd:790ms" d="M905,241L902,239L902,236L903,235L906,234L908,234L909,235L908,237L907,239ZM796,152L795,150L797,149L792,143L797,141L799,141L798,134L804,135L805,134L804,130L806,130L808,127L809,127L810,130L813,131L818,133L821,136L821,140L823,141L827,142L831,143L835,145L837,145L839,149L842,151L845,151L851,151L855,151L858,151L863,154L867,154L868,155L871,153L875,152L879,151L882,150L883,148L885,147L884,146L882,144L883,142L884,142L888,143L890,141L893,140L894,137L896,136L900,136L902,136L902,135L898,133L895,131L894,133L890,132L889,133L888,131L888,128L888,125L892,126L894,124L894,123L894,119L895,118L894,116L892,115L893,113L896,113L899,113L904,114L907,115L911,118L913,120L915,122L918,125L924,127L929,129L932,132L936,132L938,131L942,130L942,133L942,135L943,138L943,142L939,141L937,143L940,146L942,150L940,150L941,152L938,150L938,152L934,153L936,155L933,155L931,154L930,157L928,159L927,161L923,162L922,164L919,165L920,163L919,162L920,159L917,157L916,158L913,161L912,163L910,164L909,165L911,168L914,168L915,170L918,171L920,168L923,170L925,170L926,172L922,173L922,175L920,177L919,179L923,181L925,185L928,188L931,191L932,194L930,195L932,197L934,198L934,201L934,204L933,204L932,208L930,213L929,217L925,221L922,224L918,224L917,226L915,225L914,226L910,228L907,229L907,233L905,233L904,230L904,229L900,228L898,228L895,227L893,226L893,224L891,223L889,222L887,224L884,224L881,224L880,225L878,225L879,230L878,230L877,229L877,227L875,228L873,228L871,226L871,223L869,222L868,219L865,220L864,215L866,212L866,209L865,206L864,206L862,203L860,204L857,203L858,202L856,199L854,201L851,200L848,202L846,205L844,205L842,204L841,204L838,204L837,204L835,207L834,204L833,205L829,205L826,204L823,202L820,202L819,200L817,199L814,197L811,196L810,197L805,194L802,192L800,188L802,188L802,186L800,184L800,181L796,177L790,176L789,173L786,171L786,170L785,168L784,167L782,166L782,166L780,163L781,162L780,161L782,159L784,159L787,159L788,157L791,156L792,155L796,153Z"><title>China</title></path><path style="--dd:880ms" d="M582,127L583,127L588,128L586,131L586,133L585,134L584,133L584,134L582,136L582,138L583,137L584,139L584,140L585,141L584,142L585,145L587,146L586,147L584,149L578,148L574,149L574,152L570,152L567,150L566,151L561,150L560,148L561,146L562,139L559,135L557,133L552,132L552,129L556,129L560,129L560,125L562,127L569,124L570,121L572,121L572,122L574,122L575,123L577,125L578,125L581,126L581,127ZM590,151L592,150L593,153L592,156L590,155L590,152Z"><title>France</title></path><path style="--dd:970ms" d="M880,284L881,283L883,284L884,286L886,286L887,284L887,285L889,287L891,289L891,292L891,294L891,295L891,297L893,298L894,301L894,302L892,303L889,300L885,297L884,295L882,293L882,290L881,288L881,285ZM937,292L934,291L930,291L929,296L928,297L927,302L924,303L921,302L919,302L918,304L916,304L914,304L911,302L911,300L913,301L916,300L916,297L918,297L921,296L923,293L925,291L926,292L927,291L929,291L929,289L929,287L931,285L932,282L934,282L935,284L936,285L938,286L940,287L940,289L938,289L939,291Z"><title>Malaysia</title></path><path style="--dd:1060ms" d="M223,128L231,128L240,128L242,128L251,128L259,128L267,128L276,128L285,128L295,128L300,128L301,127L302,127L302,129L302,129L304,130L307,130L309,131L311,131L314,132L315,132L318,131L320,132L323,133L324,135L326,136L326,137L327,137L326,137L327,137L328,137L328,138L328,138L329,138L329,139L328,140L331,141L330,144L330,148L328,150L326,152L325,153L325,153L325,154L326,155L327,155L331,153L334,152L338,150L338,150L339,149L338,148L340,147L343,147L345,147L347,146L347,146L351,143L352,142L357,142L362,142L362,142L363,141L365,141L366,139L368,136L371,134L371,135L374,134L374,135L373,140L374,142L375,143L371,145L368,146L364,147L362,149L362,150L361,152L362,154L363,154L363,153L363,154L363,155L361,155L359,155L357,156L356,156L354,156L351,157L356,157L357,157L352,158L350,158L351,158L349,159L350,159L349,162L346,164L346,164L345,163L345,162L345,164L345,165L345,166L344,168L341,171L341,171L343,168L342,167L342,164L341,165L341,168L339,167L341,168L340,172L341,172L341,173L341,177L338,180L335,181L332,183L331,183L329,184L328,186L324,188L322,190L320,192L319,195L319,197L320,200L321,203L320,204L321,209L321,211L320,213L319,215L318,215L317,215L316,213L315,212L314,209L313,206L313,205L314,203L314,201L312,197L311,197L308,199L307,198L306,197L304,196L301,196L298,196L296,196L295,197L295,198L295,199L295,200L294,200L293,200L292,200L290,200L288,198L285,199L283,198L281,198L279,199L275,202L272,203L270,205L269,207L268,209L268,211L268,212L267,213L265,212L263,211L262,209L262,206L261,204L260,202L260,200L258,198L255,198L253,201L250,200L249,199L249,197L248,195L247,193L246,192L245,191L240,191L240,192L237,192L231,192L225,190L221,188L222,187L218,188L214,188L214,186L213,184L212,184L212,182L210,182L210,181L207,181L206,180L207,178L205,175L205,170L205,169L204,167L203,164L204,161L204,159L205,156L207,153L207,151L210,147L212,144L214,141L216,136L217,133L217,131L217,130L221,132L221,135L222,134L223,131ZM84,234L84,234L85,235L85,236L85,236L84,237L83,237L82,238L81,237L82,236L82,235L82,235L83,234L83,233L83,233L83,233ZM83,231L82,232L81,232L81,231L81,231L81,231L81,230L82,231ZM81,230L81,230L79,230L79,230ZM78,228L78,228L78,229L78,229L78,229L77,229L77,228L77,228ZM74,226L74,227L73,227L72,226L73,226L73,226ZM136,89L138,89L137,91L135,91L134,90L133,90ZM163,97L165,97L165,98L161,100L158,101L157,100L158,99L161,98ZM229,59L218,71L202,89L204,89L206,90L206,92L207,94L211,92L214,91L214,93L215,94L216,96L216,98L216,102L219,104L218,106L215,108L214,107L213,105L214,102L213,100L214,97L211,96L207,96L205,95L202,92L200,91L197,90L193,90L189,89L188,87L184,88L183,90L181,91L177,91L174,92L171,93L172,91L176,88L180,87L180,86L175,88L171,90L165,92L166,94L161,96L157,98L153,99L152,100L146,102L144,104L139,105L138,105L134,106L131,107L127,108L122,109L122,109L126,107L130,106L134,104L138,104L141,102L146,100L147,100L150,98L153,96L156,94L152,95L152,94L149,96L149,94L147,95L148,93L144,95L142,95L144,93L146,91L145,90L141,91L140,89L140,89L141,87L141,85L144,83L148,82L150,80L153,80L154,80L157,79L159,79L162,78L163,76L162,76L165,75L164,75L160,75L159,76L158,75L154,76L151,75L151,74L150,72L155,70L162,69L164,69L162,70L167,70L168,68L166,67L166,66L165,64L163,63L166,62L171,62L175,60L178,59L182,57L184,57L190,55L192,56L198,54L201,55L201,56L203,56L206,56L205,56L208,57L211,57L215,58L219,58L221,58L224,58L227,59ZM134,78L135,78L137,78L138,79L140,79L140,80L137,80L136,80L136,79L133,79L133,79Z"><title>United States</title></path><path style="--dd:1150ms" d="M993,457L995,457L993,461L991,462L989,465L989,464L985,467L985,467L983,466L983,463L984,461L984,458L985,456L987,456L989,458L991,457ZM943,425L939,427L937,428L935,430L934,431L931,431L929,432L927,431L924,431L922,432L920,434L919,433L917,434L915,436L913,435L911,435L909,433L908,432L908,430L910,430L911,429L911,428L912,425L913,423L912,419L912,417L913,415L912,413L913,411L912,410L912,407L911,404L911,403L912,404L912,401L913,402L914,403L914,401L913,399L913,397L913,396L914,394L914,393L915,391L915,389L917,387L917,389L919,387L921,386L923,384L926,383L927,382L928,383L931,382L933,381L933,380L934,380L936,380L939,379L941,377L942,375L945,374L945,372L945,370L948,367L949,370L950,369L950,368L951,366L952,367L953,364L955,362L956,361L958,360L958,359L959,360L959,359L961,358L962,358L964,359L966,361L968,361L970,362L969,360L971,357L973,356L972,355L974,353L976,352L978,352L980,351L981,349L978,348L980,348L982,349L984,350L986,351L987,351L989,352L991,351L992,351L993,350L994,352L993,354L991,356L990,356L991,357L989,359L988,361L988,362L990,364L992,365L994,366L996,369L996,369L998,369L998,371L1001,372L1003,371L1004,369L1005,367L1006,365L1007,362L1007,360L1008,359L1008,357L1008,354L1009,354L1009,352L1010,350L1011,348L1011,347L1012,346L1013,348L1013,350L1014,351L1013,352L1014,354L1014,356L1014,357L1015,360L1017,359L1018,360L1019,362L1018,363L1018,367L1018,368L1019,369L1019,372L1019,374L1019,376L1022,378L1024,380L1025,382L1025,383L1026,385L1026,389L1028,388L1028,390L1029,389L1029,393L1030,395L1031,397L1033,400L1033,403L1032,405L1031,407L1031,410L1030,413L1029,415L1027,418L1026,420L1024,423L1022,426L1019,428L1016,431L1015,433L1012,436L1010,438L1008,441L1007,443L1006,444L1004,445L1001,446L997,447L995,449L993,450L991,448L989,448L991,446L989,447L985,449L983,448L982,448L980,447L978,446L977,444L978,441L978,439L977,438L974,438L976,436L976,433L974,436L971,436L973,434L975,432L976,430L977,428L974,431L971,432L969,435L967,433L968,431L967,429L966,427L967,427L964,424L962,424L960,422L954,423L950,424L946,425Z"><title>Australia</title></path></g><path class="wm-bd" d="M851,226L851,229L850,229L851,232L849,230L849,228L848,226L846,224L844,224L844,225L843,227L842,227L842,227L841,227L839,226L838,223L837,221L837,218L835,217L835,216L837,215L835,213L835,210L838,212L839,212L840,215L843,215L846,215L848,216L847,219L846,219L845,221L847,223L847,221L848,221Z"/><circle class="wm-dot pop" style="--dd:1300ms" cx="916.7" cy="225.5" r="6"/><circle class="wm-dot pop" style="--dd:1380ms" cx="892.5" cy="302.2" r="6"/><path class="wm-arc draw" pathLength="1" style="--dd:1000ms;--dur:1.5s" d="M842.5 220.5Q560 -70 277.7 162.4"/><path class="wm-lead draw" pathLength="1" style="--dd:600ms;--dur:.5s" d="M842.5 229.5V296"/><path class="wm-lead draw" pathLength="1" style="--dd:2300ms;--dur:.5s" d="M277.7 168.4L200 262"/><circle class="pring" style="--pd:1.2s" cx="842.5" cy="220.5" r="9" fill="none" stroke="#0a7a42" stroke-width="3"/><circle class="wm-end" cx="842.5" cy="220.5" r="8"/><circle class="wm-end" cx="277.7" cy="162.4" r="7"/></svg>
+        <div class="callout k" style="left:668px;top:296px;width:250px;--dd:500ms">Bangladesh<b><span class="cnt" data-delay="700">≈ 7,603</span></b><span class="sub">new patients per medical oncologist</span></div>
+        <div class="callout" style="left:0;top:262px;width:262px;--dd:2200ms">United States<b><span class="cnt" data-delay="2300">≈ 137</span></b><span class="sub">per haematology / medical oncologist</span></div>
+      </div>
+      <div class="trials">
+        <h3>Recruiting trials found for her case</h3>
+        <p class="wleg"><span><i class="m"></i>a site in one of these trials</span><span><i class="d"></i>Hong Kong, Singapore</span><span><i class="k"></i>Bangladesh</span></p>
+        <div class="tl stg" style="--d:6">
+          <div><code>NCT05256290</code><span>United States, Canada</span></div>
+          <div><code>NCT07206498</code><span>China</span></div>
+          <div><code>NCT06868485</code><span>United States, China, France</span></div>
+          <div><code>NCT07699328</code><span>Australia, Canada, France, Hong Kong, Malaysia, Singapore</span></div>
+        </div>
+        <div class="none fu" style="--dd:1500ms"><b>0</b><span>sites in Bangladesh or anywhere in South Asia</span></div>
+        <p class="tm">The Trial-matcher names South Asian sites when a trial has them. Distance to sites is not yet checked automatically.</p>
+      </div>
+    </div>
+    <p class="fill"></p>
+    <p class="src">Trials: ClinicalTrials.gov API v2, from the stored agent run for P-001 (fictional patient), 20 Nov 2026. Workforce: GLOBOCAN 2022 ÷ Financial Express (Feb 2026); ACS 2026 ÷ ASCO JCO OP 2025; definitions differ, so this is a rough comparison. Base map: Natural Earth via world-atlas.</p>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">10 / 20</span></div>
+  <aside class="notes">
+    <p><b>Say:</b> "The Trial-matcher found four recruiting trials for Rahela's case: in the US, Canada, China, France, Australia and East Asia. Not one has a site in Bangladesh, where each medical oncologist sees about 7,600 new patients a year, against about 137 in the US."</p>
+    <p><b>Why:</b> Brings the global gap back to one patient. Knowing the right trial is only half the problem; reaching it is the other half, and the agent shows that honestly.</p>
+  </aside>
+</section>
+
+<!-- 11 CLINICIAN CASE INTAKE -->
 <section class="slide" data-title="Enter your own case">
   <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Case intake</span></div>
   <div class="body">
@@ -684,25 +931,45 @@ body.show-notes #notes-panel { display: block; }
       </div>
       <div class="pack">
         <h3>Knowledge pack, NSCLC</h3>
-        <div class="nums">
-          <div><em>17</em><span>generic treatment settings</span></div>
-          <div><em>42</em><span>cancer drugs</span></div>
-          <div><em>34</em><span>regimens</span></div>
-          <div><em>54</em><span>interaction rules</span></div>
+        <div class="nums stg" style="--d:4">
+          <div><em><span class="cnt">17</span></em><span>generic treatment settings</span></div>
+          <div><em><span class="cnt">42</span></em><span>cancer drugs</span></div>
+          <div><em><span class="cnt">34</span></em><span>regimens</span></div>
+          <div><em><span class="cnt">54</span></em><span>interaction rules</span></div>
         </div>
         <p class="honest">No setting fits the case? <span>It says so, and the agents propose no treatment.</span></p>
         <p class="priv">EGFR, ALK, ROS1, BRAF V600E, MET exon 14, RET, NTRK, KRAS G12C, HER2, no driver by PD-L1 and histology, second line. No names, record numbers or dates of birth are collected. Shown: an example case, KRAS G12C after chemo-immunotherapy.</p>
       </div>
     </div>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX · example case, de-identified and fictional</span><span class="pg">09 / 17</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX · example case, de-identified and fictional</span><span class="pg">11 / 20</span></div>
   <aside class="notes">
     <p><b>Say:</b> "Any oncologist can test this with their own case. Enter a de-identified lung cancer case and paste the molecular report. A deterministic reader, with no AI, pulls out each alteration and shows the exact text it came from. Then the same nine agents run. The pack covers 17 common NSCLC settings, and when a case falls outside them, it says so."</p>
     <p><b>Why:</b> Answers the "is it only a scripted demo?" objection, and invites judges to try a case themselves.</p>
   </aside>
 </section>
 
-<!-- 10 TRUST 1: CATCHES MISTAKES -->
+<!-- 12 FROM DRIVER TO TREATMENT -->
+<section class="slide" data-title="From driver to treatment">
+  <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Knowledge pack</span></div>
+  <div class="body">
+    <p class="kicker rv">From driver to treatment</p>
+    <h2 class="rv m" style="--d:1">Every setting maps to one sourced first option.</h2>
+    <div class="skw rv" style="--d:2;margin-top:24px">
+      <div class="skh"><span>Driver group</span><span></span><span>Knowledge-pack setting</span><span></span><span style="display:flex;justify-content:space-between;align-items:center">Leading first option <i class="notprev" style="font-style:normal">Map of the pack, not prevalence</i></span></div>
+      <svg class="sk" viewBox="0 0 1712 613" role="img" aria-label="Map of the curated knowledge pack: ten driver groups, seventeen generic settings and the leading first option in each. Equal widths; not prevalence."><g class="sk-fl"><path class="draw fl" pathLength="1" style="--dd:300ms" d="M194 33C317 33 317 19 440 19"/><path class="draw fl" pathLength="1" style="--dd:345ms" d="M194 51C317 51 317 51 440 51"/><path class="draw fl her" pathLength="1" style="--dd:390ms" d="M194 69C317 69 317 83 440 83"/><path class="draw fl" pathLength="1" style="--dd:435ms" d="M194 122C317 122 317 122 440 122"/><path class="draw fl" pathLength="1" style="--dd:480ms" d="M194 161C317 161 317 161 440 161"/><path class="draw fl" pathLength="1" style="--dd:525ms" d="M194 200C317 200 317 200 440 200"/><path class="draw fl" pathLength="1" style="--dd:570ms" d="M194 239C317 239 317 239 440 239"/><path class="draw fl" pathLength="1" style="--dd:615ms" d="M194 278C317 278 317 278 440 278"/><path class="draw fl" pathLength="1" style="--dd:660ms" d="M194 317C317 317 317 317 440 317"/><path class="draw fl" pathLength="1" style="--dd:705ms" d="M194 356C317 356 317 356 440 356"/><path class="draw fl" pathLength="1" style="--dd:750ms" d="M194 402C317 402 317 395 440 395"/><path class="draw fl" pathLength="1" style="--dd:795ms" d="M194 420C317 420 317 427 440 427"/><path class="draw fl" pathLength="1" style="--dd:840ms" d="M194 494C317 494 317 466 440 466"/><path class="draw fl" pathLength="1" style="--dd:885ms" d="M194 512C317 512 317 498 440 498"/><path class="draw fl" pathLength="1" style="--dd:930ms" d="M194 530C317 530 317 530 440 530"/><path class="draw fl" pathLength="1" style="--dd:975ms" d="M194 548C317 548 317 562 440 562"/><path class="draw fl" pathLength="1" style="--dd:1020ms" d="M194 566C317 566 317 594 440 594"/><path class="draw fl" pathLength="1" style="--dd:900ms" d="M830 19C958 19 958 19 1086 19"/><path class="draw fl" pathLength="1" style="--dd:945ms" d="M830 51C958 51 958 58 1086 58"/><path class="draw fl her" pathLength="1" style="--dd:990ms" d="M830 83C958 83 958 76 1086 76"/><path class="draw fl" pathLength="1" style="--dd:1035ms" d="M830 122C958 122 958 122 1086 122"/><path class="draw fl" pathLength="1" style="--dd:1080ms" d="M830 161C958 161 958 161 1086 161"/><path class="draw fl" pathLength="1" style="--dd:1125ms" d="M830 200C958 200 958 200 1086 200"/><path class="draw fl" pathLength="1" style="--dd:1170ms" d="M830 239C958 239 958 239 1086 239"/><path class="draw fl" pathLength="1" style="--dd:1215ms" d="M830 278C958 278 958 278 1086 278"/><path class="draw fl" pathLength="1" style="--dd:1260ms" d="M830 317C958 317 958 317 1086 317"/><path class="draw fl" pathLength="1" style="--dd:1305ms" d="M830 356C958 356 958 356 1086 356"/><path class="draw fl" pathLength="1" style="--dd:1350ms" d="M830 395C958 395 958 395 1086 395"/><path class="draw fl" pathLength="1" style="--dd:1395ms" d="M830 427C958 427 958 427 1086 427"/><path class="draw fl" pathLength="1" style="--dd:1440ms" d="M830 466C958 466 958 466 1086 466"/><path class="draw fl" pathLength="1" style="--dd:1485ms" d="M830 498C958 498 958 498 1086 498"/><path class="draw fl" pathLength="1" style="--dd:1530ms" d="M830 530C958 530 958 530 1086 530"/><path class="draw fl" pathLength="1" style="--dd:1575ms" d="M830 562C958 562 958 562 1086 562"/><path class="draw fl" pathLength="1" style="--dd:1620ms" d="M830 594C958 594 958 594 1086 594"/></g><g class="sk-n"><rect class="dn" style="--dd:0ms" x="180" y="26" width="14" height="50"/><rect class="dn" style="--dd:60ms" x="180" y="115" width="14" height="14"/><rect class="dn" style="--dd:120ms" x="180" y="154" width="14" height="14"/><rect class="dn" style="--dd:180ms" x="180" y="193" width="14" height="14"/><rect class="dn" style="--dd:240ms" x="180" y="232" width="14" height="14"/><rect class="dn" style="--dd:300ms" x="180" y="271" width="14" height="14"/><rect class="dn" style="--dd:360ms" x="180" y="310" width="14" height="14"/><rect class="dn" style="--dd:420ms" x="180" y="349" width="14" height="14"/><rect class="dn" style="--dd:480ms" x="180" y="395" width="14" height="32"/><rect class="dn" style="--dd:540ms" x="180" y="487" width="14" height="86"/><g class="sn" style="--dd:500ms"><rect x="440" y="6" width="390" height="26"/><text x="454" y="25">EGFR common, first line</text></g><g class="sn" style="--dd:545ms"><rect x="440" y="38" width="390" height="26"/><text x="454" y="57">EGFR exon 20 insertion</text></g><g class="sn her" style="--dd:590ms"><rect x="440" y="70" width="390" height="26"/><text x="454" y="89">EGFR after osimertinib</text><text class="ht" x="818" y="89" text-anchor="end">Rahela's setting</text></g><g class="sn" style="--dd:635ms"><rect x="440" y="109" width="390" height="26"/><text x="454" y="128">ALK, first line</text></g><g class="sn" style="--dd:680ms"><rect x="440" y="148" width="390" height="26"/><text x="454" y="167">ROS1, first line</text></g><g class="sn" style="--dd:725ms"><rect x="440" y="187" width="390" height="26"/><text x="454" y="206">BRAF V600E, first line</text></g><g class="sn" style="--dd:770ms"><rect x="440" y="226" width="390" height="26"/><text x="454" y="245">MET exon 14, first line</text></g><g class="sn" style="--dd:815ms"><rect x="440" y="265" width="390" height="26"/><text x="454" y="284">RET fusion, first line</text></g><g class="sn" style="--dd:860ms"><rect x="440" y="304" width="390" height="26"/><text x="454" y="323">NTRK fusion, any line</text></g><g class="sn" style="--dd:905ms"><rect x="440" y="343" width="390" height="26"/><text x="454" y="362">KRAS G12C after prior therapy</text></g><g class="sn" style="--dd:950ms"><rect x="440" y="382" width="390" height="26"/><text x="454" y="401">HER2-mutant, first line</text></g><g class="sn" style="--dd:995ms"><rect x="440" y="414" width="390" height="26"/><text x="454" y="433">HER2-mutant after prior therapy</text></g><g class="sn" style="--dd:1040ms"><rect x="440" y="453" width="390" height="26"/><text x="454" y="472">No driver, PD-L1 ≥ 50%</text></g><g class="sn" style="--dd:1085ms"><rect x="440" y="485" width="390" height="26"/><text x="454" y="504">No driver, non-squamous</text></g><g class="sn" style="--dd:1130ms"><rect x="440" y="517" width="390" height="26"/><text x="454" y="536">No driver, squamous</text></g><g class="sn" style="--dd:1175ms"><rect x="440" y="549" width="390" height="26"/><text x="454" y="568">Second line after chemo-immunotherapy</text></g><g class="sn" style="--dd:1220ms"><rect x="440" y="581" width="390" height="26"/><text x="454" y="600">Second line, immunotherapy-naive</text></g><rect class="onode" style="--dd:1100ms" x="1086" y="12" width="14" height="14"/><rect class="onode her" style="--dd:1140ms" x="1086" y="51" width="14" height="32"/><rect class="onode" style="--dd:1180ms" x="1086" y="115" width="14" height="14"/><rect class="onode" style="--dd:1220ms" x="1086" y="154" width="14" height="14"/><rect class="onode" style="--dd:1260ms" x="1086" y="193" width="14" height="14"/><rect class="onode" style="--dd:1300ms" x="1086" y="232" width="14" height="14"/><rect class="onode" style="--dd:1340ms" x="1086" y="271" width="14" height="14"/><rect class="onode" style="--dd:1380ms" x="1086" y="310" width="14" height="14"/><rect class="onode" style="--dd:1420ms" x="1086" y="349" width="14" height="14"/><rect class="onode" style="--dd:1460ms" x="1086" y="388" width="14" height="14"/><rect class="onode" style="--dd:1500ms" x="1086" y="420" width="14" height="14"/><rect class="onode" style="--dd:1540ms" x="1086" y="459" width="14" height="14"/><rect class="onode" style="--dd:1580ms" x="1086" y="491" width="14" height="14"/><rect class="onode" style="--dd:1620ms" x="1086" y="523" width="14" height="14"/><rect class="onode" style="--dd:1660ms" x="1086" y="555" width="14" height="14"/><rect class="onode" style="--dd:1700ms" x="1086" y="587" width="14" height="14"/></g><g class="sk-l"><text class="dl" style="--dd:0ms" x="166" y="58" text-anchor="end">EGFR</text><text class="dl" style="--dd:60ms" x="166" y="129" text-anchor="end">ALK</text><text class="dl" style="--dd:120ms" x="166" y="168" text-anchor="end">ROS1</text><text class="dl" style="--dd:180ms" x="166" y="207" text-anchor="end">BRAF V600E</text><text class="dl" style="--dd:240ms" x="166" y="246" text-anchor="end">MET exon 14</text><text class="dl" style="--dd:300ms" x="166" y="285" text-anchor="end">RET</text><text class="dl" style="--dd:360ms" x="166" y="324" text-anchor="end">NTRK</text><text class="dl" style="--dd:420ms" x="166" y="363" text-anchor="end">KRAS G12C</text><text class="dl" style="--dd:480ms" x="166" y="418" text-anchor="end">HER2</text><text class="dl" style="--dd:540ms" x="166" y="537" text-anchor="end">No driver</text><text class="ol" style="--dd:1100ms" x="1116" y="26">Osimertinib</text><text class="ol her" style="--dd:1140ms" x="1116" y="74">Amivantamab + carboplatin + pemetrexed</text><text class="ol" style="--dd:1180ms" x="1116" y="129">Alectinib</text><text class="ol" style="--dd:1220ms" x="1116" y="168">Repotrectinib</text><text class="ol" style="--dd:1260ms" x="1116" y="207">Dabrafenib + trametinib</text><text class="ol" style="--dd:1300ms" x="1116" y="246">Capmatinib</text><text class="ol" style="--dd:1340ms" x="1116" y="285">Selpercatinib</text><text class="ol" style="--dd:1380ms" x="1116" y="324">Larotrectinib</text><text class="ol" style="--dd:1420ms" x="1116" y="363">Sotorasib</text><text class="ol" style="--dd:1460ms" x="1116" y="402">Zongertinib</text><text class="ol" style="--dd:1500ms" x="1116" y="434">Trastuzumab deruxtecan</text><text class="ol" style="--dd:1540ms" x="1116" y="473">Pembrolizumab</text><text class="ol" style="--dd:1580ms" x="1116" y="505">Pembrolizumab + carboplatin + pemetrexed</text><text class="ol" style="--dd:1620ms" x="1116" y="537">Pembrolizumab + carboplatin + paclitaxel</text><text class="ol" style="--dd:1660ms" x="1116" y="569">Docetaxel + ramucirumab</text><text class="ol" style="--dd:1700ms" x="1116" y="601">Nivolumab</text></g></svg>
+    </div>
+    <p class="fill"></p>
+    <p class="src">The 17 generic settings of the curated knowledge pack (version 2026-11-20); 3 more back the demo patients, 20 in all. 42 drugs · 34 regimens · 54 interaction rules. Every flow has the same width: this maps coverage, not how often each driver occurs. When no setting fits a case, the agents say so and propose no treatment.</p>
+  </div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">12 / 20</span></div>
+  <aside class="notes">
+    <p><b>Say:</b> "This is the whole knowledge pack on one page. Ten driver groups lead to 17 treatment settings, and each setting has one leading first option from public approvals and pivotal trials. Rahela's path is the dark one. If a case fits none of these settings, OncoAgent says so and proposes nothing."</p>
+    <p><b>Why:</b> Makes the system's knowledge visible and bounded. Judges can see exactly what it covers, which builds more trust than a claim of breadth.</p>
+  </aside>
+</section>
+
+<!-- 13 TRUST 1: CATCHES MISTAKES -->
 <section class="slide" data-title="It catches mistakes">
   <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Safety</span></div>
   <div class="body cols">
@@ -716,9 +983,9 @@ body.show-notes #notes-panel { display: block; }
     </div>
     <div class="col grow">
       <div class="inkbox rv" style="--d:4;height:100%">
-        <p class="num">6 / 6</p>
+        <p class="num"><span class="cnt">6 / 6</span></p>
         <p class="lbl">deliberately unsafe drafts caught by the critic</p>
-        <ul class="checks">
+        <ul class="checks stg" style="--d:6">
           <li>Invented trial number</li>
           <li>Dose written by the model</li>
           <li>Unknown evidence ID</li>
@@ -731,51 +998,51 @@ body.show-notes #notes-panel { display: block; }
       </div>
     </div>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">10 / 17</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">13 / 20</span></div>
   <aside class="notes">
     <p><b>Say:</b> "Here is a mistake we did not plan. Our third fictional patient takes carbamazepine, and our own rules engine listed lorlatinib, which is contraindicated with it. The safety-critic flagged the card by itself. We also attack the critic with six deliberately unsafe drafts. It caught all six."</p>
     <p><b>Why:</b> Showing a caught error is more believable than claiming there are none.</p>
   </aside>
 </section>
 
-<!-- 11 TRUST 2: MEASURED AND HONEST -->
+<!-- 14 TRUST 2: MEASURED AND HONEST -->
 <section class="slide" data-title="Measured, and honest">
   <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Evaluation</span></div>
   <div class="body">
     <p class="kicker rv">Trust, part 2 · measured, and honest</p>
     <h2 class="rv" style="--d:1">Measured before it is trusted.<br><span class="g">And clear about what three cases can show.</span></h2>
-    <div class="met rv" style="--d:2;margin-top:40px">
-      <div><em>3 / 3</em><span>driver alterations identified</span></div>
-      <div><em>3 / 3</em><span>leading options match the gold answer</span></div>
-      <div><em>100%</em><span>citations resolve to evidence in the run</span></div>
-      <div><em>100%</em><span>trial IDs returned by the registry</span></div>
+    <div class="met stg" style="--d:2;margin-top:40px">
+      <div><em><span class="cnt">3 / 3</span></em><span>driver alterations identified</span></div>
+      <div><em><span class="cnt">3 / 3</span></em><span>leading options match the gold answer</span></div>
+      <div><em><span class="cnt">100%</span></em><span>citations resolve to evidence in the run</span></div>
+      <div><em><span class="cnt">100%</span></em><span>trial IDs returned by the registry</span></div>
       <div class="m"><em>0</em><span>doses written outside the calculator</span></div>
-      <div class="m"><em>6 / 6</em><span>adversarial unsafe drafts caught</span></div>
-      <div><em>23.4 s</em><span>mean full run with Claude</span></div>
-      <div><em>≈ $0.065</em><span>per case</span></div>
+      <div class="m"><em><span class="cnt">6 / 6</span></em><span>adversarial unsafe drafts caught</span></div>
+      <div><em><span class="cnt">23.4 s</span></em><span>mean full run with Claude</span></div>
+      <div><em><span class="cnt">≈ $0.065</span></em><span>per case</span></div>
     </div>
     <div class="limit rv" style="--d:3;margin-top:26px">
       <i>The limit</i>
       <p>Three fictional gold cases cannot support clinical accuracy claims. A pilot needs hundreds of de-identified cases with tumour-board answers, reviewed under ethics approval.</p>
     </div>
     <p class="fill"></p>
-    <p class="src">scripts/eval.ts on stored runs, 20 Nov 2026. 156 unit tests cover dose and RECIST, knowledge-pack selection and dosing, and the report reader. Fictional patients only.</p>
+    <p class="src">scripts/eval.ts on stored runs, 20 Nov 2026. <span class="cnt">167</span> unit tests cover dose and RECIST, knowledge-pack selection and dosing, and the report reader. Fictional patients only.</p>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">11 / 17</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">14 / 20</span></div>
   <aside class="notes">
-    <p><b>Say:</b> "We measure every run. On our three fictional gold cases: the right driver, the right leading option, every citation real, every trial ID from the registry, no dose outside the calculator, 23 seconds and about six and a half cents per case, with 156 unit tests underneath. And the limit: three cases show the pipeline works. They do not prove clinical accuracy. That needs hundreds of real cases under ethics approval."</p>
+    <p><b>Say:</b> "We measure every run. On our three fictional gold cases: the right driver, the right leading option, every citation real, every trial ID from the registry, no dose outside the calculator, 23 seconds and about six and a half cents per case, with 167 unit tests underneath. And the limit: three cases show the pipeline works. They do not prove clinical accuracy. That needs hundreds of real cases under ethics approval."</p>
     <p><b>Why:</b> Candour. Stating the limit ourselves makes every number above it believable.</p>
   </aside>
 </section>
 
-<!-- 12 DOCTOR IN CONTROL -->
+<!-- 15 DOCTOR IN CONTROL -->
 <section class="slide" data-title="The doctor stays in control">
   <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Doctor control</span></div>
   <div class="body cols">
     <div class="col" style="flex:0 0 760px">
       <p class="kicker rv">The doctor stays in control</p>
       <h2 class="rv m" style="--d:1">Every proposal waits for a clinician's signature.</h2>
-      <div class="ctl rv" style="--d:2">
+      <div class="ctl stg" style="--d:2">
         <div><div class="acts"><em class="a">Approve</em><em>Modify</em><em>Reject</em></div><span style="margin-top:12px">A reason is required to modify or reject. Approving a card the critic flagged needs an explicit acknowledgement and a reason.</span></div>
         <div><b>Signed and chained</b><span>Each decision is SHA-256 hash-chained to the one before. It cannot be edited afterwards.</span></div>
         <div><b>Decision queue</b><span>Flagged cards come first, then safety, treatment and tests.</span></div>
@@ -789,20 +1056,20 @@ body.show-notes #notes-panel { display: block; }
       <p class="shot-cap">Sign-off for Rahela's leading option, with the doctor's note</p>
     </div>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">12 / 17</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">15 / 20</span></div>
   <aside class="notes">
     <p><b>Say:</b> "Doctors ask us one question first: will this replace me? It cannot act alone. Every card waits for a clinician to approve, modify or reject it, and changing or rejecting needs a reason. Each signature is hash-chained, so the record shows who decided, and why."</p>
     <p><b>Why:</b> Remove the fear of being replaced and the fear of losing accountability, the two biggest blocks to adoption.</p>
   </aside>
 </section>
 
-<!-- 13 THREE THERAPY LEVELS -->
+<!-- 16 THREE THERAPY LEVELS -->
 <section class="slide" data-title="Three therapy levels">
   <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Therapy</span></div>
   <div class="body">
     <p class="kicker rv">Three therapy levels</p>
     <h2 class="rv" style="--d:1">Select. Personalise. <span class="g">Then research.</span></h2>
-    <div class="lvs mt rv" style="--d:2">
+    <div class="lvs mt stg" style="--d:2">
       <div class="lv s1"><div class="lh"><i>Level 1 · clinical</i><span class="st built">Built</span></div><b>Select</b><span>An approved drug, regimen or recruiting trial that matches the responsible gene.</span><p class="ex"><em>For Rahela</em>Amivantamab + carboplatin + pemetrexed, or a C797S trial</p></div>
       <div class="lv s2"><div class="lh"><i>Level 2 · clinical</i><span class="st built">Built</span></div><b>Personalise</b><span>The regimen and dose for this patient: kidney function, body size, interactions.</span><p class="ex"><em>For Rahela</em>Carboplatin 460 mg, pemetrexed 750 mg, ECG before starting</p></div>
       <div class="lv s3"><div class="lh"><i>Level 3 · research</i><span class="st vision">Vision</span></div><b>Research</b><span>When resistance leaves no option, study a modified or new molecule with licensed partners.</span><p class="ex"><em>Boundary</em>Stays in a research zone. Never given to a patient outside a regulated trial.</p></div>
@@ -810,24 +1077,24 @@ body.show-notes #notes-panel { display: block; }
     <p class="fill"></p>
     <p class="cap">Levels 1 and 2 run today, on the demo patients and on clinician-entered cases. Level 3 outputs never enter a patient's chart and are limited to human cancer targets.</p>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">13 / 17</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">16 / 20</span></div>
   <aside class="notes">
     <p><b>Say:</b> "OncoAgent works at three levels. Level one selects an approved drug or trial. Level two personalises the dose. Both run today. Level three, researching a modified or new molecule with licensed partners, is our vision, and it stays in a research zone, never in a patient's chart."</p>
     <p><b>Why:</b> Show the ambition while keeping what is built and what is vision clearly apart.</p>
   </aside>
 </section>
 
-<!-- 14 OPEN BY DESIGN: MCP -->
+<!-- 17 OPEN BY DESIGN: MCP -->
 <section class="slide" data-title="Open by design: MCP">
   <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Open by design</span></div>
   <div class="body cols">
     <div class="col" style="flex:0 0 780px">
       <p class="kicker rv">Open by design · MCP</p>
       <h2 class="rv m" style="--d:1">Any MCP client can call OncoAgent's tools.</h2>
-      <div class="tools rv" style="--d:2">
+      <div class="tools stg" style="--d:2">
         <i>list_patients</i><i>get_case_timeline</i><i>interpret_variant</i><i>search_trials</i><i>calculate_dose</i><i>draft_recommendations</i><i class="m">extract_report</i><i class="m">analyze_case</i><i class="k">record_decision</i>
       </div>
-      <div class="facts rv" style="--d:3">
+      <div class="facts stg" style="--d:5">
         <div><b>Server</b><span>oncoagent-mcp v0.2.0: nine tools, one definition</span></div>
         <div><b>New</b><span><code>extract_report</code> reads report text with no AI; <code>analyze_case</code> runs all nine agents on a de-identified case</span></div>
         <div><b>Transports</b><span>stdio and Streamable HTTP, both tested with an MCP client</span></div>
@@ -841,31 +1108,31 @@ body.show-notes #notes-panel { display: block; }
       <p class="shot-cap">In-browser tool tester: interpret_variant for EGFR C797S returns live CIViC evidence</p>
     </div>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">14 / 17</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">17 / 20</span></div>
   <aside class="notes">
     <p><b>Say:</b> "OncoAgent is also a set of open tools. Through the Model Context Protocol, any MCP client can use nine tools: list patients, read a report, interpret a variant, search trials, calculate a dose, or run all nine agents on a de-identified case. The decision tool refuses to sign without a clinician token."</p>
     <p><b>Why:</b> Show it fits into hospital systems instead of becoming one more silo, and that the safety rules travel with the tools.</p>
   </aside>
 </section>
 
-<!-- 15 WHY LUNG FIRST, WHY NOW -->
+<!-- 18 WHY LUNG FIRST, WHY NOW -->
 <section class="slide" data-title="Why lung first, why now">
   <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Focus and timing</span></div>
   <div class="body">
     <p class="kicker rv">Why lung first, why now</p>
     <h2 class="rv" style="--d:1">Start where the data and the drugs are.</h2>
-    <div class="why mt rv" style="--d:2">
+    <div class="why mt" style="--d:2">
       <div>
         <h3>Why lung cancer first</h3>
-        <div class="kv">
-          <div><em>1.82 M</em><span>lung cancer deaths in 2022, the most of any cancer</span></div>
-          <div><em>38,000+</em><span>NSCLC samples in AACR GENIE, more than breast or colorectal</span></div>
+        <div class="kv stg">
+          <div><em><span class="cnt">1.82 M</span></em><span>lung cancer deaths in 2022, the most of any cancer</span></div>
+          <div><em><span class="cnt">38,000+</span></em><span>NSCLC samples in AACR GENIE, more than breast or colorectal</span></div>
           <div><em>40–60%</em><span>of lung adenocarcinomas carry an actionable or oncogenic driver: EGFR, ALK, ROS1, BRAF, KRAS G12C, MET, RET, NTRK, HER2</span></div>
         </div>
       </div>
       <div>
         <h3>Why now</h3>
-        <div class="kv now">
+        <div class="kv now stg" style="--d:4">
           <div><span class="ix">1</span><span><b>Live public evidence</b>CIViC and ClinicalTrials.gov API v2, queried per case</span></div>
           <div><span class="ix">2</span><span><b>Models that follow rules</b>Structured output; the critic flags any ID outside the evidence registry</span></div>
           <div><span class="ix">3</span><span><b>MCP as a standard</b>One way to connect tools to any AI client</span></div>
@@ -877,14 +1144,14 @@ body.show-notes #notes-panel { display: block; }
     <p class="fill"></p>
     <p class="src">GLOBOCAN 2022 (IARC); AACR Project GENIE annual report 2025; NSCLC actionable-alteration review (PMC11528205).</p>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">15 / 17</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">18 / 20</span></div>
   <aside class="notes">
     <p><b>Say:</b> "Why lung first? It kills the most people, it has the most public genomic data, and 40 to 60% of adenocarcinomas carry a known driver. Why now? Evidence databases answer live, models can follow strict evidence rules, MCP gives a standard way to connect, and the rules for clinical AI are clear. Breast and colorectal follow on the same modules."</p>
     <p><b>Why:</b> Timing. Show why this can be built now, and why the first market is the right one.</p>
   </aside>
 </section>
 
-<!-- 16 BUSINESS AND ROADMAP -->
+<!-- 19 BUSINESS AND ROADMAP -->
 <section class="slide" data-title="Business and roadmap">
   <div class="top"><span class="logo"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="6" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span><span class="sec">Plan</span></div>
   <div class="body">
@@ -892,7 +1159,7 @@ body.show-notes #notes-panel { display: block; }
     <div class="rv" style="--d:1;display:flex;align-items:center;gap:28px"><h2>Who pays, and the next 30 months.</h2><span class="st plan" style="font-size:18px;padding:11px 18px">Plan · no traction claimed</span></div>
     <div class="rv" style="--d:2;margin-top:40px">
       <div class="headrow"><h3>Who pays</h3></div>
-      <div class="pay">
+      <div class="pay stg">
         <div class="m"><i>Cancer hospitals</i><b>Per-oncologist subscription</b><span>The clinician workspace, agents and decision log</span></div>
         <div><i>Molecular labs</i><b>Interpretation module</b><span>Variant interpretation and reporting</span></div>
         <div><i>Research partners</i><b>Cohort insight</b><span>De-identified, under consent and ethics approval</span></div>
@@ -900,7 +1167,7 @@ body.show-notes #notes-panel { display: block; }
     </div>
     <div class="rv" style="--d:3;margin-top:44px">
       <div class="headrow"><h3>Roadmap · months from today</h3></div>
-      <div class="road">
+      <div class="road stg" style="--d:4">
         <div><em>0–2<small>months</small></em><b>Foundation</b><span>Harden the MVP, evaluation harness, hazard log, regulatory classification</span></div>
         <div class="m"><em>2–8</em><b>NSCLC product</b><span>Full agent set, PDF report extraction, guideline RAG, ≥ 90% gold-case concordance as the target</span></div>
         <div><em>8–14</em><b>Pilot + breast</b><span>Ethics approval, hospital integration, silent-mode study on real cases</span></div>
@@ -910,14 +1177,14 @@ body.show-notes #notes-panel { display: block; }
     <p class="fill"></p>
     <p class="src">Regulatory frame: clinician-facing decision support (FDA CDS criteria); Bangladesh PDPO 2025, health and genetic data stored in-country; DGDA rules to be confirmed before a pilot.</p>
   </div>
-  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">16 / 17</span></div>
+  <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">19 / 20</span></div>
   <aside class="notes">
     <p><b>Say:</b> "Hospitals pay per oncologist. Molecular labs pay for an interpretation module. Research partners pay for de-identified insight under ethics approval. Over 30 months we go from a hardened MVP to a silent-mode pilot, then breast and colorectal. This is a plan; we are not claiming traction."</p>
     <p><b>Why:</b> A credible path to a business, stated without inflation, keeps the trust built on the last four slides.</p>
   </aside>
 </section>
 
-<!-- 17 CLOSE + ASK -->
+<!-- 20 CLOSE + ASK -->
 <section class="slide" data-title="Close and ask">
   <div class="ask-in">
     <span class="logo rv" style="--d:0"><svg viewBox="0 0 132 124" aria-hidden="true"><g stroke="#3a3a3a" stroke-width="5" stroke-linejoin="round"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><g fill="#ffffff"><rect x="-8" y="-14" width="112" height="28" rx="12" transform="translate(32 38) rotate(41)"/><rect x="-4" y="-14" width="52" height="28" rx="12" transform="translate(66 74) rotate(141)"/></g><circle cx="106" cy="25" r="22" fill="#17ff88"/></svg>Datour<span class="x">X</span></span>
@@ -926,7 +1193,7 @@ body.show-notes #notes-panel { display: block; }
     <p class="why-sm rv" style="--d:3">Under ethics approval, OncoAgent drafts beside your tumour board and its drafts are compared with your decisions. It is never used for care during the study.</p>
     <div class="links rv" style="--d:4"><span class="p1"><small>Try it now</small>oncoagent.vercel.app</span><span class="p2">github.com/shahriyar9507/oncoagent</span></div>
     <div class="endline rv" style="--d:6">
-      <p class="l1">AI proposes. <span>The doctor decides.</span></p>
+      <p class="l1">AI proposes. <span class="pulse" style="--pd:1.3s">The doctor decides.</span></p>
       <p class="l2 bn">AI প্রস্তাব দেয়, ডাক্তার সিদ্ধান্ত নেন।</p>
     </div>
   </div>
@@ -938,14 +1205,22 @@ body.show-notes #notes-panel { display: block; }
 
 </div>
 <div id="progress"></div>
-<div id="nav" aria-label="Slide controls"><button type="button" id="prev" aria-label="Previous slide">‹</button><span id="count" aria-live="polite">1 / 17</span><button type="button" id="next" aria-label="Next slide">›</button></div>
+<div id="nav" aria-label="Slide controls"><button type="button" id="prev" aria-label="Previous slide">‹</button><span id="count" aria-live="polite">1 / 20</span><button type="button" id="next" aria-label="Next slide">›</button></div>
 <div id="notes-panel" role="complementary" aria-label="Speaker notes"><div class="nh"><span class="nt"></span><span>Press N to hide</span></div><div class="nb"></div></div>
 
 <script>
 (function () {
+  var root = document.documentElement;
+  var printMode = /[?&]print=1(?:&|$)/.test(location.search);
+  if (printMode) root.classList.add('print');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
   var i = 0, prog = document.getElementById('progress'), count = document.getElementById('count');
   var panel = document.getElementById('notes-panel');
+  var DUR = 560, countToken = 0;
+
+  Array.prototype.forEach.call(document.querySelectorAll('.waffle i.on'), function (c, k) { c.style.setProperty('--i', k); });
+
   function fit() {
     var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
     slides.forEach(function (el) { el.style.setProperty('--s', s); });
@@ -955,15 +1230,68 @@ body.show-notes #notes-panel { display: block; }
     panel.querySelector('.nt').textContent = 'Notes · ' + (i + 1) + ' / ' + slides.length + ' · ' + (slides[i].getAttribute('data-title') || '');
     panel.querySelector('.nb').innerHTML = a ? a.innerHTML : '<p>No notes for this slide.</p>';
   }
+
+  /* count-up: parses the final text once; animates an overlay, never the DOM text */
+  function parse(el) {
+    var txt = el.textContent, m = /\d[\d,]*(?:\.\d+)?/.exec(txt);
+    if (!m) return null;
+    var num = m[0];
+    return { pre: txt.slice(0, m.index), post: txt.slice(m.index + num.length), val: parseFloat(num.replace(/,/g, '')),
+      dec: (num.split('.')[1] || '').length, comma: num.indexOf(',') >= 0, from: parseFloat(el.getAttribute('data-from') || '0') };
+  }
+  function fmt(v, c) {
+    var t = v.toFixed(c.dec);
+    if (c.comma) { var p = t.split('.'); p[0] = p[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','); t = p.join('.'); }
+    return c.pre + t + c.post;
+  }
+  function stopCounts() {
+    countToken++;
+    Array.prototype.forEach.call(document.querySelectorAll('.cnt.counting'), function (el) { el.classList.remove('counting'); el.removeAttribute('data-show'); });
+  }
+  function runCounts(slide) {
+    var token = countToken;
+    Array.prototype.forEach.call(slide.querySelectorAll('.cnt'), function (el) {
+      var c = el._c || (el._c = parse(el));
+      if (!c) return;
+      var cs = getComputedStyle(el);
+      var d = parseFloat(cs.getPropertyValue('--d')) || 0, k = parseFloat(cs.getPropertyValue('--k')) || 0;
+      var delay = el.hasAttribute('data-delay') ? +el.getAttribute('data-delay') : d * 80 + k * 75 + 300;
+      var dur = +(el.getAttribute('data-dur') || 1200), t0 = performance.now() + delay;
+      el.classList.add('counting');
+      el.setAttribute('data-show', fmt(c.from, c));
+      (function step(now) {
+        if (token !== countToken) return;
+        var p = Math.min(1, Math.max(0, (now - t0) / dur)), e = 1 - Math.pow(1 - p, 3);
+        el.setAttribute('data-show', fmt(c.from + (c.val - c.from) * e, c));
+        if (p < 1) requestAnimationFrame(step); else { el.classList.remove('counting'); el.removeAttribute('data-show'); }
+      })(performance.now());
+    });
+  }
+
   function go(n, user) {
     n = Math.max(0, Math.min(slides.length - 1, n));
-    if (user) document.body.classList.add('anim');
-    slides[i].classList.remove('on');
+    var prev = slides[i], next = slides[n];
+    var motion = !!user && !reduce && !printMode && prev !== next;
+    if (user && !reduce) document.body.classList.add('anim');
+    stopCounts();
+    slides.forEach(function (sl) { sl.classList.remove('leave', 'in-f', 'in-b', 'out-f', 'out-b'); });
+    var dir = n > i ? 'f' : 'b';
+    if (prev !== next) {
+      prev.classList.remove('on');
+      if (motion) {
+        prev.classList.add('leave', 'out-' + dir);
+        setTimeout(function () { prev.classList.remove('leave', 'out-f', 'out-b'); }, DUR + 60);
+      }
+    }
     i = n;
-    slides[i].classList.add('on');
+    if (prev !== next || !next.classList.contains('on')) {
+      next.classList.remove('on'); void next.offsetWidth; next.classList.add('on');
+      if (motion) { next.classList.add('in-' + dir); setTimeout(function () { next.classList.remove('in-f', 'in-b'); }, DUR + 60); }
+    }
     count.textContent = (i + 1) + ' / ' + slides.length;
     prog.style.width = ((i + 1) / slides.length * 100) + '%';
     notes();
+    if (document.body.classList.contains('anim') && !reduce && !printMode) runCounts(next);
     try { history.replaceState(null, '', '#s' + (i + 1)); } catch (e) {}
   }
   function fromHash() {
@@ -971,7 +1299,9 @@ body.show-notes #notes-panel { display: block; }
     return m ? parseInt(m[1], 10) - 1 : 0;
   }
   window.addEventListener('resize', fit);
+  window.addEventListener('beforeprint', stopCounts);
   document.addEventListener('keydown', function (e) {
+    if (printMode) return;
     if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); go(i + 1, true); }
     if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(i - 1, true); }
     if (e.key === 'Home') go(0, true);
@@ -983,7 +1313,7 @@ body.show-notes #notes-panel { display: block; }
   var tx = null;
   document.addEventListener('touchstart', function (e) { tx = e.touches[0].clientX; }, { passive: true });
   document.addEventListener('touchend', function (e) {
-    if (tx === null) return;
+    if (tx === null || printMode) return;
     var dx = e.changedTouches[0].clientX - tx; tx = null;
     if (Math.abs(dx) > 40) go(dx < 0 ? i + 1 : i - 1, true);
   });
