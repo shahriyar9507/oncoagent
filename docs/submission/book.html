@@ -224,7 +224,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
   <div class="grid g2">
     <div class="card">
       <h3>How far each capability has come</h3>
-      <div class="legend" style="flex-direction:column;align-items:flex-start;gap:8px"><span class="lg"><span class="st built">Built</span>runs today</span><span class="lg"><span class="st mvp">MVP · Today</span>in today's build</span><span class="lg"><span class="st design">Designed</span>written in a specification</span><span class="lg"><span class="st plan">Planned</span>decided, not yet designed</span><span class="lg"><span class="st vision">Vision</span>where our research is heading</span></div>
+      <div class="legend" style="flex-direction:column;align-items:flex-start;gap:8px"><span class="lg"><span class="st built">Built</span>runs today</span><span class="lg"><span class="st design">Designed</span>written in a specification</span><span class="lg"><span class="st plan">Planned</span>decided, not yet designed</span><span class="lg"><span class="st vision">Vision</span>where our research is heading</span></div>
     </div>
     <div class="card">
       <h3>Form answers</h3>
@@ -538,7 +538,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
     <div class="ans"><div class="hd"><span><span class="ftag">Form</span><span class="t">Fine-tuning / adaptation</span><span class="meta" data-count="a-ft"></span></span><button class="copy" type="button" data-copy="a-ft">Copy</button></div>
       <p class="txt" id="a-ft">No LLM fine-tuning in the MVP: we adapt through retrieval over versioned guidelines, tool use, skills and few-shot gold cases, which keeps sources citable. Later, under ethics approval and with de-identified data, we plan small domain-adapted models for report extraction and frozen pathology/imaging foundation models with lightweight task heads, each with a model card.</p></div>
     <div class="ans"><div class="hd"><span><span class="ftag">Form</span><span class="t">Evaluation and quality</span><span class="meta" data-count="a-ev"></span></span><button class="copy" type="button" data-copy="a-ev">Copy</button></div>
-      <p class="txt" id="a-ev">A script scores every stored run against gold answers for each case and attacks the safety-critic with unsafe drafts. Today: driver found 3/3, leading option matches 3/3, citations resolving to evidence 100%, trial IDs from the registry 100%, doses exact 3/3 with 9 unit tests, 0 doses outside the calculator, 0 unsafe leading recommendations, 6/6 adversarial drafts caught. Three fictional cases are too few for clinical claims; a pilot needs hundreds.</p></div>
+      <p class="txt" id="a-ev">A script scores every stored run against gold answers for each case and attacks the safety-critic with unsafe drafts. Today: driver found 3/3, leading option matches 3/3, citations resolving to evidence 100%, trial IDs from the registry 100%, doses exact 3/3 with 10 unit tests, 0 doses outside the calculator, 0 unsafe leading recommendations, 6/6 adversarial drafts caught. Three fictional cases are too few for clinical claims; a pilot needs hundreds.</p></div>
   </div>
   <div class="foot"><span class="l"><span class="star">✱</span><span class="word" style="font-size:13px">Datour<span class="x">X</span></span><span>OncoAgent · Submission book · 20 Nov 2026 · Public</span></span><span class="pg">P.16</span></div>
 </section>
@@ -657,7 +657,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
       <tr><td>Safety-critic, hash-chained audit log, gold-case and adversarial evaluation</td><td><span class="st built">Built</span></td></tr>
       <tr><td>3D structure view with Mol* (RCSB PDB)</td><td><span class="st built">Built</span></td></tr>
       <tr><td>PDF report extraction, guideline RAG, server-side decision storage</td><td><span class="st design">Designed</span></td></tr>
-      <tr><td>Hospital integration (FHIR, PACS), imaging and pathology triage models, ctDNA trends</td><td><span class="st plan">Planned</span></td></tr>
+      <tr><td>Hospital integration (FHIR, PACS), imaging and pathology triage models</td><td><span class="st plan">Planned</span></td></tr>
       <tr><td>Breast and colorectal modules; silent-mode hospital pilot</td><td><span class="st plan">Planned</span></td></tr>
       <tr><td>Research track: target dossiers and Analog Lab with a licensed discovery partner</td><td><span class="st vision">Vision</span></td></tr>
     </tbody>
@@ -686,7 +686,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
       <tr><td>2 · Workspace</td><td>Timeline, RECIST and ctDNA charts, recommendation cards, approve / modify / reject with reason, hash-chained audit log</td><td><span class="st built">Built</span></td></tr>
       <tr><td>3 · Agents</td><td>Nine agents: CIViC evidence, ClinicalTrials.gov, interactions, dose calculators, Claude Opus 5.5 synthesis, safety-critic</td><td><span class="st built">Built</span></td></tr>
       <tr><td>4 · MCP</td><td>oncoagent-mcp with seven tools over stdio and Streamable HTTP, tested with an MCP client</td><td><span class="st built">Built</span></td></tr>
-      <tr><td>5 · Prove</td><td>9 unit tests, gold-case and adversarial evaluation, README, deployed to Vercel</td><td><span class="st built">Built</span></td></tr>
+      <tr><td>5 · Prove</td><td>10 unit tests, gold-case and adversarial evaluation, README, deployed to Vercel</td><td><span class="st built">Built</span></td></tr>
       <tr><td>6 · Submit</td><td>2–3 minute demo video on YouTube; portal form filled from this book</td><td><span class="st plan">To do</span></td></tr>
     </tbody>
   </table></div>

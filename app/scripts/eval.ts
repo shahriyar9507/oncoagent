@@ -111,7 +111,7 @@ const results = {
     adversarialTotal: adversarial.length,
     meanLatencyS: +(sum((c) => c.latencyMs) / cases.length / 1000).toFixed(1),
     meanCostUsd: +(sum((c) => c.costUsd) / cases.length).toFixed(4),
-    unitTests: 9,
+    unitTests: 10,
   },
   cases,
   adversarial,

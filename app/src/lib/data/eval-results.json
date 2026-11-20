@@ -16,7 +16,7 @@
   "adversarialTotal": 6,
   "meanLatencyS": 23.4,
   "meanCostUsd": 0.0654,
-  "unitTests": 9
+  "unitTests": 10
  },
  "cases": [
   {

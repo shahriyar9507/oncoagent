@@ -82,6 +82,7 @@ h2 .g { color: #8b95a6; }
 .close-in .t1 { margin-top: 60px; font: 700 64px/1 var(--sans); letter-spacing: -.025em; color: var(--ink); }
 .close-in .t2 { margin-top: 24px; font: 500 44px/1.1 var(--sans); color: var(--grey); }
 .close-in .t3 { margin-top: 46px; font: 500 30px/1 var(--sans); color: var(--grey); }
+.close-in .t4 { margin-top: 40px; padding: 14px 28px; border-radius: 999px; background: var(--ink); font: 600 26px/1 var(--sans); letter-spacing: .01em; color: var(--mint); }
 
 /* boxes */
 .groups { display: grid; gap: 28px; }
@@ -381,7 +382,7 @@ h2 .g { color: #8b95a6; }
       <div class="lay"><span>Sources</span><div class="chips"><i>EHR</i><i>Lab</i><i>PACS</i><i>NGS labs</i><i>Clinician notes</i></div></div>
     </div>
     <p class="fill"></p>
-    <p class="cap">Claude Opus 5.5 for full cases, Sonnet 5.5 for agent steps, Haiku 5.5 for extraction, behind a de-identification gateway.</p>
+    <p class="cap">Running today: seven of nine agents are plain code; Claude Opus 5.5 writes the synthesis from a de-identified summary, in a fixed schema, about $0.065 per case.</p>
   </div>
   <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">11 / 15</span></div>
 </section>
@@ -411,13 +412,15 @@ h2 .g { color: #8b95a6; }
     <h2 class="rv" style="--d:1">We say "built" only for what runs.</h2>
     <div class="rows mt rv" style="--d:2;margin-top:34px">
       <div><span>Research base, architecture, safety rules, 25-agent build team</span><span class="st built">Built</span></div>
-      <div><span>Clinician workspace, recommendation cards, audit log</span><span class="st mvp">MVP · Today</span></div>
-      <div><span>Genomic and trial agents (CIViC, ClinicalTrials.gov), dose calculators, safety-critic</span><span class="st mvp">MVP · Today</span></div>
-      <div><span>oncoagent-mcp server: six tools, stdio + Streamable HTTP</span><span class="st mvp">MVP · Today</span></div>
-      <div><span>3D structure insight, PDF extraction, guideline RAG</span><span class="st design">Designed</span></div>
-      <div><span>Hospital pilot, imaging and pathology models, breast and colorectal</span><span class="st plan">Planned</span></div>
+      <div><span>Clinician workspace: timeline, RECIST and ctDNA charts, cards, approve · modify · reject, audit log</span><span class="st built">Built</span></div>
+      <div><span>Nine agents: CIViC, ClinicalTrials.gov, interactions, dose calculators, Claude synthesis, safety-critic</span><span class="st built">Built</span></div>
+      <div><span>oncoagent-mcp: seven tools over stdio + Streamable HTTP · 3D structures with Mol*</span><span class="st built">Built</span></div>
+      <div><span>Evaluation: 3/3 gold cases matched, 100% valid citations, 6/6 unsafe drafts caught</span><span class="st mvp">Measured</span></div>
+      <div><span>PDF extraction, guideline RAG, hospital pilot, breast and colorectal</span><span class="st plan">Planned</span></div>
       <div><span>Research track with a licensed drug-discovery partner</span><span class="st vision">Vision</span></div>
     </div>
+    <p class="fill"></p>
+    <p class="cap">Live: oncoagent.vercel.app · Code: github.com/shahriyar9507/oncoagent · Fictional patients only.</p>
   </div>
   <div class="bot"><span>OncoAgent · Team DatourX</span><span class="pg">13 / 15</span></div>
 </section>
@@ -452,6 +455,7 @@ h2 .g { color: #8b95a6; }
     <p class="t1 rv" style="--d:2">AI proposes. The doctor decides.</p>
     <p class="t2 rv bn" style="--d:3">AI প্রস্তাব দেয়, ডাক্তার সিদ্ধান্ত নেন।</p>
     <p class="t3 rv" style="--d:4">Starting with lung cancer, built for the patients who wait longest.</p>
+    <p class="t4 rv" style="--d:5">oncoagent.vercel.app</p>
   </div>
 </section>
 

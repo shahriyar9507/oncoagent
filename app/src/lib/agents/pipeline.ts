@@ -21,7 +21,7 @@ export interface PipelineResult extends AgentRunResult {
 
 // Orchestrator: runs the specialist agents in order, then the synthesis agent, then the safety-critic.
 export async function runPipeline(p: Patient, opts: PipelineOptions): Promise<PipelineResult> {
-  const today = opts.today ?? new Date().toISOString().slice(0, 10);
+  const today = opts.today ?? p.asOf ?? new Date().toISOString().slice(0, 10);
   const steps: StepEvent[] = [];
   const warnings: string[] = [];
   const reg = new EvidenceRegistry();

@@ -40,6 +40,14 @@ describe("dose calculators", () => {
     expect(card.blocks.join(" ")).toMatch(/days old/);
   });
 
+  it("every fictional record is dose-ready on its own as-of date", () => {
+    for (const [id, regimen] of [["P-001", "carboplatin-pemetrexed"], ["P-002", "pembrolizumab-carboplatin-pemetrexed"], ["P-003", "alectinib"]] as const) {
+      const p = getPatient(id)!;
+      expect(p.asOf).toBeDefined();
+      expect(buildDoseCard(p, regimen, p.asOf!).blocks).toHaveLength(0);
+    }
+  });
+
   it("blocks pemetrexed below CrCl 45", () => {
     const p = { ...getPatient("P-002")!, serumCreatinineMgDl: 2.4 };
     const card = buildDoseCard(p, "pembrolizumab-carboplatin-pemetrexed", "2026-11-20");

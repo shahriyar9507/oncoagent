@@ -47,6 +47,7 @@ export default async function PatientPage({ params }: { params: Promise<{ id: st
               <span className="chip amber">Fictional patient</span>
               <span className="chip">{p.id}</span>
               <span className="chip mint"><span className="dot" />{p.status}</span>
+              {p.asOf && <span className="chip ghost" title="The fictional record is frozen at this date; freshness rules such as creatinine age are checked against it.">Record as of {new Date(`${p.asOf}T00:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" })}</span>}
             </div>
             <h1 id="p-name" className="p-name" style={{ marginTop: 10 }}>{p.displayName}</h1>
             <p className="p-meta">

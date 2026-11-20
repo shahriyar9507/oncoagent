@@ -83,6 +83,8 @@ export interface Patient {
   heightCm: number;
   serumCreatinineMgDl: number;
   creatinineDate: string;
+  /** Clinical "today" of this fictional record. Freshness rules are checked against it; real records use the current date. */
+  asOf?: string;
   pdl1Tps?: number;
   variants: Variant[];
   medications: Medication[];

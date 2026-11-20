@@ -2,6 +2,9 @@ import type { Patient } from "../types";
 
 // Three fictional non-small-cell lung cancer cases. Names, dates and values are invented for demonstration.
 // The NSCLC biomarker panel recommended before first-line treatment.
+/** The fictional records are frozen at this date, so live demo runs give the same freshness checks on any day. */
+export const CASE_AS_OF = "2026-11-20";
+
 export const NSCLC_PANEL = ["EGFR", "ALK", "ROS1", "BRAF", "KRAS", "MET", "RET", "NTRK", "ERBB2", "PD-L1"];
 
 export const patients: Patient[] = [
@@ -19,6 +22,7 @@ export const patients: Patient[] = [
     heightCm: 152,
     serumCreatinineMgDl: 0.8,
     creatinineDate: "2026-11-17",
+    asOf: CASE_AS_OF,
     pdl1Tps: 10,
     variants: [
       { gene: "EGFR", alteration: "L858R", kind: "SNV", hgvsP: "p.Leu858Arg", vafPercent: 31, origin: "somatic", sample: "tissue", reportedOn: "2025-09-19", lab: "Molecular lab (NGS panel)" },
@@ -81,6 +85,7 @@ export const patients: Patient[] = [
     heightCm: 168,
     serumCreatinineMgDl: 1.1,
     creatinineDate: "2026-11-14",
+    asOf: CASE_AS_OF,
     pdl1Tps: 60,
     variants: [
       { gene: "KRAS", alteration: "G12C", kind: "SNV", hgvsP: "p.Gly12Cys", vafPercent: 22, origin: "somatic", sample: "tissue", reportedOn: "2026-11-12", lab: "Molecular lab (NGS panel)" },
@@ -121,6 +126,7 @@ export const patients: Patient[] = [
     heightCm: 156,
     serumCreatinineMgDl: 0.7,
     creatinineDate: "2026-11-15",
+    asOf: CASE_AS_OF,
     pdl1Tps: 5,
     variants: [
       { gene: "ALK", alteration: "EML4::ALK", kind: "fusion", vafPercent: undefined, origin: "somatic", sample: "tissue", reportedOn: "2026-11-11", lab: "Molecular lab (RNA fusion panel)" },

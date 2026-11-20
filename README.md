@@ -47,7 +47,7 @@ Therapy works at three levels: **select** an approved drug or trial (built), **p
 | Leading option matches the gold answer | 3/3 (Claude) · 3/3 (rules) |
 | Citations that resolve to evidence | 100% |
 | Trial IDs returned by the registry | 100% |
-| Doses exactly as hand-calculated | 3/3 · 9 unit tests |
+| Doses exactly as hand-calculated | 3/3 · 10 unit tests |
 | Doses written outside the calculator | 0 |
 | Adversarial unsafe drafts caught by the critic | 6/6 |
 | Full run with Claude | ≈ 23 s · ≈ $0.065 per case |
