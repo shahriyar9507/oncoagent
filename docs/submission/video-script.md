@@ -13,10 +13,11 @@
 
 1. **Chrome বা Edge-এ নতুন InPrivate/Incognito উইন্ডো** খুলুন। এতে অডিট লগ খালি থাকবে, কারণ ডেমো লগ ব্রাউজারে জমা থাকে।
 2. একবার রিহার্সাল করুন: P-001 খুলে **Run agents live** চাপুন এবং প্রায় ২৫ সেকেন্ড অপেক্ষা করুন। প্রথম রান একটু ধীর হতে পারে (cold start)। তারপর উইন্ডো বন্ধ করে নতুন Incognito খুলে আসল টেক নিন।
-3. P-001 পেজে নিচে **3D structure** অংশটি ঘুরিয়ে দেখুন। লোড হলে দৃশ্য ৫-এ ৩ সেকেন্ড দেখাবেন, না হলে বাদ দেবেন।
-4. স্ক্রিন 1920×1080, ব্রাউজার জুম 100–110%। বুকমার্ক বার লুকান (Ctrl+Shift+B), অন্য ট্যাব বন্ধ রাখুন, Windows-এ Do Not Disturb চালু করুন।
-5. রেকর্ডার: **Windows Snipping Tool** (Win+Shift+R) অথবা **OBS Studio** (ফ্রি)। মাইক্রোফোন হিসেবে ফোনের ইয়ারফোন যথেষ্ট, শুধু ঘর শান্ত রাখুন।
-6. সহজ উপায়: আগে স্ক্রিন রেকর্ড করুন, পরে ভয়েস আলাদা করে রেকর্ড করে এডিটরে মেলান।
+3. P-001 পেজে **Structure** অংশ খুলুন। ওষুধটি (সাদা) তার পকেটে বসে আছে, আর L858 (সবুজ), C797 (লাল) ও T790 (হলুদ) চিহ্নিত আছে। দৃশ্য ৫-এ এটি ৩ সেকেন্ড দেখাবেন। কম্পিউটারে লোড না হলে এই অংশ বাদ দিন।
+4. লাইভ ডেমোতে Claude রান ১০ মিনিটে ৬ বারের বেশি চালানো যায় না। তাই রিহার্সালে বেশি রান করবেন না; দরকার হলে **Claude synthesis** টিক তুলে বিনা খরচে rules-only রান চালান।
+5. স্ক্রিন 1920×1080, ব্রাউজার জুম 100–110%। বুকমার্ক বার লুকান (Ctrl+Shift+B), অন্য ট্যাব বন্ধ রাখুন, Windows-এ Do Not Disturb চালু করুন।
+6. রেকর্ডার: **Windows Snipping Tool** (Win+Shift+R) অথবা **OBS Studio** (ফ্রি)। মাইক্রোফোন হিসেবে ফোনের ইয়ারফোন যথেষ্ট, শুধু ঘর শান্ত রাখুন।
+7. সহজ উপায়: আগে স্ক্রিন রেকর্ড করুন, পরে ভয়েস আলাদা করে রেকর্ড করে এডিটরে মেলান।
 
 ---
 
@@ -51,18 +52,18 @@
 **বাংলা:** Run চাপলে নয়টি এজেন্ট পরপর কাজ করে: CIViC থেকে জিনের প্রমাণ, কোন টেস্ট বাকি, গাইডলাইনের বিকল্প, ওষুধের পারস্পরিক ঝুঁকি, ClinicalTrials.gov থেকে চলমান ট্রায়াল, আর ডোজ ক্যালকুলেটর। Claude শুধু সেই প্রমাণ দিয়ে টিউমার-বোর্ড সারাংশ লেখে। তারপর Safety-critic প্রতিটি দাবি যাচাই করে। পুরো রান প্রায় ২৩ সেকেন্ডের।
 
 ### দৃশ্য ৫ · কার্ড, প্রমাণ, ডোজ (1:15–1:45)
-**স্ক্রিন:** নিচে স্ক্রল করে প্রথম treatment কার্ড দেখান এবং একটি evidence চিপে ক্লিক করুন। আগের রানে এটি ছিল amivantamab + carboplatin + pemetrexed, তবে লাইভ রানে Claude-এর ভাষা একটু আলাদা হতে পারে। তারপর QT safety কার্ড, তারপর **Dose card** (Carboplatin 460 mg, Pemetrexed 750 mg ও ফর্মুলা)। 3D structure লোড হলে ৩ সেকেন্ড দেখান।
+**স্ক্রিন:** উপরের মেনু থেকে **Recommendations** চাপুন। প্রথম treatment কার্ডে **Reasoning, uncertainty and alternatives** চাপলে কার্ডের বিস্তারিত খুলবে। এরপর **N sources** চাপলে ডানে প্রমাণের প্যানেল খুলবে; Esc চেপে বন্ধ করুন। আগের রানে এটি ছিল amivantamab + carboplatin + pemetrexed, তবে লাইভ রানে Claude-এর ভাষা একটু আলাদা হতে পারে। তারপর QT safety কার্ড, তারপর **Dose card** (Carboplatin 460 mg, Pemetrexed 750 mg ও ফর্মুলা)। 3D structure লোড হলে ৩ সেকেন্ড দেখান।
 **Voice:**
 > Every card says why, cites its sources, and shows what would change the advice. The pharmacology agent caught a real risk: osimertinib and citalopram both prolong the QT interval. The dose card shows its working, Calvert formula and Cockcroft–Gault clearance, so carboplatin is 460 milligrams. A creatinine older than seven days would block the card.
 
 **বাংলা:** প্রতিটি কার্ডে লেখা থাকে কেন এই প্রস্তাব, প্রমাণের উৎস কী, আর কী বদলালে পরামর্শ বদলাবে। ফার্মাকোলজি এজেন্ট একটি আসল ঝুঁকি ধরেছে: osimertinib আর citalopram দুটোই হৃদস্পন্দনের QT বাড়ায়। ডোজ কার্ডে পুরো হিসাব দেখানো আছে (Calvert ফর্মুলা, Cockcroft–Gault ক্লিয়ারেন্স), তাই carboplatin ৪৬০ মিলিগ্রাম। ক্রিয়েটিনিন রিপোর্ট ৭ দিনের বেশি পুরোনো হলে কার্ডটি আটকে যায়।
 
 ### দৃশ্য ৬ · ডাক্তার সিদ্ধান্ত নেন (1:45–2:02)
-**স্ক্রিন:** treatment কার্ডে **Approve** চাপুন, কারণ লিখুন (যেমন "Agree; re-biopsy first, tumour board Friday"), তারপর **Approve and sign** চাপুন। নিচে Audit log-এ নতুন এন্ট্রি ও **hash chain intact** দেখান।
+**স্ক্রিন:** treatment কার্ডে **Approve** চাপুন, কারণ লিখুন (যেমন "Agree; re-biopsy first, tumour board Friday"), তারপর **Approve and sign** চাপুন। নিচে-ডানে সবুজ বার্তা আসবে, আর Audit log-এ নতুন এন্ট্রি ও **hash chain intact** দেখা যাবে। এরপর উপরের **Tumour-board report** বাটনে চাপুন এবং ২ সেকেন্ড প্রিন্ট-যোগ্য রিপোর্ট দেখান।
 **Voice:**
-> The AI cannot act on its own. The oncologist approves, modifies or rejects each card with a reason, and every decision is written to a hash-chained audit log.
+> The AI cannot act on its own. The oncologist approves, modifies or rejects each card with a reason, every decision is written to a hash-chained audit log, and the tumour-board report is ready to print.
 
-**বাংলা:** AI নিজে কিছু করতে পারে না। অনকোলজিস্ট প্রতিটি কার্ড কারণসহ approve, modify বা reject করেন, আর প্রতিটি সিদ্ধান্ত হ্যাশ-চেইনড অডিট লগে লেখা হয়, যা পরে বদলানো যায় না।
+**বাংলা:** AI নিজে কিছু করতে পারে না। অনকোলজিস্ট প্রতিটি কার্ড কারণসহ approve, modify বা reject করেন। প্রতিটি সিদ্ধান্ত হ্যাশ-চেইনড অডিট লগে লেখা হয়, যা পরে বদলানো যায় না। টিউমার-বোর্ডের রিপোর্টও প্রিন্টের জন্য তৈরি থাকে।
 
 ### দৃশ্য ৭ · প্রমাণ (2:02–2:18)
 **স্ক্রিন:** সাইডবারে **Evaluation** পেজ। উপরের ৮টি সংখ্যা, তারপর Red-team টেবিল দেখান।
@@ -72,11 +73,11 @@
 **বাংলা:** বিশ্বাস করার আগে আমরা মাপি। তিনটি gold কেসেই মূল জিন আর প্রধান চিকিৎসা-বিকল্প মিলেছে। প্রতিটি সূত্র আর ট্রায়াল আইডি আসল, আর critic ছয়টির মধ্যে ছয়টি বিপজ্জনক খসড়াই ধরেছে।
 
 ### দৃশ্য ৮ · MCP (2:18–2:30)
-**স্ক্রিন:** সাইডবারে **MCP server** পেজ। এন্ডপয়েন্ট ও ৭টি টুলের তালিকা দেখান।
+**স্ক্রিন:** সাইডবারে **MCP server** পেজ খুলুন। **Try the tools live** অংশে `interpret_variant` বেছে **Call tool** চাপুন; আধা সেকেন্ডের মধ্যে CIViC-এর আসল ফলাফল আসবে।
 **Voice:**
-> The same seven tools run as an MCP server, over stdio and Streamable HTTP, so any MCP client can use them.
+> The same seven tools run as an MCP server, over stdio and Streamable HTTP. Here I call one live from the browser, exactly as any MCP client would.
 
-**বাংলা:** এই সাতটি টুলই একটি MCP সার্ভার হিসেবে stdio আর Streamable HTTP-তে চলে, তাই যেকোনো MCP ক্লায়েন্ট এগুলো ব্যবহার করতে পারে।
+**বাংলা:** এই সাতটি টুলই একটি MCP সার্ভার হিসেবে stdio আর Streamable HTTP-তে চলে। এখানে ব্রাউজার থেকে একটি টুল লাইভ চালাচ্ছি, ঠিক যেভাবে যেকোনো MCP ক্লায়েন্ট চালায়।
 
 ### দৃশ্য ৯ · সমাপ্তি (2:30–2:42)
 **স্ক্রিন:** ডেক স্লাইড ১৫ (DatourX লোগো + oncoagent.vercel.app)।

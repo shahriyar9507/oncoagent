@@ -8,8 +8,8 @@ Entry for *Idea to Unicorn · International AI Builders Congress 2026* (CloudCam
 
 | | |
 |---|---|
-| Live demo | https://oncoagent.vercel.app *(see the deployment note below)* |
-| MCP endpoint | `https://<deployment>/api/mcp` (Streamable HTTP) · `npx tsx mcp/stdio.ts` (stdio) |
+| Live demo | https://oncoagent.vercel.app |
+| MCP endpoint | `https://oncoagent.vercel.app/api/mcp` (Streamable HTTP) · `npx tsx mcp/stdio.ts` (stdio) · try it at `/mcp` |
 | Submission book | `docs/submission/book.html` |
 | Pitch deck | `docs/submission/deck.html` |
 | Research with sources | `docs/RESEARCH.md` |
@@ -36,6 +36,19 @@ A specialist agent team works on each new event in a patient's record:
 | Safety-critic | Rejects invented trials, doses outside the calculator, unsafe or wrong-line drugs, unknown evidence | — |
 
 Every output is a **recommendation card**: proposal, patient facts used, evidence IDs, confidence, what is uncertain, alternatives, what would change the advice, safety checks. The clinician approves, modifies or rejects (a reason is required), and each decision is written to a **hash-chained audit log**.
+
+### The clinician workspace
+
+- **Patient record**: summary, therapy lines, RECIST 1.1 and ctDNA charts (with table view), timeline, molecular profile against the 10-marker guideline panel, recruiting trials, and a sticky section menu.
+- **Agent run**: live streaming of the nine steps with progress and timings; Claude synthesis can be switched off for a free rules-only run. The latest live run is kept in the browser, so decisions survive a reload.
+- **Recommendation cards**: compact by default, with reasoning, uncertainty and alternatives one click away; evidence opens in a side drawer grouped by source.
+- **Decision queue**: every pending card across patients, flagged ones first, with filters and approve / modify / reject in place.
+- **Tumour-board report**: a printable A4 pre-read (`/patients/<id>/report`) with the record, the AI draft, every card and its decision, the dose card, numbered sources and signature lines.
+- **3D structure**: Mol* view of the drug in its pocket with the driver, resistance and gatekeeper residues highlighted (residue numbers checked against each PDB file).
+- **Live status**: the top bar checks Claude, CIViC and ClinicalTrials.gov on load and says when snapshots are in use.
+- **MCP tester**: call any of the seven tools from the browser against the deployed endpoint.
+
+Live Claude runs are rate-limited in the public demo (6 per 10 minutes per visitor; 10 per hour through MCP). Rules-only runs are free.
 
 Therapy works at three levels: **select** an approved drug or trial (built), **personalise** regimen and dose (built), and in a separate research zone, **research a modified or new molecule** with licensed partners (vision, never given to a patient outside a regulated trial).
 
@@ -72,7 +85,7 @@ npm run mcp:smoke      # list and call the MCP tools over stdio
 Connect Claude Code to the deployed MCP server:
 
 ```bash
-claude mcp add --transport http oncoagent https://<deployment>/api/mcp
+claude mcp add --transport http oncoagent https://oncoagent.vercel.app/api/mcp
 ```
 
 Environment variables: `ANTHROPIC_API_KEY` (Claude synthesis), `CLINICIAN_TOKEN` (enables `record_decision` over MCP), `MCP_BEARER_TOKEN` (optional bearer auth on `/api/mcp`).

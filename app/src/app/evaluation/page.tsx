@@ -43,7 +43,7 @@ export default function EvaluationPage() {
         <section className="panel">
           <div className="panel-head"><h2 className="panel-title"><IconGauge /> Per case</h2><span className="chip ghost">{results.model}</span></div>
           <div className="table-wrap">
-            <table className="data">
+            <table className="data stackable">
               <thead><tr><th>Case</th><th>Driver</th><th>Lead option</th><th>Key points</th><th>Dose</th><th>Critic flags</th><th>Cost</th></tr></thead>
               <tbody>
                 {results.cases.map((c) => {
@@ -51,13 +51,13 @@ export default function EvaluationPage() {
                   const found = c.mentions.filter((m) => m.found).length;
                   return (
                     <tr key={c.id}>
-                      <td className="strong">{p.displayName}<br /><span className="muted mono">{c.id}</span></td>
-                      <td>{c.driverFound ? <span className="chip mint">found</span> : <span className="chip red">missed</span>}</td>
-                      <td>{c.leadingOptionClaude ? <span className="chip mint">match</span> : <span className="chip red">differs</span>}</td>
-                      <td className="num">{found}/{c.mentions.length}</td>
-                      <td>{c.doseExact ? <span className="chip mint">exact</span> : <span className="chip red">off</span>}</td>
-                      <td>{c.criticFlags.length ? <span className="chip amber" title={c.criticFlags.map((f) => f.notes.join(" ")).join(" | ")}>{c.criticFlags.length} · {c.criticFlags[0].agent}</span> : <span className="chip ghost">0</span>}</td>
-                      <td className="num">${c.costUsd.toFixed(3)}</td>
+                      <td className="strong" data-label="Case">{p.displayName}<br /><span className="muted mono">{c.id}</span></td>
+                      <td data-label="Driver">{c.driverFound ? <span className="chip mint">found</span> : <span className="chip red">missed</span>}</td>
+                      <td data-label="Lead option">{c.leadingOptionClaude ? <span className="chip mint">match</span> : <span className="chip red">differs</span>}</td>
+                      <td className="num" data-label="Key points">{found}/{c.mentions.length}</td>
+                      <td data-label="Dose">{c.doseExact ? <span className="chip mint">exact</span> : <span className="chip red">off</span>}</td>
+                      <td data-label="Critic flags">{c.criticFlags.length ? <span className="chip amber" title={c.criticFlags.map((f) => f.notes.join(" ")).join(" | ")}>{c.criticFlags.length} · {c.criticFlags[0].agent}</span> : <span className="chip ghost">0</span>}</td>
+                      <td className="num" data-label="Cost">${c.costUsd.toFixed(3)}</td>
                     </tr>
                   );
                 })}
@@ -97,14 +97,14 @@ export default function EvaluationPage() {
       <section className="panel">
         <div className="panel-head"><h2 className="panel-title"><IconShield /> Red-team set for the safety-critic</h2><span className="chip mint">{s.adversarialCaught}/{s.adversarialTotal} caught</span></div>
         <div className="table-wrap">
-          <table className="data">
+          <table className="data stackable">
             <thead><tr><th>Unsafe draft</th><th>Result</th><th>Critic note</th></tr></thead>
             <tbody>
               {results.adversarial.map((a) => (
                 <tr key={a.name}>
-                  <td className="strong">{a.name}</td>
-                  <td>{a.caught ? <span className="chip mint">caught</span> : <span className="chip red">missed</span>}</td>
-                  <td>{a.notes.join(" ")}</td>
+                  <td className="strong" data-label="Unsafe draft">{a.name}</td>
+                  <td data-label="Result">{a.caught ? <span className="chip mint">caught</span> : <span className="chip red">missed</span>}</td>
+                  <td data-label="Critic note">{a.notes.join(" ")}</td>
                 </tr>
               ))}
             </tbody>

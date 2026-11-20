@@ -8,6 +8,7 @@ import { buildDoseCard } from "../clinical/dose";
 import { regimens } from "../data/regimens";
 import { assessRecist } from "../clinical/recist";
 import { runPipeline } from "../agents/pipeline";
+import { allow, MCP_CLAUDE_RUNS_PER_HOUR } from "../ratelimit";
 import type { Patient } from "../types";
 
 // oncoagent-mcp: the platform's tools, served over stdio and Streamable HTTP from one definition.
@@ -111,10 +112,17 @@ export function registerOncoTools(server: McpServer) {
     async ({ patient_id, use_claude }) => {
       const p = getPatient(patient_id);
       if (!p) return { ...text(`Unknown patient ${patient_id}.`), isError: true };
-      const r = await runPipeline(p, { useClaude: use_claude });
+      let useClaude = use_claude;
+      let note: string | undefined;
+      if (useClaude && !allow("mcp:claude", MCP_CLAUDE_RUNS_PER_HOUR, 60 * 60 * 1000).ok) {
+        useClaude = false;
+        note = `Claude synthesis is limited to ${MCP_CLAUDE_RUNS_PER_HOUR} runs per hour on the public endpoint; this run used the rules-only agents.`;
+      }
+      const r = await runPipeline(p, { useClaude });
       return text({
         patientId: r.patientId,
         mode: r.mode,
+        ...(note ? { note } : {}),
         boardSummary: r.boardSummary,
         cards: r.cards.map((c) => ({ id: c.id, agent: c.agent, kind: c.kind, proposal: c.proposal, evidenceIds: c.evidenceIds, confidence: c.confidence, critic: c.critic })),
         evidence: r.evidence.map((e) => ({ id: e.id, label: e.label, url: e.url })),

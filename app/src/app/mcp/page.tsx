@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { IconPlug, IconShield } from "@/components/icons";
 import { regimens } from "@/lib/data/regimens";
+import { CodeBlock, McpPlayground } from "@/components/McpPlayground";
 
 export const metadata = { title: "MCP server · OncoAgent" };
 
@@ -34,44 +35,46 @@ export default async function McpPage() {
 
       <section className="panel">
         <div className="panel-head"><h2 className="panel-title"><IconPlug /> Endpoint</h2></div>
-        <div className="code">{url}</div>
+        <CodeBlock code={url} />
         <div className="grid g3" style={{ marginTop: 16 }}>
           <div>
             <p className="eyebrow" style={{ marginBottom: 8 }}>Claude Code</p>
-            <div className="code">{`claude mcp add --transport http \\\n  oncoagent ${url}`}</div>
+            <CodeBlock code={`claude mcp add --transport http \\\n  oncoagent ${url}`} />
           </div>
           <div>
             <p className="eyebrow" style={{ marginBottom: 8 }}>Claude Desktop (via mcp-remote)</p>
-            <div className="code">{`{
+            <CodeBlock code={`{
   "mcpServers": {
     "oncoagent": {
       "command": "npx",
       "args": ["-y", "mcp-remote", "${url}"]
     }
   }
-}`}</div>
+}`} />
           </div>
           <div>
             <p className="eyebrow" style={{ marginBottom: 8 }}>Local stdio (from the repository)</p>
-            <div className="code">{`cd app
+            <CodeBlock code={`cd app
 npm install
-npx tsx mcp/stdio.ts`}</div>
+npx tsx mcp/stdio.ts`} />
           </div>
         </div>
       </section>
 
+      <McpPlayground endpoint="/api/mcp" />
+
       <section className="panel">
         <div className="panel-head"><h2 className="panel-title">Tools</h2><span className="chip ghost">{TOOLS.length}</span></div>
         <div className="table-wrap">
-          <table className="data">
+          <table className="data stackable">
             <thead><tr><th>Tool</th><th>Input</th><th>Returns</th><th>Effect</th></tr></thead>
             <tbody>
               {TOOLS.map((t) => (
                 <tr key={t.name}>
-                  <td className="strong mono">{t.name}</td>
-                  <td>{t.input}</td>
-                  <td>{t.out}</td>
-                  <td><span className={`chip ${t.side.startsWith("write") ? "amber" : "mint"}`}>{t.side}</span></td>
+                  <td className="strong mono" data-label="Tool">{t.name}</td>
+                  <td data-label="Input">{t.input}</td>
+                  <td data-label="Returns">{t.out}</td>
+                  <td data-label="Effect"><span className={`chip ${t.side.startsWith("write") ? "amber" : "mint"}`}>{t.side}</span></td>
                 </tr>
               ))}
             </tbody>
@@ -82,14 +85,14 @@ npx tsx mcp/stdio.ts`}</div>
       <div className="grid g2">
         <section className="panel">
           <div className="panel-head"><h2 className="panel-title">Try it with curl</h2></div>
-          <div className="code">{`curl -s ${url} \\
+          <CodeBlock code={`curl -s ${url} \\
   -H "content-type: application/json" \\
   -H "accept: application/json, text/event-stream" \\
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/call",
        "params":{"name":"calculate_dose","arguments":{
        "regimen":"carboplatin-pemetrexed","height_cm":152,
        "weight_kg":54,"age":55,"sex":"F",
-       "serum_creatinine_mg_dl":0.8,"creatinine_date":"2026-11-17"}}}'`}</div>
+       "serum_creatinine_mg_dl":0.8,"creatinine_date":"2026-11-17"}}}'`} />
         </section>
         <section className="panel">
           <div className="panel-head"><h2 className="panel-title"><IconShield /> Safety on the tool layer</h2></div>
@@ -98,7 +101,8 @@ npx tsx mcp/stdio.ts`}</div>
             <li><span className="mono">record_decision</span> refuses unless a clinician session token is supplied. An AI client cannot sign.</li>
             <li>Set <span className="mono">MCP_BEARER_TOKEN</span> to require a bearer token on the HTTP endpoint.</li>
             <li>All patients are fictional; identifiable data never passes through the demo endpoint.</li>
-            <li>During development the stdio server and API were exposed through a tunnel for remote clients; the deployed endpoint replaces it.</li>
+            <li>Claude synthesis through <span className="mono">draft_recommendations</span> is rate-limited on the public endpoint; rules-only runs are free.</li>
+            <li>For on-premise hospital pilots, an outbound-only tunnel keeps patient data inside the hospital network.</li>
           </ul>
         </section>
       </div>

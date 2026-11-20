@@ -52,14 +52,14 @@ export function RecistChart({ points }: { points: RecistAssessment[] }) {
       </div>
       {table ? (
         <div className="table-wrap">
-          <table className="data">
+          <table className="data stackable">
             <thead><tr><th>Date</th><th>Month</th><th>Sum (mm)</th><th>From baseline</th><th>From nadir</th><th>RECIST</th></tr></thead>
             <tbody>
               {points.map((p) => (
                 <tr key={p.date}>
-                  <td className="num">{p.date}</td><td className="num">{p.months}</td><td className="num strong">{p.sumMm}</td>
-                  <td className="num">{p.changeFromBaselinePct.toFixed(1)}%</td><td className="num">{p.changeFromNadirPct.toFixed(1)}%</td>
-                  <td>{p.category}{p.newLesions ? " · new lesion" : ""}</td>
+                  <td className="num" data-label="Date">{p.date}</td><td className="num" data-label="Month">{p.months}</td><td className="num strong" data-label="Sum (mm)">{p.sumMm}</td>
+                  <td className="num" data-label="From baseline">{p.changeFromBaselinePct.toFixed(1)}%</td><td className="num" data-label="From nadir">{p.changeFromNadirPct.toFixed(1)}%</td>
+                  <td data-label="RECIST">{p.category}{p.newLesions ? " · new lesion" : ""}</td>
                 </tr>
               ))}
             </tbody>
@@ -146,11 +146,11 @@ export function CtdnaChart({ points }: { points: CtdnaPoint[] }) {
       </div>
       {table ? (
         <div className="table-wrap">
-          <table className="data">
+          <table className="data stackable">
             <thead><tr><th>Date</th><th>Month</th><th>Marker</th><th>VAF</th></tr></thead>
             <tbody>
               {points.map((p) => (
-                <tr key={p.date}><td className="num">{p.date}</td><td className="num">{p.months}</td><td>{p.marker}</td><td className="num strong">{p.vafPercent === null ? "Not detected" : `${p.vafPercent}%`}</td></tr>
+                <tr key={p.date}><td className="num" data-label="Date">{p.date}</td><td className="num" data-label="Month">{p.months}</td><td data-label="Marker">{p.marker}</td><td className="num strong" data-label="VAF">{p.vafPercent === null ? "Not detected" : `${p.vafPercent}%`}</td></tr>
               ))}
             </tbody>
           </table>

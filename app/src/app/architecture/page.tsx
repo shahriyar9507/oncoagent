@@ -12,6 +12,14 @@ const LAYERS = [
   ["Sources", "Referral letters · imaging · pathology · NGS · liquid biopsy · medication list", false],
 ] as const;
 
+const PIPE: { title: string; tag: string; items: [string, string][]; tone?: string }[] = [
+  { title: "Inputs", tag: "data", items: [["Patient record", "timeline, labs, scans, NGS"], ["CIViC", "live · snapshot fallback"], ["ClinicalTrials.gov", "live · snapshot fallback"], ["Knowledge pack", "approvals and pivotal trials"], ["Drug labels", "dose parameters"]] },
+  { title: "Specialist agents", tag: "deterministic code", items: [["Sentinel", "RECIST 1.1, ctDNA"], ["Genomic-interpreter", "driver, resistance"], ["Test-advisor", "missing tests"], ["Guideline", "ranked options"], ["Pharmacology-safety", "interactions"], ["Trial-matcher", "recruiting trials"], ["Dose-optimizer", "BSA, CrCl, Calvert"]] },
+  { title: "Synthesis", tag: "Claude Opus 5.5", tone: "mint", items: [["Evidence registry", "every claim needs an ID"], ["De-identified summary", "pseudonym + age band"], ["Structured output", "pre-read + up to 3 cards"]] },
+  { title: "Safety-critic", tag: "deterministic code", tone: "amber", items: [["Unknown evidence ID", "flag"], ["Trial not from registry", "flag"], ["Dose outside calculator", "flag"], ["Contraindicated drug", "flag"], ["Wrong-line drug", "flag"]] },
+  { title: "Clinician", tag: "decides", tone: "mint", items: [["Approve", "with note"], ["Modify", "reason required"], ["Reject", "reason required"], ["Audit log", "SHA-256 hash chain"]] },
+];
+
 const AGENTS = [
   ["Sentinel", "RECIST 1.1 and ctDNA trend; red flags", "Suggest", "Treating oncologist"],
   ["Genomic-interpreter", "Driver and resistance calls from CIViC", "Draft", "Molecular pathologist"],
@@ -33,6 +41,21 @@ export default function ArchitecturePage() {
         <p>The model proposes, deterministic code checks, a clinician decides. Research outputs never enter a patient&apos;s chart, and no agent can sign, prescribe or contact a patient.</p>
       </section>
 
+      <section className="panel" aria-labelledby="pipe-t">
+        <div className="panel-head"><h2 id="pipe-t" className="panel-title"><IconSpark /> One agent run, end to end</h2><span className="chip ghost">about 25 s · $0.065 with Claude</span></div>
+        <ol className="pipe">
+          {PIPE.map((c) => (
+            <li key={c.title} className={`pcol${c.tone ? ` ${c.tone}` : ""}`}>
+              <div className="pc-head"><b>{c.title}</b><span>{c.tag}</span></div>
+              <ul>
+                {c.items.map(([a, b]) => <li key={a}><b>{a}</b><span>{b}</span></li>)}
+              </ul>
+            </li>
+          ))}
+        </ol>
+        <p className="footer-note" style={{ marginTop: 12 }}>Seven of nine agents are plain, testable code. The model writes language, never numbers: doses come from the calculator and trial IDs from the registry.</p>
+      </section>
+
       <section className="panel">
         <div className="panel-head"><h2 className="panel-title"><IconLayers /> Layers</h2></div>
         <div className="layers">
@@ -48,9 +71,9 @@ export default function ArchitecturePage() {
       <section className="panel">
         <div className="panel-head"><h2 className="panel-title"><IconSpark /> Agents and who signs</h2></div>
         <div className="table-wrap">
-          <table className="data">
+          <table className="data stackable">
             <thead><tr><th>Agent</th><th>Job</th><th>Autonomy</th><th>Signs off</th></tr></thead>
-            <tbody>{AGENTS.map((a) => <tr key={a[0]}><td className="strong">{a[0]}</td><td>{a[1]}</td><td>{a[2]}</td><td>{a[3]}</td></tr>)}</tbody>
+            <tbody>{AGENTS.map((a) => <tr key={a[0]}><td className="strong" data-label="Agent">{a[0]}</td><td data-label="Job">{a[1]}</td><td data-label="Autonomy">{a[2]}</td><td data-label="Signs off">{a[3]}</td></tr>)}</tbody>
           </table>
         </div>
       </section>
@@ -58,17 +81,17 @@ export default function ArchitecturePage() {
       <div className="grid g3">
         <section className="panel">
           <p className="eyebrow">Level 1 · clinical</p>
-          <h3 style={{ marginTop: 8, fontSize: 18 }}>Select</h3>
+          <h3 className="h3">Select</h3>
           <p className="sub" style={{ marginTop: 6 }}>Approved drug, regimen or recruiting trial that matches the responsible protein. Built today.</p>
         </section>
         <section className="panel">
           <p className="eyebrow">Level 2 · clinical</p>
-          <h3 style={{ marginTop: 8, fontSize: 18 }}>Personalise</h3>
+          <h3 className="h3">Personalise</h3>
           <p className="sub" style={{ marginTop: 6 }}>Dose for kidney function, body size and interactions with label formulas. Built today; model-informed dosing is research.</p>
         </section>
         <section className="panel">
           <p className="eyebrow">Level 3 · research</p>
-          <h3 style={{ marginTop: 8, fontSize: 18 }}>New molecule</h3>
+          <h3 className="h3">New molecule</h3>
           <p className="sub" style={{ marginTop: 6 }}>De-identified resistance patterns become target dossiers for licensed discovery partners. Vision; years of trials before any patient.</p>
         </section>
       </div>
